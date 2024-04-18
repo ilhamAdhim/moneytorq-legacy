@@ -21,7 +21,7 @@ const ProfileForm = () => {
     const { register, handleSubmit } = useForm();
 
     const onSubmit = async (values: any) => {
-        setIsLoading(false)
+        setIsLoading(true)
         if(values.username === 'testing' && values.password === 'testing'){
             setTimeout(() => { 
                 router.push("/dashboard")

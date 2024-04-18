@@ -1,5 +1,4 @@
 import { Metadata } from "next"
-import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -18,7 +17,7 @@ import {
 import { CalendarDateRangePicker } from "@/app/dashboard/components/date-range-picker"
 import { Overview } from "@/app/dashboard/components/overview"
 import { MainNav } from "@/app/dashboard/components/main-nav"
-import { RecentSales } from "@/app/dashboard/components/recent-sales"
+import { RecentTransaction } from "@/app/dashboard/components/recent-transaction"
 import { Search } from "@/app/dashboard/components/search"
 import TeamSwitcher from "@/app/dashboard/components/team-switcher"
 // import { UserNav } from "@/app/(app)/examples/dashboard/components/user-nav"
@@ -135,7 +134,7 @@ export default function DashboardPage() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                    <CardTitle className="text-sm font-medium">Transaction</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -194,13 +193,13 @@ export default function DashboardPage() {
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>Recent Transaction</CardTitle>
                     <CardDescription>
                       You made 265 sales this month.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentSales />
+                    <RecentTransaction />
                   </CardContent>
                 </Card>
               </div>
