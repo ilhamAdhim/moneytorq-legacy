@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { transactionRecords } from "@/store";
 import { useAtomValue } from "jotai/react";
 import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon } from "lucide-react";
+import Link from "next/link";
 
 const dataStats = [
     {
@@ -77,7 +78,11 @@ function OverviewScreen() {
                                 You made {recentTransaction.length} sales this month.
                             </CardDescription>
                         </CardHeader>
-                        <Button className="p-4 my-auto">Read more</Button>
+                        <div className="p-4">
+                            <Link href="/transaction">
+                            <Button className="my-auto">Read more</Button>
+                            </Link>
+                        </div>
                     </div>
                     <CardContent>
                         <RecentTransaction />

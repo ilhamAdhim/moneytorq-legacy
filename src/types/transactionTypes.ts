@@ -3,5 +3,6 @@ export interface ITransaction {
     amount: number,
     text: string,
     id: string,
+    date: string,
     description?: string
 }
