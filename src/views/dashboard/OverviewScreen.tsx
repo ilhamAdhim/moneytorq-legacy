@@ -2,6 +2,7 @@
 
 import { Overview } from "@/components/composites/overview";
 import { RecentTransaction } from "@/components/composites/recent-transaction";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { transactionRecords } from "@/store";
 import { useAtomValue } from "jotai/react";
@@ -36,51 +37,54 @@ const dataStats = [
 ]
 
 function OverviewScreen() {
-  const recentTransaction = useAtomValue(transactionRecords)
+    const recentTransaction = useAtomValue(transactionRecords)
 
     return (
-    <>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {dataStats.map((item, index) => (
-                <Card key={index}>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            {item.title}
-                        </CardTitle>
-                        {item.icon}
+        <>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {dataStats.map((item, index) => (
+                    <Card key={index}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                {item.title}
+                            </CardTitle>
+                            {item.icon}
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{item.value}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {item.description}
+                            </p>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <Card className="col-span-4">
+                    <CardHeader>
+                        <CardTitle>Overview</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{item.value}</div>
-                        <p className="text-xs text-muted-foreground">
-                            {item.description}
-                        </p>
+                    <CardContent className="pl-2">
+                        <Overview />
                     </CardContent>
                 </Card>
-            ))}
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-                <CardHeader>
-                    <CardTitle>Overview</CardTitle>
-                </CardHeader>
-                <CardContent className="pl-2">
-                    <Overview />
-                </CardContent>
-            </Card>
-            <Card className="col-span-3">
-                <CardHeader>
-                    <CardTitle>Recent Transaction</CardTitle>
-                    <CardDescription>
-                        You made {recentTransaction.length} sales this month.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <RecentTransaction />
-                </CardContent>
-            </Card>
-        </div>
-    </>);
+                <Card className="col-span-3">
+                    <div className="flex space-between">
+                        <CardHeader className="grow">
+                            <CardTitle>Recent Transaction</CardTitle>
+                            <CardDescription>
+                                You made {recentTransaction.length} sales this month.
+                            </CardDescription>
+                        </CardHeader>
+                        <Button className="p-4 my-auto">Read more</Button>
+                    </div>
+                    <CardContent>
+                        <RecentTransaction />
+                    </CardContent>
+                </Card>
+            </div>
+        </>);
 }
 
 export default OverviewScreen;
