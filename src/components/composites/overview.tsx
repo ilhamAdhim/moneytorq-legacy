@@ -1,116 +1,99 @@
 "use client"
+import { formatRupiah } from '@/utils/common'
+import { ResponsiveLine } from '@nivo/line'
+import { useState, useEffect } from 'react'
+interface IOverview {
+  data: any
+}
+export const Overview = ({ data }: IOverview) => {
 
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+  const [datasets, setDatasets] = useState([])
 
-const data = [
-  {
-    name: "Jan",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    valueIncome: Math.floor(Math.random() * 5000) + 1000,
-    valueExpense: Math.floor(Math.random() * 5000) + 1000,
-  },
-]
+  useEffect(() => {
+    let animation = setTimeout(() => setDatasets(data), 1)
+    return () => {
+      clearTimeout(animation);
+    };
+  }, [data]);
 
-export function Overview() {
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <AreaChart width={730} height={250} data={data}
-        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-        <defs>
-          <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="5">
-            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-          </linearGradient>
-          <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.5} />
-            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <XAxis dataKey="name" />
-        <YAxis
-          tickFormatter={(value: any) => `$${value}`}
+    <>
+      {datasets ?
+        <ResponsiveLine
+          data={datasets}
+          curve='linear'
+          enableArea
+          areaOpacity={.1}
+          areaBaselineValue={0}
+          areaBlendMode='multiply'
+          colors={{ datum: 'color' }}
+          margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+          enableSlices={"x"}
+          xScale={{ type: 'point' }}
+          yScale={{
+            type: 'linear',
+            min: 'auto',
+            max: 'auto',
+          }}
+          yFormat={(value) => `${formatRupiah(value as any)}`}
+          axisTop={null}
+          axisRight={null}
+          axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Month',
+            legendOffset: 36,
+            legendPosition: 'middle',
+            truncateTickAt: 0
+          }}
+          axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'IDR',
+            format: (value) => `Rp ${formatRupiah(value)}`,
+            legendOffset: -40,
+            legendPosition: 'middle',
+            truncateTickAt: 0
+          }}
+          enableGridX
+          pointSize={10}
+          pointColor={{ theme: 'background' }}
+          pointBorderWidth={2}
+          pointBorderColor={{ from: 'serieColor' }}
+          pointLabelYOffset={-12}
+          enableTouchCrosshair={true}
+          useMesh={true}
+          legends={[
+            {
+              anchor: 'bottom-right',
+              direction: 'column',
+              justify: false,
+              translateX: 100,
+              translateY: 0,
+              itemsSpacing: 0,
+              itemDirection: 'left-to-right',
+              itemWidth: 80,
+              itemHeight: 20,
+              itemOpacity: 0.75,
+              symbolSize: 12,
+              symbolShape: 'circle',
+              symbolBorderColor: 'rgba(0, 0, 0, .5)',
+              effects: [
+                {
+                  on: 'hover',
+                  style: {
+                    itemBackground: 'rgba(0, 0, 0, .03)',
+                    itemOpacity: 1
+                  }
+                }
+              ]
+            }
+          ]}
         />
-        <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip />
-        <Area type="monotone" dataKey="valueIncome" stroke="#8884d8" fill="#8884d8" />
-        <Area type="monotone" dataKey="valueExpense" stroke="#82ca9d" fill="#82ca9d" />
-      </AreaChart>
-      {/* <BarChart data={data}>
-        <XAxis
-          dataKey="name"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value: any) => `$${value}`}
-        />
-        <Bar
-          dataKey="value"
-          fill="currentColor"
-          radius={[4, 4, 0, 0]}
-          className="fill-primary"
-        />
-      </BarChart> */}
-    </ResponsiveContainer>
+        : "Loading.."}
+
+    </>
   )
 }

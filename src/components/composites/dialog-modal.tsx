@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 interface IDialog {
-    title: string,
+    title: string | React.ReactElement,
     desc: string
     children?: React.ReactElement
     footer?: any

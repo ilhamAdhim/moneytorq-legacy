@@ -1,12 +1,15 @@
 "use client"
 // import type { Metadata } from "next";
 import "./globals.css";
+import '@radix-ui/themes/styles.css';
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster";
 import { Inter as FontSans } from "next/font/google"
 import { ThemeProvider } from "next-themes";
 import { useAtomValue } from "jotai/react";
 import { colorMode } from "@/store";
+import { Theme } from '@radix-ui/themes';
+
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -30,13 +33,17 @@ export default function RootLayout({
         "min-h-screen bg-background font-sans antialiased",
         fontSans.variable
       )}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme={initialColorMode}
-          enableSystem
-        >
-          {children}
-        </ThemeProvider>
+        {/* For Radix UI */}
+        <Theme> 
+          {/* For Dark mode */}
+          <ThemeProvider  
+            attribute="class"
+            defaultTheme={initialColorMode}
+            enableSystem
+          >
+            {children}
+          </ThemeProvider>
+        </Theme>
         <Toaster />
 
       </body>

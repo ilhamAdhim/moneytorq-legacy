@@ -9,6 +9,118 @@ import { useAtomValue } from "jotai/react";
 import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 
+// Data mock
+const data = [
+    {
+      "id": "Income",
+      "color": "green",
+      "data": [
+        {
+          "x": "Jan",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Feb",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "March",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Apr",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "May",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Jun",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Jul",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Aug",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Sep",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Oct",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Nov",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Dec",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        }
+      ]
+    },
+    {
+      "id": "Expenses",
+      "color": "#bf4b39",
+      "data": [
+        {
+          "x": "Jan",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Feb",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "March",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Apr",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "May",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Jun",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Jul",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Aug",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Sep",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Oct",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Nov",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        },
+        {
+          "x": "Dec",
+          "y": Math.floor(Math.random() * 10000000) + 1000
+        }
+      ]
+    }
+  ]
+
 const dataStats = [
     {
         title: "Total Revenue",
@@ -66,8 +178,8 @@ function OverviewScreen() {
                     <CardHeader>
                         <CardTitle>Overview</CardTitle>
                     </CardHeader>
-                    <CardContent className="pl-2">
-                        <Overview />
+                    <CardContent className="pl-2 h-[400px]">
+                        <Overview data={data} />
                     </CardContent>
                 </Card>
                 <Card className="col-span-3">

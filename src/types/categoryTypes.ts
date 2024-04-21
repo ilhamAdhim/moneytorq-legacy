@@ -1,5 +1,6 @@
+import { COLORS } from "./common";
 export interface ICategory { 
-    name: string,
     id: number,
-    colorBadge: string
+    category_title: string,
+    colorBadge: COLORS
 }
