@@ -54,7 +54,7 @@ function TransactionView() {
     const [selectedYear, setSelectedYear] = useState("2024")
     const [isModalAddRecordOpen, setIsModalAddRecordOpen] = useState(false)
 
-    const [selectedMonth, setSelectedMonth] = useState("")
+    const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getMonth()])
     const { isSmallViewport } = useScreenWidth()
 
     useEffect(() => {
@@ -117,27 +117,25 @@ function TransactionView() {
                 </SelectContent>
             </Select>
 
-            <Tabs defaultValue="Q1" className="space-y-4">
+            {/* // ? Uncommon usage of Tabs actually, I just like the design =)) */}
+            <Tabs defaultValue={selectedMonth} className="space-y-4">
                 <TabsList>
                     {processMonths.map((item, idx) =>
                         <TabsTrigger
-                            // onClick={(test) => console.log(test.target.value)}
+                            // ? Especially this textContent 
+                            // @ts-ignore-next-line
+                            onClick={(val) => setSelectedMonth(val.target.textContent)}
                             disabled={!item.isAvailable} key={idx} value={`${item.value}`}>
                             {item.value}
                         </TabsTrigger>
                     )}
                 </TabsList>
-                {processMonths.map((item, idx) => (
-                    <TabsContent key={idx} value={`${item}`} className="space-y-4">
-                        {selectedYear} {item.value} content
-                    </TabsContent>
-                ))}
             </Tabs>
 
             <div className={`flex ${isSmallViewport ? "flex-col" : "flex-row"} gap-4`}>
                 <Card className={`${isSmallViewport ? "w-full" : "w-2/5"}`}>
                     <CardHeader>
-                        <CardTitle>Money Spent at {selectedYear}, Month ... </CardTitle>
+                        <CardTitle>Money Spent at {selectedMonth} {selectedYear} </CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2 h-[500px]">
                         <PieChartSpent data={data} />
