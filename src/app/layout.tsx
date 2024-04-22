@@ -1,7 +1,7 @@
 "use client"
 // import type { Metadata } from "next";
-import "./globals.css";
 import '@radix-ui/themes/styles.css';
+import "./globals.css";
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster";
 import { Inter as FontSans } from "next/font/google"
@@ -34,9 +34,9 @@ export default function RootLayout({
         fontSans.variable
       )}>
         {/* For Radix UI */}
-        <Theme> 
+        <Theme>
           {/* For Dark mode */}
-          <ThemeProvider  
+          <ThemeProvider
             attribute="class"
             defaultTheme={initialColorMode}
             enableSystem

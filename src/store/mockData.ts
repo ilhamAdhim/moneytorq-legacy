@@ -17,7 +17,7 @@ export const dataTransaction: Payment[] = [
         amount: 242,
         status: "success",
         category: [{
-            id: 0,
+            id: 1,
             category_title: "Transportation",
             colorBadge: "red"
         }],
@@ -28,7 +28,7 @@ export const dataTransaction: Payment[] = [
         amount: 837,
         status: "processing",
         category: [{
-            id: 0,
+            id: 2,
             category_title: "Transportation",
             colorBadge: "red"
         }],
@@ -39,7 +39,7 @@ export const dataTransaction: Payment[] = [
         amount: 900,
         status: "success",
         category: [{
-            id: 0,
+            id: 3,
             category_title: "Transportation",
             colorBadge: "red"
         }],
@@ -51,12 +51,12 @@ export const dataTransaction: Payment[] = [
         status: "success",
         category: [
             {
-                id: 0,
+                id: 4,
                 category_title: "Transportation",
                 colorBadge: "yellow"
             },
             {
-                id: 0,
+                id: 5,
                 category_title: "Vacation",
                 colorBadge: "teal"
             },
@@ -68,7 +68,7 @@ export const dataTransaction: Payment[] = [
         amount: 721,
         status: "failed",
         category: [{
-            id: 0,
+            id: 6,
             category_title: "Transportation",
             colorBadge: "red"
         }],

@@ -12,8 +12,6 @@ import { dataTransaction } from "@/store/mockData"
 import { Badge } from "@radix-ui/themes"
 import { useAtomValue } from "jotai/react"
 import { categories } from "@/store"
-import DialogModal from "@/components/composites/dialog-modal"
-import { Label } from "@/components/ui/label"
 import ModalNewCategory from "@/components/composites/Modals/ModalNewCategory"
 
 export const columns: ColumnDef<Payment>[] = [
@@ -186,7 +184,7 @@ function TableTransactionView() {
                                 {
                                     categoryList.map(item => (
                                         <DropdownMenuItem key={item.id}>
-                                            <Badge color={item.colorBadge}>
+                                            <Badge className="p-1 rounded-lg" color={item.colorBadge}>
                                                 {item.category_title}
                                             </Badge>
                                         </DropdownMenuItem>
@@ -196,7 +194,7 @@ function TableTransactionView() {
                                 <div onClick={() => setIsModalOpenNewCategories(true)}>
                                     <DropdownMenuItem>
                                         <PlusCircle className="mr-2 h-4 w-4" />
-                                        <span> Create New... </span>
+                                        <span className="pr-2"> Create New... </span>
                                     </DropdownMenuItem>
                                 </div>
                             </DropdownMenuContent>
@@ -233,7 +231,7 @@ function TableTransactionView() {
                 </div>
             } />
 
-            <ModalNewCategory 
+            <ModalNewCategory
                 isModalOpenNewCategories={isModalOpenNewCategories}
                 setIsModalOpenNewCategories={setIsModalOpenNewCategories}
             />

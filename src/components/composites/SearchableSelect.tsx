@@ -21,11 +21,12 @@ import {
 } from "@/components/ui/popover"
 import { ICategory } from "@/types/categoryTypes"
 import { Dispatch, SetStateAction } from "react"
+import { COLORS } from "@/types/common"
 
 interface ISearchableSelect {
     data: ICategory[] | any[]
     selectedValue: string,
-    setSelectedValue: Dispatch<SetStateAction<string>>
+    setSelectedValue: Dispatch<SetStateAction<any>>
     entity: string
     keyIdentifierValue?: "value" | string
 }
@@ -46,7 +47,7 @@ export function SearchableSelect({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-full justify-between"
                 >
                     {selectedValue
                         ? data.find((item) => item[keyIdentifierValue] === selectedValue)?.label
@@ -54,7 +55,7 @@ export function SearchableSelect({
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent side="bottom" className="w-full p-0">
                 <Command>
                     <CommandInput placeholder={`Search ${entity}...`} />
                     <CommandEmpty>No {entity} found.</CommandEmpty>
@@ -62,6 +63,7 @@ export function SearchableSelect({
                         <CommandGroup>
                             {data.map((item) => (
                                 <CommandItem
+                                    className="color-red"
                                     key={item[keyIdentifierValue]}
                                     value={item[keyIdentifierValue]}
                                     onSelect={(currentValue) => {
@@ -72,10 +74,13 @@ export function SearchableSelect({
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            selectedValue === item[keyIdentifierValue] ? "opacity-100" : "opacity-0"
+                                            selectedValue === item[keyIdentifierValue] ? "opacity-100" : "opacity-0",
+
                                         )}
                                     />
-                                    {item.label}
+                                    <div className={`bg-red`}>
+                                        {item.label}
+                                    </div>
                                 </CommandItem>
                             ))}
                         </CommandGroup>
