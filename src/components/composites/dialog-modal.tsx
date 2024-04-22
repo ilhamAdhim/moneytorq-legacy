@@ -12,10 +12,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 interface IDialog {
-    title: string | React.ReactElement,
-    desc: string
+    title?: string | React.ReactElement,
+    desc?: string
     children?: React.ReactElement
+    buttonContent?: React.ReactElement
     footer?: any
+    isOpen?: boolean
+    onOpenChange? : any
 }
 
 const defaultContent = <div className="grid gap-4 py-4">
@@ -42,19 +45,19 @@ const defaultContent = <div className="grid gap-4 py-4">
 </div>
 
 export default function DialogModal({
-    title, desc, footer, children = defaultContent
+    title, desc, footer, isOpen, onOpenChange, children = defaultContent
 }: IDialog) {
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="default">{title}</Button>
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>
-                        {desc}
-                    </DialogDescription>
+                    {desc && (
+                        <DialogDescription>
+                            {desc}
+                        </DialogDescription>
+                    )}
+                    
                 </DialogHeader>
 
                 {children}

@@ -2,14 +2,19 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { SortingState, ColumnFiltersState, VisibilityState, useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal, Settings2Icon } from "lucide-react"
-import { useState } from "react"
+import { ArrowUpDown, MoreHorizontal, PlusCircle, Settings2Icon, TagsIcon } from "lucide-react"
+import { useEffect, useState } from "react"
 import { DataTableDemo } from "@/components/composites/data-table"
 import { Input } from "@/components/ui/input"
 import { DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu"
 import { ICategory } from "@/types/categoryTypes"
 import { dataTransaction } from "@/store/mockData"
 import { Badge } from "@radix-ui/themes"
+import { useAtomValue } from "jotai/react"
+import { categories } from "@/store"
+import DialogModal from "@/components/composites/dialog-modal"
+import { Label } from "@/components/ui/label"
+import ModalNewCategory from "@/components/composites/Modals/ModalNewCategory"
 
 export const columns: ColumnDef<Payment>[] = [
     {
@@ -62,7 +67,7 @@ export const columns: ColumnDef<Payment>[] = [
         cell: ({ row }) => (
             <div className="flex gap-2 w-[100px]">
                 {(row.getValue("category") as ICategory[]).map(item => (
-                    <Badge color={item.colorBadge}>
+                    <Badge key={item.id} color={item.colorBadge}>
                         {item.category_title}
                     </Badge>
                 ))}
@@ -124,9 +129,13 @@ export type Payment = {
 }
 
 function TableTransactionView() {
+    const categoryList = useAtomValue(categories)
+
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
+    const [isModalOpenNewCategories, setIsModalOpenNewCategories] = useState(false)
 
     const [rowSelection, setRowSelection] = useState({})
 
@@ -149,6 +158,10 @@ function TableTransactionView() {
         },
     })
 
+    useEffect(() => {
+        console.log(categoryList, "categoryList")
+    }, [categoryList]);
+
     return (
         <>
             <DataTableDemo tableInstance={table} headers={
@@ -166,11 +179,26 @@ function TableTransactionView() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline">
-                                    <Settings2Icon className="h-4 w-4" />  Categories
+                                    <TagsIcon className="h-4 w-4 mr-2" />  Categories
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <></>
+                                {
+                                    categoryList.map(item => (
+                                        <DropdownMenuItem key={item.id}>
+                                            <Badge color={item.colorBadge}>
+                                                {item.category_title}
+                                            </Badge>
+                                        </DropdownMenuItem>
+                                    ))
+                                }
+                                <DropdownMenuSeparator />
+                                <div onClick={() => setIsModalOpenNewCategories(true)}>
+                                    <DropdownMenuItem>
+                                        <PlusCircle className="mr-2 h-4 w-4" />
+                                        <span> Create New... </span>
+                                    </DropdownMenuItem>
+                                </div>
                             </DropdownMenuContent>
                         </DropdownMenu>
 
@@ -204,6 +232,11 @@ function TableTransactionView() {
                     </DropdownMenu>
                 </div>
             } />
+
+            <ModalNewCategory 
+                isModalOpenNewCategories={isModalOpenNewCategories}
+                setIsModalOpenNewCategories={setIsModalOpenNewCategories}
+            />
         </>);
 }
 

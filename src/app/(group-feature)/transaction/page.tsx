@@ -14,7 +14,7 @@ function TransactionPage() {
         <div className="flex items-center justify-between space-y-2">
                 <h2 className="text-3xl font-bold tracking-tight">Transaction</h2>
                 <div className="flex items-center space-x-2 gap-4">
-                    <DialogModal title={
+                    <DialogModal title="Add Records" buttonContent={
                         <div className="flex gap-2">
                             <PlusIcon />
                             <div className="my-auto">
