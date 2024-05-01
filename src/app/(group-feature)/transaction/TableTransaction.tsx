@@ -158,6 +158,7 @@ function TableTransactionView() {
 
     useEffect(() => {
         console.log(categoryList, "categoryList")
+        console.log(categoryList, "categoryList")
     }, [categoryList]);
 
     return (
