@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { ICategory } from "@/types/categoryTypes";
+import { Badge } from "@radix-ui/themes"
 import { Edit2Icon, TrashIcon } from "lucide-react";
 
 interface ICategoryCards {
@@ -23,9 +24,9 @@ function CategoryCards({
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <Badge className="p-1 rounded-lg" color={category.colorBadge}>
                     {category.category_title}
-                </CardTitle>
+                </Badge>
                 {category.icon}
             </CardHeader>
             <CardContent>

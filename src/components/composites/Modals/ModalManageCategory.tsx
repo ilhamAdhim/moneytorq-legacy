@@ -25,7 +25,7 @@ function ModalManageCategory({ disclosure, handleSubmit, role }: IModalManageCat
             desc="Roughly estimate your income after tax. Then, we do the budgeting for you">
             <form onSubmit={handleSubmit}>
                 <Box>
-                    <div className="flex flex-col space-y-1.5">
+                    <div className="flex gap-2 flex-col space-y-1.5">
                         <Label htmlFor="income">Income (Rp)</Label>
                         <Input id="income" type="income" placeholder="Input your income" />
                     </div>

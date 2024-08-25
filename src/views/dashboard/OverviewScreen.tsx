@@ -1,7 +1,6 @@
 "use client"
 
 import { AreaChartCustom } from "@/components/composites/Charts/AreaChart";
-import { Overview } from "@/components/composites/overview";
 import { RecentTransaction } from "@/components/composites/recent-transaction";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
@@ -73,16 +72,16 @@ function OverviewScreen() {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="flex  md:flex-row flex-col gap-4">
+        <Card className="md:w-3/5 w-full">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
           </CardHeader>
-          <CardContent className="pl-2 p-8 min-h-[400px]">
+          <CardContent className="pl-2 p-8 md:min-h-[400px] min-h-auto">
             <AreaChartCustom data={data} />
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="md:w-2/5 w-full">
           <div className="flex space-between">
             <CardHeader className="grow">
               <CardTitle>Recent Transaction</CardTitle>

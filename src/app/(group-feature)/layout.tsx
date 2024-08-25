@@ -1,13 +1,20 @@
 import { MainNav } from "@/components/composites/main-nav";
 import TeamSwitcher from "@/components/composites/team-switcher";
 import ThemeSwitcher from "@/components/composites/theme-switcher";
-import { Search } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 interface ILayoutGroupFeature {
     children: React.ReactNode;
 }
 
-function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
+async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
+    // All protected routes 
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) redirect('/login')
+
     return (
         <>
             <div className="hidden flex-col md:flex">
