@@ -18,10 +18,10 @@ const navList = [
     href: "/budgeting",
     label: 'Budgeting'
   },
-  {
-    href: "/investment-portfolio",
-    label: 'Investment Portfolio'
-  },
+  // {
+  //   href: "/investment-portfolio",
+  //   label: 'Investment Portfolio'
+  // },
 ]
 
 export function MainNav({

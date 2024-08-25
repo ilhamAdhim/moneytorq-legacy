@@ -14,6 +14,7 @@ import PieChartSpent from "./PiechartSpent";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import ModalTransaction from "@/components/composites/Modals/ModalTransaction";
+import { Flex } from "@radix-ui/themes";
 
 const data = [
     {
@@ -103,34 +104,51 @@ function TransactionView() {
                     />
                 </div>
             </div >
-            <Select onValueChange={(val) => setSelectedYear(val)}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a year" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Year </SelectLabel>
-                        {availableYearsHistory.map(item => (
-                            <SelectItem key={item} value={`${item}`}>{item}</SelectItem>
-                        ))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+            <Flex gap="4" justify="between">
+                <Select onValueChange={(val) => setSelectedYear(val)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Year </SelectLabel>
+                            {availableYearsHistory.map(item => (
+                                <SelectItem key={item} value={`${item}`}>{item}</SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
 
-            {/* // ? Uncommon usage of Tabs actually, I just like the design =)) */}
-            <Tabs defaultValue={selectedMonth} className="space-y-4">
-                <TabsList>
-                    {processMonths.map((item, idx) =>
-                        <TabsTrigger
-                            // ? Especially this textContent 
-                            // @ts-ignore-next-line
-                            onClick={(val) => setSelectedMonth(val.target.textContent)}
-                            disabled={!item.isAvailable} key={idx} value={`${item.value}`}>
-                            {item.value}
-                        </TabsTrigger>
-                    )}
-                </TabsList>
-            </Tabs>
+                {isSmallViewport ?
+                    (<Select onValueChange={(val) => setSelectedMonth(val)}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel> Month </SelectLabel>
+                                {processMonths.map((item, idx) => (
+                                    <SelectItem key={idx} value={item.value}>{item.value}</SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>)
+                    :
+                    (<Tabs defaultValue={selectedMonth} className="space-y-4">
+                        <TabsList>
+                            {processMonths.map((item, idx) =>
+                                <TabsTrigger
+                                    // ? Especially this textContent 
+                                    // @ts-ignore-next-line
+                                    onClick={(val) => setSelectedMonth(val.target.textContent)}
+                                    disabled={!item.isAvailable} key={idx} value={`${item.value}`}>
+                                    {item.value}
+                                </TabsTrigger>
+                            )}
+                        </TabsList>
+                    </Tabs>)
+                }
+            </Flex>
 
             <div className={`flex ${isSmallViewport ? "flex-col" : "flex-row"} gap-4`}>
                 <Card className={`${isSmallViewport ? "w-full" : "w-2/5"}`}>
