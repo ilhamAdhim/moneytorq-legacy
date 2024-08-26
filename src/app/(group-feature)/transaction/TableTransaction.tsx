@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import { SortingState, ColumnFiltersState, VisibilityState, useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal, PlusCircle, Settings2Icon, TagsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { DataTableDemo } from "@/components/composites/data-table"
+import { DataTableDemo } from "@/components/composites/DataTable"
 import { Input } from "@/components/ui/input"
 import { DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu"
 import { ICategory } from "@/types/categoryTypes"

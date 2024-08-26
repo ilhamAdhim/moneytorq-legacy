@@ -24,12 +24,18 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition } from "react";
+import { Dispatch, SetStateAction, useState, useTransition } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { verifyOtp } from "@/actions/auth";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
+
+interface IRegister {
+	redirectTo: string
+	isLoading: boolean
+	setIsLoading: Dispatch<SetStateAction<boolean>>
+}
 
 const FormSchema = z
 	.object({
@@ -49,7 +55,7 @@ const FormSchema = z
 		{ message: "Password does't match", path: ["confirm-pass"] }
 	);
 
-export default function SignUp({ redirectTo }: { redirectTo: string }) {
+export default function SignUp({ redirectTo, isLoading, setIsLoading }: IRegister) {
 	const queryString =
 		typeof window !== "undefined" ? window.location.search : "";
 	const urlParams = new URLSearchParams(queryString);
@@ -101,8 +107,8 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
 		if (!json.error) {
 			router.replace(
 				(pathname || "/") +
-					"?verify=true&email=" +
-					form.getValues("email")
+				"?verify=true&email=" +
+				form.getValues("email")
 			);
 			setIsConfirmed(true);
 		} else {
@@ -129,9 +135,8 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
 
 	return (
 		<div
-			className={` whitespace-nowrap p-5 space-x-5 overflow-hidden  items-center align-top   ${
-				isPending ? "animate-pulse" : ""
-			}`}
+			className={` whitespace-nowrap p-5 space-x-5 overflow-hidden  items-center align-top   ${isPending ? "animate-pulse" : ""
+				}`}
 		>
 			<Form {...form}>
 				<form
@@ -243,7 +248,7 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
 					/>
 					<Button
 						type="submit"
-						className="w-full h-8 bg-indigo-500 hover:bg-indigo-600 transition-all text-white flex items-center gap-2"
+						className="w-full h-8 bg-green-600 hover:bg-green-700 transition-all text-white flex items-center gap-2"
 					>
 						<AiOutlineLoading3Quarters
 							className={cn(
@@ -256,15 +261,8 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
 					<div className="text-center text-sm">
 						<h1>
 							Already have account?{" "}
-							<Link
-								href={
-									redirectTo
-										? `/signin?next=` + redirectTo
-										: "/signin"
-								}
-								className="text-blue-400"
-							>
-								Signin
+							<Link href="/login" className="text-blue-400">
+								Login
 							</Link>
 						</h1>
 					</div>
@@ -371,18 +369,17 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
 							}}
 						>
 							<AiOutlineLoading3Quarters
-								className={`${
-									!isSendAgain
-										? "hidden"
-										: "block animate-spin"
-								}`}
+								className={`${!isSendAgain
+									? "hidden"
+									: "block animate-spin"
+									}`}
 							/>
 							Send me another code.
 						</span>
 					</div>
 					<Button
 						type="submit"
-						className="w-full h-8 bg-indigo-500 hover:bg-indigo-600 transition-all text-white flex items-center gap-2"
+						className="w-full h-8 bg-green-600 hover:bg-green-700 transition-all text-white flex items-center gap-2"
 						onClick={async () => {
 							setIsConfirmed(false);
 						}}

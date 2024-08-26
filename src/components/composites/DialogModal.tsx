@@ -6,7 +6,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -18,7 +17,7 @@ interface IDialog {
     buttonContent?: React.ReactElement
     footer?: any
     isOpen?: boolean
-    onOpenChange? : any
+    onOpenChange?: any
 }
 
 const defaultContent = <div className="grid gap-4 py-4">
@@ -57,7 +56,7 @@ export default function DialogModal({
                             {desc}
                         </DialogDescription>
                     )}
-                    
+
                 </DialogHeader>
 
                 {children}

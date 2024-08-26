@@ -1,16 +1,16 @@
 
 
-import SignIn from "@/components/supaauth/login";
+import SignUp from "@/components/supaauth/register";
 import { Box } from "@radix-ui/themes";
 
-const AuthLoginPage = () => {
+const AuthRegisterPage = () => {
     return (
         <div className="flex align-center justify-center min-h-[100vh]">
             <Box className="m-auto p-4">
-                <SignIn />
+                <SignUp redirectTo="" />
             </Box>
         </div>
     )
 }
 
-export default AuthLoginPage
+export default AuthRegisterPage

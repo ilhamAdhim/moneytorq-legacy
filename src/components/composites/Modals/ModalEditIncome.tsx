@@ -1,5 +1,5 @@
 import { DialogFooter } from "@/components/ui/dialog";
-import DialogModal from "../dialog-modal";
+import DialogModal from "../DialogModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UseDisclosureType } from "@/types/common";

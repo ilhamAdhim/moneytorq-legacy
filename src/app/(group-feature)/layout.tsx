@@ -1,6 +1,6 @@
-import { MainNav } from "@/components/composites/main-nav";
-import TeamSwitcher from "@/components/composites/team-switcher";
-import ThemeSwitcher from "@/components/composites/theme-switcher";
+import { MainNav } from "@/components/composites/MainNav";
+import TeamSwitcher from "@/components/composites/TeamSwitcher";
+import ThemeSwitcher from "@/components/composites/ThemeSwitcher";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 

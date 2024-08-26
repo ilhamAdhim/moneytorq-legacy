@@ -1,5 +1,5 @@
 "use client"
-import DialogModal from "@/components/composites/dialog-modal"
+import DialogModal from "@/components/composites/DialogModal"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"

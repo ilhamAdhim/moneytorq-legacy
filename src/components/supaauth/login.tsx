@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,46 +16,54 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import SocialAuth from "../composites/social-auth";
+import SocialAuth from "./SocialAuth";
+import { toast } from "sonner";
+import LoaderCustom from "../composites/Modals/Loaders";
 
 const FormSchema = z.object({
 	email: z.string().email({ message: "Invalid Email Address" }),
 	password: z.string().min(6, { message: "Password is too short" }),
 });
 
+interface ISignIn {
+	redirectTo: string
+	isLoading: boolean
+	setIsLoading: Dispatch<SetStateAction<boolean>>
+}
+
 export default function SignIn() {
+	const [isLoading, setIsLoading] = useState(false)
+
 	return (
-		<div className="w-full sm:w-[26rem] shadow sm:p-5  border dark:border-zinc-800 rounded-md">
+		<div className="w-full sm:w-[26rem] shadow sm:p-5 border dark:border-zinc-800 rounded-md">
 			<div className="p-5 space-y-5">
-				<div className="text-center space-y-3">
+				<div className="text-center">
 					<Image
-						src={"/supabase.png"}
+						src={"/moneytorq.png"}
 						alt="supabase logo"
-						width={50}
-						height={50}
-						className=" rounded-full mx-auto"
+						width={100}
+						height={100}
+						className="rounded-full mx-auto"
 					/>
-					<h1 className="font-bold">Sign in to SupaAuth</h1>
-					<p className="text-sm">
+					<p className="text-sm font-bold">
 						Welcome back! Please sign in to continue
 					</p>
 				</div>
-				<SocialAuth redirectTo={"/"} />
+				<SocialAuth redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
 				<div className="flex items-center gap-5">
 					<div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
 					<div className="text-sm">or</div>
 					<div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
 				</div>
-				<SignInForm redirectTo={"/"} />
+				<SignInForm redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
 			</div>
 		</div>
 	);
 }
 
-export function SignInForm({ redirectTo }: { redirectTo: string }) {
+export function SignInForm({ redirectTo, isLoading, setIsLoading }: ISignIn) {
 	const [passwordReveal, setPasswordReveal] = useState(false);
 
 	const form = useForm<z.infer<typeof FormSchema>>({
@@ -66,7 +74,17 @@ export function SignInForm({ redirectTo }: { redirectTo: string }) {
 		},
 	});
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {}
+	function onSubmit(data: z.infer<typeof FormSchema>) {
+		// TODO: Login Logic 
+		try {
+			setIsLoading(true)
+		} catch (error) {
+			console.log("error", error)
+			toast("Error occured...")
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
 	return (
 		<Form {...form}>
@@ -127,23 +145,17 @@ export function SignInForm({ redirectTo }: { redirectTo: string }) {
 					)}
 				/>
 				<Button
+					disabled={isLoading}
 					type="submit"
-					className="w-full h-8 bg-indigo-500 hover:bg-indigo-600 transition-all text-white flex items-center gap-2"
+					className="w-full h-8 bg-green-600 hover:bg-green-700 transition-all text-white flex items-center gap-2"
 				>
-					Continue
+					{isLoading ? <LoaderCustom /> : "Continue"}
 				</Button>
 			</form>
 			<div className="text-center text-sm">
 				<h1>
-					Doest not have account yet?{" "}
-					<Link
-						href={
-							redirectTo
-								? `/register?next=` + redirectTo
-								: "/register"
-						}
-						className="text-blue-400"
-					>
+					Doesn't not have account yet?{" "}
+					<Link href="/register" className="text-blue-400">
 						Register
 					</Link>
 				</h1>

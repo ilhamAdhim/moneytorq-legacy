@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import DialogModal from "../dialog-modal";
+import DialogModal from "../DialogModal";
 
 interface IModalTransaction {
     isOpen: boolean,
@@ -14,7 +14,7 @@ function ModalTransaction({ isOpen, onOpenChange }: IModalTransaction) {
                 onOpenChange={onOpenChange}
                 title="Add Transaction Records"
                 desc="Lorem ipsum">
-                    <>Hello transactionRecords</>
+                <>Hello transactionRecords</>
             </DialogModal>
         </>);
 }
