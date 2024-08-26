@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-// import Social from "./social";
 import Image from "next/image";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import SocialAuth from "../composites/social-auth";
 
 const FormSchema = z.object({
 	email: z.string().email({ message: "Invalid Email Address" }),
@@ -43,7 +43,7 @@ export default function SignIn() {
 						Welcome back! Please sign in to continue
 					</p>
 				</div>
-				{/* <Social redirectTo={"/"} /> */}
+				<SocialAuth redirectTo={"/"} />
 				<div className="flex items-center gap-5">
 					<div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
 					<div className="text-sm">or</div>
