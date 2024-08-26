@@ -1,7 +1,7 @@
 import { MainNav } from "@/components/composites/main-nav";
 import TeamSwitcher from "@/components/composites/team-switcher";
 import ThemeSwitcher from "@/components/composites/theme-switcher";
-import { createClient } from "@/utils/supabase/server";
+import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 interface ILayoutGroupFeature {
@@ -10,7 +10,7 @@ interface ILayoutGroupFeature {
 
 async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
     // All protected routes 
-    const supabase = createClient()
+    const supabase = createSupabaseServer()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) redirect('/login')

@@ -7,7 +7,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { redirect } from "next/navigation"
-import { createClient } from "@/utils/supabase/server"
+import { createSupabaseServer } from "@/lib/supabase/server"
 import { headers } from "next/headers"
 
 const ProfileForm = () => {
@@ -15,7 +15,7 @@ const ProfileForm = () => {
         'use server'
         console.log("running")
         // 1. Create Supabase client
-        const supabase = createClient()
+        const supabase = createSupabaseServer()
         const origin = headers().get('origin')
         console.log("origin", origin)
 

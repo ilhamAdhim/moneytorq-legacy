@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/tabs"
 import { CalendarDateRangePicker } from "@/components/composites/date-range-picker"
 import OverviewScreen from "@/views/dashboard/OverviewScreen"
-import { createClient } from "@/utils/supabase/server"
+import { createSupabaseServer } from "@/lib/supabase/server"
 
 export default async function DashboardPage() {
-  const supabase = createClient()
+  const supabase = createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   return (
     <>
