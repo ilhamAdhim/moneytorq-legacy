@@ -3,12 +3,12 @@
 import '@radix-ui/themes/styles.css';
 import "./globals.css";
 import { cn } from "@/lib/utils"
-import { Toaster } from "@/components/ui/toaster";
 import { Inter as FontSans } from "next/font/google"
 import { ThemeProvider } from "next-themes";
 import { useAtomValue } from "jotai/react";
 import { colorMode } from "@/store";
 import { Theme } from '@radix-ui/themes';
+import { Toaster } from 'sonner';
 
 
 const fontSans = FontSans({

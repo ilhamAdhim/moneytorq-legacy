@@ -17,11 +17,29 @@ interface IModalManageCategory {
 }
 
 function ModalManageCategory({ disclosure, handleSubmit, role }: IModalManageCategory) {
+
+    if (role === "delete") return (
+        <DialogModal onOpenChange={disclosure.toggle}
+            isOpen={disclosure.isOpen}
+            title={`Delete Category`}
+            desc="Are you sure?"
+        >
+            <DialogFooter className="mt-8">
+                <Button onClick={disclosure.close} variant="outline" className="ml-auto">
+                    Cancel
+                </Button>
+                <Button onClick={handleSubmit} variant="outline" className="ml-auto">
+                    <CheckIcon className="mr-2 h-4 w-4" />  Delete
+                </Button>
+            </DialogFooter>
+        </DialogModal>
+    )
+
     return (
         <DialogModal
             onOpenChange={disclosure.toggle}
             isOpen={disclosure.isOpen}
-            title={`${capitalize(role)} Category `}
+            title={`${capitalize(role)} Category`}
             desc="Roughly estimate your income after tax. Then, we do the budgeting for you">
             <form onSubmit={handleSubmit}>
                 <Box>

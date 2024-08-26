@@ -2,14 +2,6 @@
 import { TrendingUp } from "lucide-react"
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
     ChartConfig,
     ChartContainer,
     ChartLegend,
@@ -17,6 +9,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import { Box } from "@radix-ui/themes"
 const chartData = [
     { category: "Transportation", budget: 186, real: 80 },
     { category: "Groceries", budget: 305, real: 200 },
@@ -46,48 +39,42 @@ export function RadarChartCustom({
     desc = "Showing total visitors for the last 6 months"
 }: IRadarChartCustom) {
     return (
-        <Card>
-            <CardHeader className="items-center pb-4">
-                <CardTitle>{title} </CardTitle>
-                <CardDescription> {desc}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
+        <>
+            <ChartContainer
+                config={chartConfig}
+                className="mx-auto aspect-square max-h-[250px]"
+            >
+                <RadarChart
+                    data={chartData}
+                    margin={{
+                        top: -40,
+                        bottom: -10,
+                    }}
                 >
-                    <RadarChart
-                        data={chartData}
-                        margin={{
-                            top: -40,
-                            bottom: -10,
-                        }}
-                    >
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent indicator="line" />}
-                        />
-                        <PolarAngleAxis dataKey="category" />
-                        <PolarGrid />
-                        <Radar
-                            dataKey="budget"
-                            fill="var(--color-budget)"
-                            fillOpacity={0.6}
-                        />
-                        <Radar dataKey="real" fill="var(--color-real)" />
-                        <ChartLegend className="mt-8" content={<ChartLegendContent />} />
-                    </RadarChart>
-                </ChartContainer>
-            </CardContent>
-            <CardFooter className="flex-col gap-2 pt-4 text-sm">
+                    <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent indicator="line" />}
+                    />
+                    <PolarAngleAxis dataKey="category" />
+                    <PolarGrid />
+                    <Radar
+                        dataKey="budget"
+                        fill="var(--color-budget)"
+                        fillOpacity={0.6}
+                    />
+                    <Radar dataKey="real" fill="var(--color-real)" />
+                    <ChartLegend className="mt-8" content={<ChartLegendContent />} />
+                </RadarChart>
+            </ChartContainer>
+            {/* <Box className="flex-col gap-2 pt-4 text-sm">
                 <div className="flex items-center gap-2 font-medium leading-none">
                     Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
                 </div>
                 <div className="flex items-center gap-2 leading-none text-muted-foreground">
                     January - June 2024
                 </div>
-            </CardFooter>
-        </Card>
+            </Box> */}
+        </>
+
     )
 }

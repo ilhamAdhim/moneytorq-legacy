@@ -8,26 +8,30 @@ import { SetStateAction } from "jotai/vanilla";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Box } from "@radix-ui/themes";
+import { useForm } from "react-hook-form";
 
 interface IModalEditIncome {
     disclosure: UseDisclosureType
-    setValueIncome: Dispatch<SetStateAction<number>>
-    handleSubmit: () => any
+    handleSubmit: (formData: any) => any
 }
 
-function ModalEditIncome({ disclosure, handleSubmit, setValueIncome }: IModalEditIncome) {
+function ModalEditIncome({ disclosure, handleSubmit }: IModalEditIncome) {
+    const { register, handleSubmit: submitForm } = useForm()
     return (
         <DialogModal
             onOpenChange={disclosure.toggle}
             isOpen={disclosure.isOpen}
             title="Edit Income"
             desc="Roughly estimate your income after tax. Then, we do the budgeting for you">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={submitForm(handleSubmit)}>
                 <Box>
-                    <div className="flex flex-col space-y-1.5">
+                    <div className="flex flex-col space-y-4">
                         <Label htmlFor="income">Income (Rp)</Label>
-                        <Input id="income" type="income" placeholder="Input your income"
-                            onChange={(e) => setValueIncome(Number(e.target.value))} />
+                        <Input
+                            {...register("income")}
+                            id="income"
+                            placeholder="Input your income"
+                        />
                     </div>
                 </Box>
                 <DialogFooter className="mt-8">

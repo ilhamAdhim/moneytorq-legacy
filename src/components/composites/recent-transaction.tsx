@@ -31,7 +31,7 @@ export function RecentTransaction() {
       {recentTransaction.map((item: ITransaction) => (
         <div key={item.id} className="flex items-center">
           <div className="ml-4 space-y-1">``
-            <p className="text-sm font-medium leading-none">{item.text}</p>
+            <p className="text-sm font-medium leading-none">{item.title}</p>
             <p className="text-sm text-muted-foreground">
               {item.description}
             </p>

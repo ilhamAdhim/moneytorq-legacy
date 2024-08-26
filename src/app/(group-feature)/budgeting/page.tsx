@@ -1,11 +1,12 @@
-import { createSupabaseBrowser } from "@/lib/supabase/client";
+
+import { getCategories } from "@/actions/categories";
+import { ICategoryResponse } from "@/types/categoryTypes";
 import BudgetingView from "@/views/budgeting/BudgetingView";
 
 async function BudgetingPage() {
-    const supabaseClient = createSupabaseBrowser()
-    // ? RLS still all public
-    const { data, error } = await supabaseClient.from('tb_category').select().order('category_id')
-    return (<BudgetingView data={data} error={error} />);
+    const { data, error } = await getCategories({})
+
+    return (<BudgetingView data={data || []} error={error} />);
 }
 
 export default BudgetingPage;

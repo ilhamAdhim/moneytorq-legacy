@@ -11,12 +11,12 @@ const navList = [
     label: 'Overview'
   },
   {
-    href: "/transaction",
-    label: 'Transactions'
-  },
-  {
     href: "/budgeting",
     label: 'Budgeting'
+  },
+  {
+    href: "/transaction",
+    label: 'Transactions'
   },
   // {
   //   href: "/investment-portfolio",

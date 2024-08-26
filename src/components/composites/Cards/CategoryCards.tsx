@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ICategory } from "@/types/categoryTypes";
 import { Badge } from "@radix-ui/themes"
-import { Edit2Icon, TrashIcon } from "lucide-react";
+import { Edit2Icon, EllipsisIcon, TrashIcon } from "lucide-react";
 
 interface ICategoryCards {
     category: ICategory
@@ -29,22 +30,29 @@ function CategoryCards({
                 </Badge>
                 {category.icon}
             </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{category.category_title}</div>
+            <CardContent className="space-y-4">
+                {/* <div className="text-xl font-bold">{category.category_title}</div>
                 <p className="text-xs text-muted-foreground">
-                    {category.desc}
-                </p>
+                    {category.desc ?? "Lorem ipsum"}
+                </p> */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                            <EllipsisIcon size={14} />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem className="flex justify-between" onClick={handleClickEdit}>
+                            Edit
+                            <Edit2Icon className="w-4" size="icon" />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex justify-between" onClick={handleClickRemove}>
+                            Delete
+                            <TrashIcon className="w-4" size="icon" />
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardContent>
-            <CardFooter className="flex gap-4">
-                {withEditButton &&
-                    <Button onClick={handleClickEdit} className="mx-auto" variant="outline" >
-                        <Edit2Icon className="w-4" size="icon" />
-                    </Button>}
-                {withRemoveButton &&
-                    <Button onClick={handleClickRemove} className="mx-auto" variant="outline">
-                        <TrashIcon className="w-4" size="icon" />
-                    </Button>}
-            </CardFooter>
         </Card>);
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
 import { useAtomValue } from "jotai/react";
@@ -10,44 +10,11 @@ import { isAfter } from "date-fns";
 import TableTransactionView from "./TableTransaction";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import useScreenWidth from "@/hooks/useScreenWidth";
-import PieChartSpent from "./PiechartSpent";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import ModalTransaction from "@/components/composites/Modals/ModalTransaction";
 import { Flex } from "@radix-ui/themes";
-
-const data = [
-    {
-        "id": "c",
-        "label": "c",
-        "value": 152,
-        "color": "hsl(222, 70%, 50%)"
-    },
-    {
-        "id": "rust",
-        "label": "rust",
-        "value": 183,
-        "color": "hsl(50, 70%, 50%)"
-    },
-    {
-        "id": "python",
-        "label": "python",
-        "value": 101,
-        "color": "hsl(271, 70%, 50%)"
-    },
-    {
-        "id": "haskell",
-        "label": "haskell",
-        "value": 26,
-        "color": "hsl(42, 70%, 50%)"
-    },
-    {
-        "id": "stylus",
-        "label": "stylus",
-        "value": 496,
-        "color": "hsl(5, 70%, 50%)"
-    }
-]
+import { RadarChartCustom } from "@/components/composites/Charts/RadarChart";
 
 const availableYearsHistory = [2024, 2023, 2022]
 function TransactionView() {
@@ -57,10 +24,6 @@ function TransactionView() {
 
     const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getMonth()])
     const { isSmallViewport } = useScreenWidth()
-
-    useEffect(() => {
-        console.log(isSmallViewport)
-    }, [isSmallViewport]);
 
     const dataRecordInYear = useMemo(() => {
         records.filter(item => item.date.includes(selectedYear))
@@ -155,8 +118,8 @@ function TransactionView() {
                     <CardHeader>
                         <CardTitle>Money Spent at {selectedMonth} {selectedYear} </CardTitle>
                     </CardHeader>
-                    <CardContent className="pl-2 h-[500px]">
-                        <PieChartSpent data={data} />
+                    <CardContent className="pl-2 h-[400px]">
+                        <RadarChartCustom />
                     </CardContent>
                 </Card>
                 <Card className={`${isSmallViewport ? "w-full" : "w-3/5"}`}>
