@@ -80,7 +80,7 @@ export function SignInForm({ redirectTo, isLoading, setIsLoading }: ISignIn) {
 			setIsLoading(true)
 		} catch (error) {
 			console.log("error", error)
-			toast("Error occured...")
+			toast.error("Error occured...")
 		} finally {
 			setIsLoading(false)
 		}

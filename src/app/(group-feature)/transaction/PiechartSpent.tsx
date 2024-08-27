@@ -9,7 +9,7 @@ const PieChartSpent = ({ data }: IPieChartSpent) => {
     const [dataPie, setDataPie] = useState([])
 
     useEffect(() => {
-        let animation = setTimeout(() =>setDataPie(data), 1)
+        let animation = setTimeout(() => setDataPie(data), 1)
         return () => {
             clearTimeout(animation);
         };
@@ -17,14 +17,14 @@ const PieChartSpent = ({ data }: IPieChartSpent) => {
 
     return (
         <>
-            { dataPie ?
+            {dataPie ?
                 <ResponsivePie
                     data={dataPie}
                     margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
                     innerRadius={0.7}
                     padAngle={2}
                     activeOuterRadiusOffset={8}
-                    colors={{ scheme: 'dark2' }}
+                    colors={{ scheme: 'blue_green' }}
                     borderWidth={1}
                     borderColor={{
                         from: 'color',

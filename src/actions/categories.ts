@@ -1,5 +1,6 @@
 "use server";
 
+import { IFormDataManageCategory } from "@/components/composites/Modals/ModalManageCategory";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { ICategory } from "@/types/categoryTypes";
 
@@ -27,9 +28,7 @@ const getCategories = async ({ limit, page, keyword, month, year }: IGetCategori
   let query = supabase.from("tb_category").select().order("category_id");
   if (limit && page) {
     let offset = (page - 1) * limit;
-    query = query
-      .limit(limit) // Set your desired limit per page (e.g., 10)
-      .range(offset, offset + limit - 1);
+    query = query.limit(limit).range(offset, offset + limit - 1);
   }
 
   if (keyword) query = query.ilike("category_title", keyword);
@@ -40,7 +39,10 @@ const getCategories = async ({ limit, page, keyword, month, year }: IGetCategori
   }
 
   const data = await query;
-  return data;
+
+  const queryTotalPercentage = await supabase.rpc("total_budget");
+
+  return { queryCategories: data, queryTotalPercentage };
 };
 
 const getCategoryByID = async (id: number) => {
@@ -48,36 +50,18 @@ const getCategoryByID = async (id: number) => {
   return query;
 };
 
-const createCategory = async (payload: ICategory) => {
-  const { category_title, colorBadge, budgetPercentage, desc } = payload;
-
+const createCategory = async (payload: IFormDataManageCategory) => {
+  const user = await getCurrentUser();
   const { data, count, error, status, statusText } = await supabase
     .from("tb_category")
-    .insert([
-      {
-        category_title,
-        color_badge: colorBadge,
-        budget_percentage: budgetPercentage,
-        description: desc,
-      },
-    ])
+    .insert([{ ...payload, user_id: user }])
     .select();
 
   return { data, count, error, status, statusText };
 };
 
-const updateCategory = async (payload: ICategory, id: number) => {
-  const { category_title, colorBadge, budgetPercentage, desc } = payload;
-  const query = supabase
-    .from("tb_category")
-    .update({
-      category_title,
-      color_badge: colorBadge,
-      budget_percentage: budgetPercentage,
-      description: desc,
-    })
-    .eq("id", id)
-    .single();
+const updateCategory = async (payload: IFormDataManageCategory, id: number) => {
+  const query = supabase.from("tb_category").update(payload).eq("category_id", id).single();
   return query;
 };
 
@@ -86,4 +70,13 @@ const deleteCategory = async (id: number) => {
   return query;
 };
 
-export { getCategories, getCategoryByID, createCategory, updateCategory, deleteCategory };
+const getTotalPercentage = async () => {};
+
+export {
+  getCategories,
+  getCategoryByID,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  getTotalPercentage,
+};

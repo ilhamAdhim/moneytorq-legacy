@@ -31,16 +31,11 @@ export default function Social({ redirectTo, isLoading, setIsLoading }: ISocial)
 			});
 
 		} catch (error) {
-			console.log(error)
-			toast("Error occured")
+			toast.error("Error occured")
 		} finally {
 			setIsLoading(false)
 		}
 	};
-
-	useEffect(() => {
-		console.log("isLoading", isLoading)
-	}, [isLoading]);
 
 	return (
 		<div className="w-full flex gap-2">

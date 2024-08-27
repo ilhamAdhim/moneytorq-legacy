@@ -44,7 +44,7 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </Theme>
-        <Toaster />
+        <Toaster richColors />
 
       </body>
 
