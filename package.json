@@ -40,7 +40,7 @@
     "input-otp": "^1.2.4",
     "jotai": "^2.8.0",
     "lucide-react": "^0.364.0",
-    "next": "14.1.4",
+    "next": "^14.2.7",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-day-picker": "^8.10.0",
@@ -51,7 +51,6 @@
     "recharts": "^2.12.7",
     "resend": "^4.0.0",
     "sonner": "^1.5.0",
-    "table": "github:tanstack/react-table",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"

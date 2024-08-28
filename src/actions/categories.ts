@@ -2,11 +2,10 @@
 
 import { IFormDataManageCategory } from "@/components/composites/Modals/ModalManageCategory";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { ICategory } from "@/types/categoryTypes";
-
-const supabase = createSupabaseServer();
 
 const getCurrentUser = async () => {
+  const supabase = createSupabaseServer();
+
   const currentUser = await supabase.auth.getUser();
   return currentUser?.data?.user?.id || "";
 };
@@ -22,6 +21,8 @@ interface IGetCategories {
 }
 
 const getCategories = async ({ limit, page, keyword, month, year }: IGetCategories) => {
+  const supabase = createSupabaseServer();
+
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
@@ -46,11 +47,15 @@ const getCategories = async ({ limit, page, keyword, month, year }: IGetCategori
 };
 
 const getCategoryByID = async (id: number) => {
+  const supabase = createSupabaseServer();
+
   const query = supabase.from("tb_category").select().eq("id", id).single();
   return query;
 };
 
 const createCategory = async (payload: IFormDataManageCategory) => {
+  const supabase = createSupabaseServer();
+
   const user = await getCurrentUser();
   const { data, count, error, status, statusText } = await supabase
     .from("tb_category")
@@ -61,11 +66,15 @@ const createCategory = async (payload: IFormDataManageCategory) => {
 };
 
 const updateCategory = async (payload: IFormDataManageCategory, id: number) => {
+  const supabase = createSupabaseServer();
+
   const query = supabase.from("tb_category").update(payload).eq("category_id", id).single();
   return query;
 };
 
 const deleteCategory = async (id: number) => {
+  const supabase = createSupabaseServer();
+
   const query = await supabase.from("tb_category").delete().eq("category_id", id).select();
   return query;
 };

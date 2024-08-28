@@ -3,8 +3,6 @@
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { ITransaction } from "@/types/transactionTypes";
 
-const supabase = createSupabaseServer();
-
 interface IGetTransactions {
   limit?: number;
   page?: number;
@@ -16,6 +14,7 @@ interface IGetTransactions {
 }
 
 const getTransactions = async ({ limit, page, keyword, month, year }: IGetTransactions) => {
+  const supabase = createSupabaseServer();
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
@@ -39,12 +38,14 @@ const getTransactions = async ({ limit, page, keyword, month, year }: IGetTransa
 };
 
 const gettransactionByID = async (id: number) => {
+  const supabase = createSupabaseServer();
   const query = supabase.from("tb_transaction").select().eq("id", id).single();
   return query;
 };
 
 const createtransaction = async (payload: ITransaction) => {
   const { type } = payload;
+  const supabase = createSupabaseServer();
 
   const { data, count, error, status, statusText } = await supabase
     .from("tb_transaction")
@@ -60,6 +61,7 @@ const createtransaction = async (payload: ITransaction) => {
 };
 
 const updatetransaction = async (payload: ITransaction, id: number) => {
+  const supabase = createSupabaseServer();
   const { type } = payload;
   const query = supabase
     .from("tb_transaction")
@@ -73,6 +75,7 @@ const updatetransaction = async (payload: ITransaction, id: number) => {
 };
 
 const deletetransaction = async (id: number) => {
+  const supabase = createSupabaseServer();
   const query = await supabase.from("tb_transaction").delete().eq("id", id);
   return query;
 };
