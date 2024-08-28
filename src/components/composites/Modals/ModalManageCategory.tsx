@@ -47,9 +47,9 @@ function ModalManageCategory({
         category_title: selectedCategory.category_title,
         color_badge: selectedCategory.colorBadge,
         description: selectedCategory.desc,
-        percentage_amount: selectedCategory.budgetPercentage
-      }
-    })
+        percentage_amount: selectedCategory.budgetPercentage,
+      },
+    }),
   });
 
   const watchCategoryName = watch("category_title");
@@ -127,7 +127,7 @@ function ModalManageCategory({
                     min: { value: 1, message: "Please enter a positive number" },
                     max: {
                       value: 70,
-                      message: "It's better to have better allocation for various budgets :)",
+                      message: "It's better to have reasonable allocation for various budgets :)",
                     },
                   })}
                 />
@@ -190,10 +190,8 @@ function ModalManageCategory({
             </div>
             <hr />
             <div className="flex justify-end">
-              <Button type="submit" disabled={!isValid || isSubmitting} >
-                {isSubmitting ?
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Submit"
-                }
+              <Button type="submit" disabled={!isValid || isSubmitting}>
+                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Submit"}
               </Button>
             </div>
           </div>

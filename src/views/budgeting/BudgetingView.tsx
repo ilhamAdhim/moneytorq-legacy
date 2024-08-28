@@ -112,11 +112,19 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
 
   const handleSubmit = async (formData: IFormDataManageCategory) => {
     try {
-      if (Number(totalPercentage) + Number(formData.percentage_amount) > 100)
-        throw Error("Your budget is more than 100% ?");
+      let percentageBelow100 = selectedCategory
+        ? Number(totalPercentage) -
+            Number(selectedCategory.budgetPercentage) +
+            Number(formData.percentage_amount) >
+          100
+        : Number(totalPercentage) + Number(formData.percentage_amount) > 100;
+
+      if (percentageBelow100) throw Error("Your budget is more than 100% ?");
+
       let query;
       if (selectedCategory) query = await updateCategory(formData, selectedCategory.id);
       else query = await createCategory(formData);
+
       refetchDataCategories();
       toast.success(`Category ${selectedCategory ? "Updated" : "Created"}!`);
     } catch (error) {
