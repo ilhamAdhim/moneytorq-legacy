@@ -16,7 +16,6 @@ async function TransactionPage() {
     // startDate: `01-01-${currentYear}`,
     // endDate: format(now, "dd-MM-yyyy"),
   });
-  console.log("data new 77 ", data);
   return <TransactionView dataTransaction={data || []} />;
 }
 

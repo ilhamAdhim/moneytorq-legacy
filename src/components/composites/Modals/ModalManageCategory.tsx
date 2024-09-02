@@ -11,7 +11,7 @@ import { capitalize } from "@/utils/common";
 import { Controller, useForm } from "react-hook-form";
 import { SearchableSelect } from "../SearchableSelect";
 import { COLORS_OPTION } from "@/constants";
-import { ICategory } from "@/types/categoryTypes";
+import { ICategory } from "@/types/category";
 import { Loader2 } from "lucide-react";
 
 export interface IFormDataManageCategory {
@@ -73,7 +73,7 @@ function ModalManageCategory({
         onOpenChange={disclosure.toggle}
         isOpen={disclosure.isOpen}
         title={`Delete Category`}
-        desc="Are you sure?"
+        desc={`Are you sure want to delete ${selectedCategory?.category_title}?`}
       >
         <DialogFooter className="mt-8">
           <Button onClick={disclosure.close} variant="outline" className="ml-auto">

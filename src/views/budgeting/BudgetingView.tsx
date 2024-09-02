@@ -7,7 +7,7 @@ import { Badge } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/ui/Typography/Heading4";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { ICategory, ICategoryResponse } from "@/types/categoryTypes";
+import { ICategory, ICategoryResponse } from "@/types/category";
 import { formatRupiah } from "@/utils/common";
 import { Box, Flex } from "@radix-ui/themes";
 import { Edit2Icon, PlusIcon, EllipsisIcon, TrashIcon } from "lucide-react";
@@ -180,6 +180,11 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
     modalManageCategory.open();
   };
 
+  const handleOpenEditCategory = (item: ICategory) => {
+    setSelectedCategory(item);
+    modalManageCategory.open();
+  };
+
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-between space-y-2">
@@ -210,8 +215,8 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
 
       <Separator />
 
-      <Flex className="flex-col md:flex-row sm:flex-row" gap="6">
-        <Card className="w-full md:w-1/2 sm:w-1/3">
+      <Flex className={`${isSmallViewport ? "flex-col" : "flex-row"}`} gap="6">
+        <Card className={`${isSmallViewport ? "w-full" : "w-2/5"}`}>
           <CardHeader>
             <CardTitle> Overview </CardTitle>
           </CardHeader>
@@ -219,8 +224,8 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
             <PieChartSpent data={dataPieChart} />
           </CardContent>
         </Card>
-        <Card className="p-4 w-full md:w-1/2 sm:w-2/3">
-          <Flex justify="between">
+        <Card className={`${isSmallViewport ? "w-full" : "w-3/5"}`}>
+          <Flex className="p-4" justify="between">
             <h2 className="my-auto text-xl font-bold tracking-tight">Allocations</h2>
             <Button
               size={isSmallViewport ? "sm" : "default"}
@@ -268,10 +273,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             className="flex justify-between cursor-pointer"
-                            onClick={() => {
-                              setSelectedCategory(item);
-                              modalManageCategory.open();
-                            }}
+                            onClick={() => handleOpenEditCategory(item)}
                           >
                             Edit
                             <Edit2Icon className="w-4" size="icon" />
@@ -321,6 +323,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
       {modalDeleteCategory.isOpen && (
         <ModalManageCategory
           role={"delete"}
+          selectedCategory={selectedCategory}
           disclosure={modalDeleteCategory}
           handleSubmit={handleRemoveCategory}
         />

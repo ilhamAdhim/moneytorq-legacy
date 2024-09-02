@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,49 +19,51 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, PlusCircle, Settings2Icon, TagsIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DataTableDemo } from "@/components/composites/DataTable";
 import { Input } from "@/components/ui/input";
 import { DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
-import { ICategory, ICategoryResponse } from "@/types/categoryTypes";
-import { dataTransaction } from "@/store/mockData";
-import { Badge } from "@radix-ui/themes";
-import ModalNewCategory from "@/components/composites/Modals/ModalNewCategory";
-import { createCategory, getCategories } from "@/actions/categories";
-import ModalManageCategory, {
-  IFormDataManageCategory,
-} from "@/components/composites/Modals/ModalManageCategory";
-import { useDisclosure } from "@/hooks/useDisclosure";
-import { toast } from "sonner";
-import { COLORS } from "@/types/common";
-import { ITransaction } from "@/types/transactionTypes";
+import { ICategory } from "@/types/category";
+import { Badge, Box } from "@radix-ui/themes";
+import { UseDisclosureType } from "@/types/common";
+import { ITransaction } from "@/types/transaction";
 import { format } from "date-fns";
 
 export const columns: ColumnDef<ITransaction>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={value => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={
+  //         table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+  //       }
+  //       onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={value => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "date",
-    header: () => <div className="text-center">Date</div>,
+    header: ({ column }) => (
+      <Box className="flex justify-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </Box>
+    ),
     cell: ({ row }) => (
       <div className="capitalize text-center">{format(row.getValue("date"), "dd MMM yyyy")}</div>
     ),
@@ -75,21 +76,28 @@ export const columns: ColumnDef<ITransaction>[] = [
   {
     accessorKey: "category",
     header: () => <div className="text-center"> Category </div>,
-    cell: ({ row }) => (
-      <div className="flex gap-2 justify-center">
-        <Badge key={row.id} color={"green"}>
-          {row.getValue("title")}
-        </Badge>
-      </div>
-    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2 justify-center">
+          <Badge key={row.id} color={row.original.color_badge}>
+            {row.original.category_title}
+          </Badge>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "amount",
     header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Amount
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <Box className="flex justify-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Amount
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </Box>
     ),
     cell: ({ row, column }) => {
       const amount = parseFloat(row.getValue("amount"));
@@ -103,59 +111,65 @@ export const columns: ColumnDef<ITransaction>[] = [
       return <div className="text-center font-medium">{formatted}</div>;
     },
   },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
 ];
-
-// export type Payment = {
-//   id: string;
-//   amount: number;
-//   title: string;
-//   category: ICategory[];
-//   status: "pending" | "processing" | "success" | "failed";
-// };
 
 interface ITableTransactionView {
   dataTransaction: ITransaction[];
+  categoryList: ICategory[];
+  modalManageCategory: UseDisclosureType;
+  handleOpenModalEdit: (item: ITransaction) => void;
+  handleOpenModalDelete: (item: ITransaction) => void;
 }
 
-function TableTransactionView({ dataTransaction }: ITableTransactionView) {
+function TableTransactionView({
+  dataTransaction,
+  categoryList,
+  modalManageCategory,
+  handleOpenModalEdit,
+  handleOpenModalDelete,
+}: ITableTransactionView) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-
-  const modalManageCategory = useDisclosure();
 
   const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data: dataTransaction,
-    columns,
+    columns: [
+      ...columns,
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  className="hover:cursor-pointer"
+                  onClick={() => handleOpenModalEdit(row.original)}
+                >
+                  Edit Transaction
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:cursor-pointer"
+                  onClick={() => handleOpenModalDelete(row.original)}
+                >
+                  Delete Transaction
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ],
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -170,68 +184,12 @@ function TableTransactionView({ dataTransaction }: ITableTransactionView) {
       columnVisibility,
       rowSelection,
     },
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
+    },
   });
-
-  const [categoryList, setCategoryList] = useState<ICategory[]>([]);
-  const [totalPercentage, setTotalPercentage] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const {
-        queryCategories: { data: dataCategory },
-        queryTotalPercentage: { data: dataTotalPercent },
-      } = await getCategories({});
-      if (dataCategory)
-        setCategoryList(
-          dataCategory?.map((item: ICategoryResponse) => {
-            return {
-              id: item.category_id,
-              budgetPercentage: item.percentage_amount,
-              category_title: item.category_title,
-              colorBadge: item.color_badge as COLORS,
-            };
-          })
-        );
-      if (dataTotalPercent) setTotalPercentage(dataTotalPercent);
-    };
-
-    fetchData();
-  }, []);
-
-  const refetchDataCategories = async () => {
-    const {
-      queryCategories: { data },
-      queryTotalPercentage: { data: dataPercentage },
-    } = await getCategories({});
-    if (data)
-      setCategoryList(
-        data?.map((item: ICategoryResponse) => {
-          return {
-            id: item.category_id,
-            budgetPercentage: item.percentage_amount,
-            category_title: item.category_title,
-            colorBadge: item.color_badge as COLORS,
-          };
-        })
-      );
-
-    if (dataPercentage) setTotalPercentage(dataPercentage);
-  };
-
-  const handleSubmit = async (formData: IFormDataManageCategory) => {
-    try {
-      if (Number(totalPercentage) + Number(formData.percentage_amount) > 100)
-        throw Error("Your budget is more than 100% ?");
-      const query = await createCategory(formData);
-      refetchDataCategories();
-      toast.success(`Category Created!`);
-    } catch (error) {
-      console.error(error);
-      toast.error(`Cannot Create Category <br/> | ${error}`);
-    } finally {
-      modalManageCategory.close();
-    }
-  };
 
   return (
     <>
@@ -298,12 +256,6 @@ function TableTransactionView({ dataTransaction }: ITableTransactionView) {
             </DropdownMenu>
           </div>
         }
-      />
-
-      <ModalManageCategory
-        role={"create"}
-        disclosure={modalManageCategory}
-        handleSubmit={handleSubmit}
       />
     </>
   );
