@@ -13,12 +13,21 @@ interface IGetTransactions {
   year?: number;
 }
 
-const getTransactions = async ({ limit, page, keyword, month, year }: IGetTransactions) => {
+const getTransactions = async ({
+  limit,
+  page,
+  keyword,
+  month,
+  year,
+  startDate,
+  endDate,
+}: IGetTransactions) => {
   const supabase = createSupabaseServer();
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
-  let query = supabase.from("tb_transaction").select().order("transaction_id");
+  let query = supabase.from("tb_transactions").select().order("id");
+
   if (limit && page) {
     let offset = (page - 1) * limit;
     query = query
@@ -37,7 +46,7 @@ const getTransactions = async ({ limit, page, keyword, month, year }: IGetTransa
   return data;
 };
 
-const gettransactionByID = async (id: number) => {
+const getTransactionByID = async (id: number) => {
   const supabase = createSupabaseServer();
   const query = supabase.from("tb_transaction").select().eq("id", id).single();
   return query;
@@ -82,7 +91,7 @@ const deletetransaction = async (id: number) => {
 
 export {
   getTransactions,
-  gettransactionByID,
+  getTransactionByID,
   createtransaction,
   updatetransaction,
   deletetransaction,

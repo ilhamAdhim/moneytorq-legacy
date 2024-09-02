@@ -55,15 +55,23 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
 
   const dataPieChart = useMemo(() => {
-    return categoryList.map(item => {
+    const dataCategory = categoryList.map(item => {
       return {
         id: item.category_title,
         label: item.category_title,
         value: item.budgetPercentage,
-        color: "blue",
       };
     });
-  }, [categoryList]);
+
+    return [
+      ...dataCategory,
+      {
+        id: "available",
+        label: "Available",
+        value: 100 - totalPercentage,
+      },
+    ];
+  }, [categoryList, totalPercentage]);
 
   const refetchDataCategories = async () => {
     const {

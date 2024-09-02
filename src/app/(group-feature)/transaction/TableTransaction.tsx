@@ -35,8 +35,10 @@ import ModalManageCategory, {
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { toast } from "sonner";
 import { COLORS } from "@/types/common";
+import { ITransaction } from "@/types/transactionTypes";
+import { format } from "date-fns";
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<ITransaction>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -59,42 +61,37 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
+    accessorKey: "date",
+    header: () => <div className="text-center">Date</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">{format(row.getValue("date"), "dd MMM yyyy")}</div>
+    ),
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    accessorKey: "title",
+    header: () => <div className="text-center">Transaction Title</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("title")}</div>,
   },
   {
     accessorKey: "category",
-    header: "Category",
+    header: () => <div className="text-center"> Category </div>,
     cell: ({ row }) => (
-      <div className="flex gap-2 w-[100px]">
-        {(row.getValue("category") as ICategory[]).map(item => (
-          <Badge key={item.id} color={item.colorBadge}>
-            {item.category_title}
-          </Badge>
-        ))}
+      <div className="flex gap-2 justify-center">
+        <Badge key={row.id} color={"green"}>
+          {row.getValue("title")}
+        </Badge>
       </div>
     ),
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Amount
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row, column }) => {
       const amount = parseFloat(row.getValue("amount"));
 
       // Format the amount as a dollar amount
@@ -103,7 +100,7 @@ export const columns: ColumnDef<Payment>[] = [
         currency: "IDR",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-center font-medium">{formatted}</div>;
     },
   },
   {
@@ -135,15 +132,19 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export type Payment = {
-  id: string;
-  amount: number;
-  email: string;
-  category: ICategory[];
-  status: "pending" | "processing" | "success" | "failed";
-};
+// export type Payment = {
+//   id: string;
+//   amount: number;
+//   title: string;
+//   category: ICategory[];
+//   status: "pending" | "processing" | "success" | "failed";
+// };
 
-function TableTransactionView() {
+interface ITableTransactionView {
+  dataTransaction: ITransaction[];
+}
+
+function TableTransactionView({ dataTransaction }: ITableTransactionView) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -240,9 +241,9 @@ function TableTransactionView() {
           <div className="flex space-between py-4">
             <div className="flex gap-4">
               <Input
-                placeholder="Filter emails..."
-                value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                onChange={event => table.getColumn("email")?.setFilterValue(event.target.value)}
+                placeholder="Filter titles..."
+                value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+                onChange={event => table.getColumn("title")?.setFilterValue(event.target.value)}
                 className="max-w-sm"
               />
 
@@ -281,7 +282,7 @@ function TableTransactionView() {
                 {table
                   .getAllColumns()
                   .filter(column => column.getCanHide())
-                  .map(column => {
+                  ?.map(column => {
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}

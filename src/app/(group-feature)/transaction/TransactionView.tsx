@@ -24,10 +24,16 @@ import ModalTransaction from "@/components/composites/Modals/ModalTransaction";
 import { Flex } from "@radix-ui/themes";
 import { RadarChartCustom } from "@/components/composites/Charts/RadarChart";
 import { ICategoryResponse } from "@/types/categoryTypes";
+import { ITransaction } from "@/types/transactionTypes";
 
 const availableYearsHistory = [2024, 2023, 2022];
 
-function TransactionView() {
+interface ITransactionView {
+  dataTransaction?: ITransaction[];
+}
+
+function TransactionView({ dataTransaction }: ITransactionView) {
+  console.log("dataTransaction", dataTransaction);
   const records = useAtomValue(transactionRecords);
   const [selectedYear, setSelectedYear] = useState("2024");
   const [isModalAddRecordOpen, setIsModalAddRecordOpen] = useState(false);
@@ -141,7 +147,7 @@ function TransactionView() {
             <CardTitle>Transaction Records</CardTitle>
           </CardHeader>
           <CardContent className="px-8">
-            <TableTransactionView />
+            <TableTransactionView dataTransaction={dataTransaction || []} />
           </CardContent>
         </Card>
       </div>
