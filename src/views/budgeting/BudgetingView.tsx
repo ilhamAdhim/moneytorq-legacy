@@ -50,9 +50,17 @@ interface IBudgetingView {
 
 function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
   const { isSmallViewport } = useViewports();
+  const [valueIncome, setValueIncome] = useState(0);
+
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [totalPercentage, setTotalPercentage] = useState(dataTotalPercentage);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+
+  const availableBudgetPercentage = useMemo(() => 100 - totalPercentage, [totalPercentage]);
+  const availableBudgetRupiah = useMemo(
+    () => formatRupiah(((100 - totalPercentage) / 100) * valueIncome),
+    [totalPercentage, valueIncome]
+  );
 
   const dataPieChart = useMemo(() => {
     const dataCategory = categoryList.map(item => {
@@ -86,6 +94,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
             budgetPercentage: item.percentage_amount,
             category_title: item.category_title,
             colorBadge: item.color_badge as COLORS,
+            desc: item.description,
           };
         })
       );
@@ -96,8 +105,6 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
   const modalEditIncome = useDisclosure();
   const modalManageCategory = useDisclosure();
   const modalDeleteCategory = useDisclosure();
-
-  const [valueIncome, setValueIncome] = useState(0);
 
   const fetchIncome = async () => {
     const res = await getIncomeByID();
@@ -113,6 +120,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
           budgetPercentage: item.percentage_amount,
           category_title: item.category_title,
           colorBadge: item.color_badge as any,
+          desc: item.description,
         };
       })
     );
@@ -214,9 +222,8 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
       </div>
 
       <Separator />
-
-      <Flex className={`${isSmallViewport ? "flex-col" : "flex-row"}`} gap="6">
-        <Card className={`${isSmallViewport ? "w-full" : "w-2/5"}`}>
+      <Flex className="flex-col lg:flex-row" gap="6">
+        <Card className="w-full lg:w-1/4">
           <CardHeader>
             <CardTitle> Overview </CardTitle>
           </CardHeader>
@@ -224,9 +231,9 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
             <PieChartSpent data={dataPieChart} />
           </CardContent>
         </Card>
-        <Card className={`${isSmallViewport ? "w-full" : "w-3/5"}`}>
+        <Card className="w-full lg:w-1/2">
           <Flex className="p-4" justify="between">
-            <h2 className="my-auto text-xl font-bold tracking-tight">Allocations</h2>
+            <h2 className="my-auto text-xl font-bold tracking-tight">Expense Allocations</h2>
             <Button
               size={isSmallViewport ? "sm" : "default"}
               onClick={handleOpenCreateCategory}
@@ -239,6 +246,13 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
           <Flex className="flex-col flex-wrap sm:flex-row my-6" gap="4">
             <Table>
               <TableCaption>A list of your recent budgetings.</TableCaption>
+              <TableCaption>
+                {" "}
+                Your Available budget is
+                <b> {availableBudgetPercentage}% </b>
+                {" or "}
+                <b> {availableBudgetRupiah} </b>{" "}
+              </TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead> Category Name </TableHead>
@@ -304,6 +318,16 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
               </TableFooter>
             </Table>
           </Flex>
+        </Card>
+        <Card className="w-full lg:w-1/4">
+          <CardHeader>
+            <CardTitle> Income Stream </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 h-[400px]">
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil magnam cum minus
+            assumenda praesentium earum nesciunt hic tenetur id cupiditate? Eaque ad at recusandae
+            asperiores veritatis esse quasi, in aut.
+          </CardContent>
         </Card>
       </Flex>
 

@@ -18,9 +18,17 @@ interface IGetCategories {
   endDate?: string;
   month?: number;
   year?: number;
+  type?: "income" | "expenses";
 }
 
-const getCategories = async ({ limit, page, keyword, month, year }: IGetCategories) => {
+const getCategories = async ({
+  limit,
+  page,
+  keyword,
+  month,
+  year,
+  type = "expenses",
+}: IGetCategories) => {
   const supabase = createSupabaseServer();
 
   const currentYear = new Date().getFullYear();
@@ -32,6 +40,7 @@ const getCategories = async ({ limit, page, keyword, month, year }: IGetCategori
     query = query.limit(limit).range(offset, offset + limit - 1);
   }
 
+  if (type) query = query.eq("category_type", type);
   if (keyword) query = query.ilike("category_title", keyword);
   if (month || year) {
     query = query

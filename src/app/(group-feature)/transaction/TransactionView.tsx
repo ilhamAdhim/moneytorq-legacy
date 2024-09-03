@@ -48,7 +48,6 @@ interface ITransactionView {
 }
 
 function TransactionView({ dataTransaction }: ITransactionView) {
-  const records = useAtomValue(transactionRecords);
   const [transactionList, setTransactionList] = useState<ITransaction[]>([]);
 
   const [selectedYear, setSelectedYear] = useState("2024");
@@ -61,10 +60,6 @@ function TransactionView({ dataTransaction }: ITransactionView) {
   const modalManageCategory = useDisclosure();
 
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction | null>(null);
-
-  const dataRecordInYear = useMemo(() => {
-    records.filter(item => item.date.includes(selectedYear));
-  }, [selectedYear]);
 
   const processMonths = useMemo(() => {
     return MONTHS.map((month, idx) => {
@@ -92,7 +87,6 @@ function TransactionView({ dataTransaction }: ITransactionView) {
   const handleSubmit = async (formData: IFormDataManageTransaction) => {
     // ? Actually exclude the category_title
     const { category_title, ...restFormData } = formData;
-    console.log("restFormData", restFormData);
     try {
       let query;
       if (selectedTransaction)
@@ -270,8 +264,8 @@ function TransactionView({ dataTransaction }: ITransactionView) {
         )}
       </Flex>
 
-      <div className={`flex ${isSmallViewport ? "flex-col" : "flex-row"} gap-4`}>
-        <Card className={`${isSmallViewport ? "w-full" : "w-2/5"}`}>
+      <div className={`flex flex-col md:flex-row gap-4`}>
+        <Card className="w-full md:w-2/5">
           <CardHeader>
             <CardTitle>
               Money Spent at {selectedMonth} {selectedYear}{" "}
@@ -281,7 +275,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
             <RadarChartCustom />
           </CardContent>
         </Card>
-        <Card className={`${isSmallViewport ? "w-full" : "w-3/5"}`}>
+        <Card className="w-full md:w-3/5">
           <CardHeader>
             <CardTitle>Transaction Records</CardTitle>
           </CardHeader>

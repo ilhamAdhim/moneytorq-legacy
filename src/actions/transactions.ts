@@ -18,6 +18,9 @@ interface IGetTransactions {
   endDate?: string;
   month?: number;
   year?: number;
+  type?: "income" | "expenses";
+  orderBy?: "date" | "amount";
+  orderDir?: "asc" | "desc";
 }
 
 const getTransactions = async ({
@@ -28,25 +31,30 @@ const getTransactions = async ({
   year,
   startDate,
   endDate,
+  type,
+  orderBy = "date",
+  orderDir = "desc",
 }: IGetTransactions) => {
   const supabase = createSupabaseServer();
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
-  let query = supabase.from("v_transactions").select().order("date", { ascending: false });
+  let query = supabase.from("v_transactions").select();
 
-  if (limit && page) {
-    let offset = (page - 1) * limit;
-    query = query
-      .limit(limit) // Set your desired limit per page (e.g., 10)
-      .range(offset, offset + limit - 1);
-  }
-
+  if (limit) query = query.limit(limit);
   if (keyword) query = query.ilike("title", keyword);
+  if (type) query.eq("transaction_type", type);
+  if (orderBy) query.order(orderBy, { ascending: orderDir === "asc" ? true : false });
+
   if (month || year) {
     query = query
       .gte("created_at", `${year || currentYear}-${month || currentMonth}-01`)
       .lt("created_at", `${year || currentYear}-${month || currentMonth}-01`);
+  }
+
+  if (page) {
+    let offset = (page - 1) * (limit ?? 10);
+    query.range(offset, offset + (limit ?? 10) - 1);
   }
 
   const data = await query;
