@@ -21,14 +21,7 @@ interface IGetCategories {
   type?: "income" | "expenses";
 }
 
-const getCategories = async ({
-  limit,
-  page,
-  keyword,
-  month,
-  year,
-  type = "expenses",
-}: IGetCategories) => {
+const getCategories = async ({ limit, page, keyword, month, year, type }: IGetCategories) => {
   const supabase = createSupabaseServer();
 
   const currentYear = new Date().getFullYear();

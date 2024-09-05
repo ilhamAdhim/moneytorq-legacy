@@ -92,7 +92,7 @@ function ModalManageTransaction({
     <DialogModal
       isOpen={disclosure.isOpen}
       onOpenChange={disclosure.toggle}
-      title="Add Transaction Records"
+      title={`${selectedTransaction ? "Edit" : "Create"} Transaction Records`}
     >
       <form onSubmit={submitForm(handleSubmit)}>
         <div className="grid gap-4 pt-4">

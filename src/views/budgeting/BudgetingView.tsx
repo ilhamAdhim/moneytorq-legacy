@@ -43,16 +43,16 @@ import {
 import { COLORS } from "@/types/common";
 
 interface IBudgetingView {
-  data: ICategoryResponse[];
+  categoryExpenses: ICategoryResponse[];
   dataTotalPercentage: any;
   error: any;
 }
 
-function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
+function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView) {
   const { isSmallViewport } = useViewports();
   const [valueIncome, setValueIncome] = useState(0);
 
-  const [categoryList, setCategoryList] = useState<ICategory[]>([]);
+  const [categoryExpensesList, setCategoryExpensesList] = useState<ICategory[]>([]);
   const [totalPercentage, setTotalPercentage] = useState(dataTotalPercentage);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
 
@@ -63,7 +63,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
   );
 
   const dataPieChart = useMemo(() => {
-    const dataCategory = categoryList.map(item => {
+    const dataCategory = categoryExpensesList.map(item => {
       return {
         id: item.category_title,
         label: item.category_title,
@@ -79,7 +79,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
         value: 100 - totalPercentage,
       },
     ];
-  }, [categoryList, totalPercentage]);
+  }, [categoryExpensesList, totalPercentage]);
 
   const refetchDataCategories = async () => {
     const {
@@ -87,7 +87,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
       queryTotalPercentage: { data: dataPercentage },
     } = await getCategories({});
     if (data)
-      setCategoryList(
+      setCategoryExpensesList(
         data?.map((item: ICategoryResponse) => {
           return {
             id: item.category_id,
@@ -113,8 +113,9 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
 
   useEffect(() => {
     fetchIncome();
-    setCategoryList(
-      data.map((item: ICategoryResponse) => {
+
+    setCategoryExpensesList(
+      categoryExpenses?.map((item: ICategoryResponse) => {
         return {
           id: item.category_id,
           budgetPercentage: item.percentage_amount,
@@ -124,7 +125,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
         };
       })
     );
-  }, [data]);
+  }, [categoryExpenses]);
 
   const handleSubmit = async (formData: IFormDataManageCategory) => {
     try {
@@ -223,7 +224,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
 
       <Separator />
       <Flex className="flex-col lg:flex-row" gap="6">
-        <Card className="w-full lg:w-1/4">
+        <Card className="w-full lg:w-1/2">
           <CardHeader>
             <CardTitle> Overview </CardTitle>
           </CardHeader>
@@ -233,7 +234,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
         </Card>
         <Card className="w-full lg:w-1/2">
           <Flex className="p-4" justify="between">
-            <h2 className="my-auto text-xl font-bold tracking-tight">Expense Allocations</h2>
+            <h2 className="my-auto text-xl font-bold tracking-tight">Categories</h2>
             <Button
               size={isSmallViewport ? "sm" : "default"}
               onClick={handleOpenCreateCategory}
@@ -263,7 +264,7 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categoryList.map(item => (
+                {categoryExpensesList.map(item => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">
                       <Badge className="p-1 rounded-lg my-auto" color={item.colorBadge}>
@@ -318,16 +319,6 @@ function BudgetingView({ data, dataTotalPercentage }: IBudgetingView) {
               </TableFooter>
             </Table>
           </Flex>
-        </Card>
-        <Card className="w-full lg:w-1/4">
-          <CardHeader>
-            <CardTitle> Income Stream </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 h-[400px]">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil magnam cum minus
-            assumenda praesentium earum nesciunt hic tenetur id cupiditate? Eaque ad at recusandae
-            asperiores veritatis esse quasi, in aut.
-          </CardContent>
         </Card>
       </Flex>
 

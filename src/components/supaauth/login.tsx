@@ -135,7 +135,7 @@ export function SignInForm({ redirectTo, isLoading, setIsLoading }: ISignIn) {
       </form>
       <div className="text-center text-sm">
         <h1>
-          Doesn`&apos;`t not have account yet?{" "}
+          Doesn&apos;t not have account yet?{" "}
           <Link href="/register" className="text-blue-400">
             Register
           </Link>

@@ -228,7 +228,8 @@ function TransactionView({ dataTransaction }: ITransactionView) {
           </SelectContent>
         </Select>
 
-        {isSmallViewport ? (
+        {/* Only on Mobile view */}
+        <div className="block lg:hidden">
           <Select onValueChange={val => setSelectedMonth(val)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select Month" />
@@ -244,24 +245,25 @@ function TransactionView({ dataTransaction }: ITransactionView) {
               </SelectGroup>
             </SelectContent>
           </Select>
-        ) : (
-          <Tabs defaultValue={selectedMonth} className="space-y-4">
-            <TabsList>
-              {processMonths.map((item, idx) => (
-                <TabsTrigger
-                  // ? Especially this textContent
-                  // @ts-ignore-next-line
-                  onClick={val => setSelectedMonth(val.target.textContent)}
-                  disabled={!item.isAvailable}
-                  key={idx}
-                  value={`${item.value}`}
-                >
-                  {item.value}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        )}
+        </div>
+
+        {/* Only on desktop view */}
+        <Tabs defaultValue={selectedMonth} className="space-y-4 hidden lg:block">
+          <TabsList>
+            {processMonths.map((item, idx) => (
+              <TabsTrigger
+                // ? Especially this textContent
+                // @ts-ignore-next-line
+                onClick={val => setSelectedMonth(val.target.textContent)}
+                disabled={!item.isAvailable}
+                key={idx}
+                value={`${item.value}`}
+              >
+                {item.value}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </Flex>
 
       <div className={`flex flex-col md:flex-row gap-4`}>

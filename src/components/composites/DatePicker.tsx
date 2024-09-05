@@ -18,6 +18,12 @@ export function DatePicker({ useFormAttributes }: IDatePicker) {
   return (
     <Controller
       name="date"
+      rules={{
+        required: {
+          message: "Please pick transaction date",
+          value: true,
+        },
+      }}
       control={useFormAttributes.control as any}
       render={({ field }) => (
         <Popover>
@@ -25,7 +31,7 @@ export function DatePicker({ useFormAttributes }: IDatePicker) {
             <Button
               variant={"outline"}
               className={cn(
-                "w-[280px] justify-start text-left font-normal",
+                "w-full justify-start text-left font-normal",
                 !field.value && "text-muted-foreground"
               )}
             >
