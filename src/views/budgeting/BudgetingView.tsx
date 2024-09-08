@@ -1,5 +1,4 @@
 "use client";
-import ModalEditIncome from "@/components/composites/Modals/ModalEditIncome";
 import ModalManageCategory, {
   IFormDataManageCategory,
 } from "@/components/composites/Modals/ModalManageCategory";
@@ -41,6 +40,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { COLORS } from "@/types/common";
+import DrawerEditIncome from "@/components/composites/Modals/DrawerEditIncome";
 
 interface IBudgetingView {
   categoryExpenses: ICategoryResponse[];
@@ -102,7 +102,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
     if (dataPercentage) setTotalPercentage(dataPercentage);
   };
 
-  const modalEditIncome = useDisclosure();
+  const drawerEditIncome = useDisclosure();
   const modalManageCategory = useDisclosure();
   const modalDeleteCategory = useDisclosure();
 
@@ -156,7 +156,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
     try {
       await updateIncome(formData.income);
 
-      modalEditIncome.close();
+      drawerEditIncome.close();
       fetchIncome();
       toast.success(`Data Updated!`, {
         description: `Income updated to ${formatRupiah(formData.income)}`,
@@ -213,7 +213,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
               variant="outline"
               onClick={() => {
                 setSelectedCategory(null);
-                modalEditIncome.open();
+                drawerEditIncome.open();
               }}
             >
               <Edit2Icon className="w-4" size="icon" />
@@ -322,9 +322,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
         </Card>
       </Flex>
 
-      {modalEditIncome.isOpen && (
-        <ModalEditIncome handleSubmit={handleSubmitEditIncome} disclosure={modalEditIncome} />
-      )}
+      <DrawerEditIncome handleSubmit={handleSubmitEditIncome} disclosure={drawerEditIncome} />
 
       {modalManageCategory.isOpen && (
         <ModalManageCategory

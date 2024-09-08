@@ -11,11 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { INavList } from "@/types/common";
-import { Box } from "@radix-ui/themes";
-import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
+import React from "react";
 import { FaUser } from "react-icons/fa6";
 
 interface ILayoutGroupFeature {
@@ -54,7 +53,7 @@ function MenuDropdown({ navList }: INavList) {
         <DropdownMenuSeparator />
 
         {navList?.map((item, idx) => (
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem key={idx} asChild>
             <Link
               key={idx}
               href={item.href}

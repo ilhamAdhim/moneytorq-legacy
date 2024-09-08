@@ -11,8 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
-import { useAtomValue } from "jotai/react";
-import { transactionRecords } from "@/store";
 import { MONTHS } from "@/constants";
 import { isAfter } from "date-fns";
 import TableTransactionView from "./TableTransaction";

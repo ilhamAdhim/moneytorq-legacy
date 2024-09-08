@@ -6,6 +6,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuRadioItem,
+  DropdownMenuRadioGroup,
 } from "@/components/ui/dropdown-menu";
 import {
   SortingState,
@@ -18,7 +20,14 @@ import {
   getFilteredRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, PlusCircle, Settings2Icon, TagsIcon } from "lucide-react";
+import {
+  ArrowUpDown,
+  CircleDollarSign,
+  MoreHorizontal,
+  PlusCircle,
+  Settings2Icon,
+  TagsIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { DataTableDemo } from "@/components/composites/DataTable";
 import { Input } from "@/components/ui/input";
@@ -51,6 +60,9 @@ export const columns: ColumnDef<ITransaction>[] = [
   //   enableSorting: false,
   //   enableHiding: false,
   // },
+  {
+    accessorKey: "transaction_type",
+  },
   {
     accessorKey: "date",
     header: ({ column }) => (
@@ -192,7 +204,10 @@ function TableTransactionView({
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      columnVisibility: {
+        transaction_type: false,
+        ...columnVisibility,
+      },
       rowSelection,
     },
     initialState: {
@@ -208,18 +223,38 @@ function TableTransactionView({
         tableInstance={table}
         headers={
           <div className="flex space-between py-4">
-            <div className="flex flex-col md:flex-row justify-between w-full gap-4">
+            <div className="flex flex-col lg:flex-row justify-between w-full gap-4">
               <Input
-                placeholder="Filter titles..."
+                placeholder="Filter Transaction titles..."
                 value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
                 onChange={event => table.getColumn("title")?.setFilterValue(event.target.value)}
                 className="w-full"
               />
 
-              <div className="flex gap-4 justify-between">
+              <div className="flex gap-2 flex-wrap lg:flex-nowrap w-full justify-between">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" className="w-full lg:w-fit">
+                      <CircleDollarSign className="h-4 w-4 mr-2" /> Expense Type
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuRadioGroup
+                      value={
+                        (table.getColumn("transaction_type")?.getFilterValue() as string) ?? ""
+                      }
+                      onValueChange={value =>
+                        table.getColumn("transaction_type")?.setFilterValue(value)
+                      }
+                    >
+                      <DropdownMenuRadioItem value="expenses">Expenses</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="income">Income</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full lg:w-fit">
                       <TagsIcon className="h-4 w-4 mr-2" /> Categories
                     </Button>
                   </DropdownMenuTrigger>
@@ -242,7 +277,7 @@ function TableTransactionView({
                 </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="ml-auto">
+                    <Button variant="outline" className="w-full lg:w-fit">
                       <Settings2Icon className="mr-2 h-4 w-4" /> Columns
                     </Button>
                   </DropdownMenuTrigger>
