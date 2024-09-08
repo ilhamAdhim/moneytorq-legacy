@@ -11,7 +11,7 @@ import { capitalize } from "@/utils/common";
 import { Controller, useForm } from "react-hook-form";
 import { SearchableSelect } from "../SearchableSelect";
 import { COLORS_OPTION } from "@/constants";
-import { ICategory } from "@/types/category";
+import { ICategory, ICategoryResponse } from "@/types/category";
 import { Loader2 } from "lucide-react";
 
 export interface IFormDataManageCategory {
@@ -25,7 +25,7 @@ interface IModalManageCategory {
   disclosure: UseDisclosureType;
   handleSubmit: (formData: any) => void;
   role: "delete" | "edit" | "create";
-  selectedCategory?: ICategory | null;
+  selectedCategory?: ICategoryResponse | null;
 }
 
 function ModalManageCategory({
@@ -45,9 +45,9 @@ function ModalManageCategory({
     ...(selectedCategory && {
       defaultValues: {
         category_title: selectedCategory.category_title,
-        color_badge: selectedCategory.colorBadge,
-        description: selectedCategory.desc,
-        percentage_amount: selectedCategory.budgetPercentage,
+        color_badge: selectedCategory.color_badge as COLORS,
+        description: selectedCategory.description,
+        percentage_amount: selectedCategory.percentage_amount,
       },
     }),
   });

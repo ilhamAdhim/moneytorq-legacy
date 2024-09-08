@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { COLORS } from "@/types/common";
 import DrawerEditIncome from "@/components/composites/Modals/DrawerEditIncome";
+import TableCategoriesView from "@/app/(group-feature)/budgeting/TableCategories";
 
 interface IBudgetingView {
   categoryExpenses: ICategoryResponse[];
@@ -52,9 +53,9 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
   const { isSmallViewport } = useViewports();
   const [valueIncome, setValueIncome] = useState(0);
 
-  const [categoryExpensesList, setCategoryExpensesList] = useState<ICategory[]>([]);
+  const [categoryExpensesList, setCategoryExpensesList] = useState<ICategoryResponse[]>([]);
   const [totalPercentage, setTotalPercentage] = useState(dataTotalPercentage);
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ICategoryResponse | null>(null);
 
   const availableBudgetPercentage = useMemo(() => 100 - totalPercentage, [totalPercentage]);
   const availableBudgetRupiah = useMemo(
@@ -67,7 +68,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
       return {
         id: item.category_title,
         label: item.category_title,
-        value: item.budgetPercentage,
+        value: item.percentage_amount,
       };
     });
 
@@ -86,18 +87,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
       queryCategories: { data },
       queryTotalPercentage: { data: dataPercentage },
     } = await getCategories({});
-    if (data)
-      setCategoryExpensesList(
-        data?.map((item: ICategoryResponse) => {
-          return {
-            id: item.category_id,
-            budgetPercentage: item.percentage_amount,
-            category_title: item.category_title,
-            colorBadge: item.color_badge as COLORS,
-            desc: item.description,
-          };
-        })
-      );
+    if (data) setCategoryExpensesList(data);
 
     if (dataPercentage) setTotalPercentage(dataPercentage);
   };
@@ -114,24 +104,14 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
   useEffect(() => {
     fetchIncome();
 
-    setCategoryExpensesList(
-      categoryExpenses?.map((item: ICategoryResponse) => {
-        return {
-          id: item.category_id,
-          budgetPercentage: item.percentage_amount,
-          category_title: item.category_title,
-          colorBadge: item.color_badge as any,
-          desc: item.description,
-        };
-      })
-    );
+    setCategoryExpensesList(categoryExpenses);
   }, [categoryExpenses]);
 
   const handleSubmit = async (formData: IFormDataManageCategory) => {
     try {
       let percentageBelow100 = selectedCategory
         ? Number(totalPercentage) -
-            Number(selectedCategory.budgetPercentage) +
+            Number(selectedCategory.percentage_amount) +
             Number(formData.percentage_amount) >
           100
         : Number(totalPercentage) + Number(formData.percentage_amount) > 100;
@@ -139,7 +119,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
       if (percentageBelow100) throw Error("Your budget is more than 100% ?");
 
       let query;
-      if (selectedCategory) query = await updateCategory(formData, selectedCategory.id);
+      if (selectedCategory) query = await updateCategory(formData, selectedCategory.category_id);
       else query = await createCategory(formData);
 
       refetchDataCategories();
@@ -170,7 +150,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
   const handleRemoveCategory = async () => {
     try {
       if (selectedCategory) {
-        const { error } = await deleteCategory(selectedCategory.id);
+        const { error } = await deleteCategory(selectedCategory.category_id);
         if (error) throw Error(error.message);
 
         modalDeleteCategory.close();
@@ -189,9 +169,14 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
     modalManageCategory.open();
   };
 
-  const handleOpenEditCategory = (item: ICategory) => {
+  const handleOpenEditCategory = (item: ICategoryResponse) => {
     setSelectedCategory(item);
     modalManageCategory.open();
+  };
+
+  const handleOpenDeleteCategory = (item: ICategoryResponse) => {
+    setSelectedCategory(item);
+    modalDeleteCategory.open();
   };
 
   return (
@@ -244,8 +229,8 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
               <div className="my-auto text-white">Add Records</div>
             </Button>
           </Flex>
-          <Flex className="flex-col flex-wrap sm:flex-row my-6" gap="4">
-            <Table>
+          <Flex className="flex-col flex-wrap sm:flex-row my-6 mx-8" gap="4">
+            {/* <Table>
               <TableCaption>A list of your recent budgetings.</TableCaption>
               <TableCaption>
                 {" "}
@@ -317,7 +302,12 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
                   <TableCell colSpan={3}> </TableCell>
                 </TableRow>
               </TableFooter>
-            </Table>
+            </Table> */}
+            <TableCategoriesView
+              dataCategoryList={categoryExpensesList}
+              handleOpenModalEdit={handleOpenEditCategory}
+              handleOpenModalDelete={handleOpenDeleteCategory}
+            />
           </Flex>
         </Card>
       </Flex>

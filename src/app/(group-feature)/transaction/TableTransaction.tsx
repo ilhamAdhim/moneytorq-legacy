@@ -138,10 +138,11 @@ export const columns: ColumnDef<ITransaction>[] = [
 
 interface ITableTransactionView {
   dataTransaction: ITransaction[];
-  categoryList: ICategory[];
-  modalManageCategory: UseDisclosureType;
+  categoryList?: ICategory[];
+  modalManageCategory?: UseDisclosureType;
   handleOpenModalEdit: (item: ITransaction) => void;
   handleOpenModalDelete: (item: ITransaction) => void;
+  withFilters?: boolean;
 }
 
 function TableTransactionView({
@@ -150,6 +151,7 @@ function TableTransactionView({
   modalManageCategory,
   handleOpenModalEdit,
   handleOpenModalDelete,
+  withFilters = false,
 }: ITableTransactionView) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -223,84 +225,88 @@ function TableTransactionView({
         tableInstance={table}
         headers={
           <div className="flex space-between py-4">
-            <div className="flex flex-col lg:flex-row justify-between w-full gap-4">
-              <Input
-                placeholder="Filter Transaction titles..."
-                value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-                onChange={event => table.getColumn("title")?.setFilterValue(event.target.value)}
-                className="w-full"
-              />
+            {withFilters && (
+              <div className="flex flex-col lg:flex-row justify-between w-full gap-4">
+                <Input
+                  placeholder="Filter Transaction titles..."
+                  value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+                  onChange={event => table.getColumn("title")?.setFilterValue(event.target.value)}
+                  className="w-full"
+                />
 
-              <div className="flex gap-2 flex-wrap lg:flex-nowrap w-full justify-between">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full lg:w-fit">
-                      <CircleDollarSign className="h-4 w-4 mr-2" /> Expense Type
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuRadioGroup
-                      value={
-                        (table.getColumn("transaction_type")?.getFilterValue() as string) ?? ""
-                      }
-                      onValueChange={value =>
-                        table.getColumn("transaction_type")?.setFilterValue(value)
-                      }
-                    >
-                      <DropdownMenuRadioItem value="expenses">Expenses</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="income">Income</DropdownMenuRadioItem>
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full lg:w-fit">
-                      <TagsIcon className="h-4 w-4 mr-2" /> Categories
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {categoryList?.map(item => (
-                      <DropdownMenuItem key={item.id}>
-                        <Badge className="p-1 rounded-lg" color={item.colorBadge as any}>
-                          {item.category_title}
-                        </Badge>
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <div onClick={modalManageCategory.open}>
-                      <DropdownMenuItem>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        <span className="pr-2"> Create New... </span>
-                      </DropdownMenuItem>
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full lg:w-fit">
-                      <Settings2Icon className="mr-2 h-4 w-4" /> Columns
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {table
-                      .getAllColumns()
-                      .filter(column => column.getCanHide())
-                      ?.map(column => {
-                        return (
-                          <DropdownMenuCheckboxItem
-                            key={column.id}
-                            className="capitalize"
-                            checked={column.getIsVisible()}
-                            onCheckedChange={value => column.toggleVisibility(!!value)}
-                          >
-                            {column.id}
-                          </DropdownMenuCheckboxItem>
-                        );
-                      })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex gap-2 flex-wrap lg:flex-nowrap w-full justify-between">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full lg:w-fit">
+                        <CircleDollarSign className="h-4 w-4 mr-2" /> Expense Type
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuRadioGroup
+                        value={
+                          (table.getColumn("transaction_type")?.getFilterValue() as string) ?? ""
+                        }
+                        onValueChange={value =>
+                          table.getColumn("transaction_type")?.setFilterValue(value)
+                        }
+                      >
+                        <DropdownMenuRadioItem value="expenses">Expenses</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="income">Income</DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full lg:w-fit">
+                        <TagsIcon className="h-4 w-4 mr-2" /> Categories
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {categoryList?.map(item => (
+                        <DropdownMenuItem key={item.id}>
+                          <Badge className="p-1 rounded-lg" color={item.colorBadge as any}>
+                            {item.category_title}
+                          </Badge>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                      {modalManageCategory && (
+                        <div onClick={modalManageCategory.open}>
+                          <DropdownMenuItem>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            <span className="pr-2"> Create New... </span>
+                          </DropdownMenuItem>
+                        </div>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full lg:w-fit">
+                        <Settings2Icon className="mr-2 h-4 w-4" /> Columns
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {table
+                        .getAllColumns()
+                        .filter(column => column.getCanHide())
+                        ?.map(column => {
+                          return (
+                            <DropdownMenuCheckboxItem
+                              key={column.id}
+                              className="capitalize"
+                              checked={column.getIsVisible()}
+                              onCheckedChange={value => column.toggleVisibility(!!value)}
+                            >
+                              {column.id}
+                            </DropdownMenuCheckboxItem>
+                          );
+                        })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         }
       />

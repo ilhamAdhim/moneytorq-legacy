@@ -51,8 +51,6 @@ function TransactionView({ dataTransaction }: ITransactionView) {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getMonth()]);
 
-  const { isSmallViewport } = useScreenWidth();
-
   const modalManageTransaction = useDisclosure();
   const modalDeleteTransaction = useDisclosure();
   const modalManageCategory = useDisclosure();
@@ -92,7 +90,6 @@ function TransactionView({ dataTransaction }: ITransactionView) {
       else query = await createTransaction(restFormData);
 
       const { data, error, status } = query;
-      console.log("data, error, status", data, error, status);
       refetchDataTransaction();
       toast.success(`Transaction ${selectedTransaction ? "Updated" : "Created"}!`);
     } catch (error) {
@@ -281,6 +278,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
           </CardHeader>
           <CardContent className="px-8">
             <TableTransactionView
+              withFilters
               dataTransaction={transactionList || []}
               categoryList={categoryList}
               modalManageCategory={modalManageCategory}
