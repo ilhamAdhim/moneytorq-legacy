@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -16,9 +17,10 @@ import { ITransaction } from "@/types/transaction";
 interface IDataTable {
   tableInstance: TableInstance<ITransaction | any>;
   headers?: any;
+  tableCaption?: string;
 }
 
-export function DataTableDemo({ tableInstance, headers }: IDataTable) {
+export function DataTableDemo({ tableInstance, headers, tableCaption }: IDataTable) {
   return (
     <div className="w-full">
       {headers}
@@ -61,6 +63,7 @@ export function DataTableDemo({ tableInstance, headers }: IDataTable) {
               </TableRow>
             )}
           </TableBody>
+          {tableCaption && <TableCaption className="my-4"> {tableCaption}</TableCaption>}
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">

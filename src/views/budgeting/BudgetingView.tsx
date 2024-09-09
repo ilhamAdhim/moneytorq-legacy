@@ -6,12 +6,11 @@ import { Badge } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/ui/Typography/Heading4";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { ICategory, ICategoryResponse } from "@/types/category";
+import { ICategoryResponse } from "@/types/category";
 import { formatRupiah } from "@/utils/common";
 import { Box, Flex } from "@radix-ui/themes";
-import { Edit2Icon, PlusIcon, EllipsisIcon, TrashIcon } from "lucide-react";
+import { Edit2Icon, PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getIncomeByID, updateIncome } from "@/actions/incomes";
 import { toast } from "sonner";
 import PieChartSpent from "@/app/(group-feature)/transaction/PiechartSpent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,36 +20,24 @@ import {
   getCategories,
   updateCategory,
 } from "@/actions/categories";
-import useViewports from "@/hooks/useScreenWidth";
+import { useScreenDetector } from "@/hooks/useScreenWidth";
 import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { COLORS } from "@/types/common";
-import DrawerEditIncome from "@/components/composites/Modals/DrawerEditIncome";
 import TableCategoriesView from "@/app/(group-feature)/budgeting/TableCategories";
+import { getTotalIncomeLast30Days } from "@/actions/transactions";
+import { subDays, format } from "date-fns";
+import SheetManageCategory from "@/components/composites/Sheets/SheetManageCategory";
+import SheetManageIncome from "@/components/composites/Sheets/SheetManageIncome";
+import ResponsiveManageCategory from "@/components/composites/ResponsiveView/ResponsiveManageCategory";
 
 interface IBudgetingView {
   categoryExpenses: ICategoryResponse[];
+  dataTotalIncome: any;
   dataTotalPercentage: any;
   error: any;
 }
 
-function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView) {
-  const { isSmallViewport } = useViewports();
+function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage }: IBudgetingView) {
+  const { isTablet } = useScreenDetector();
   const [valueIncome, setValueIncome] = useState(0);
 
   const [categoryExpensesList, setCategoryExpensesList] = useState<ICategoryResponse[]>([]);
@@ -86,26 +73,34 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
     const {
       queryCategories: { data },
       queryTotalPercentage: { data: dataPercentage },
-    } = await getCategories({});
+    } = await getCategories({
+      type: "expenses",
+    });
     if (data) setCategoryExpensesList(data);
 
     if (dataPercentage) setTotalPercentage(dataPercentage);
   };
 
-  const drawerEditIncome = useDisclosure();
+  const drawerManageIncome = useDisclosure();
   const modalManageCategory = useDisclosure();
   const modalDeleteCategory = useDisclosure();
 
-  const fetchIncome = async () => {
-    const res = await getIncomeByID();
-    setValueIncome(res.data?.income || 0);
+  const refetchTotalIncome = async () => {
+    const { data: dataTotalIncome } = await getTotalIncomeLast30Days({
+      startDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
+      endDate: format(new Date(), "yyyy-MM-dd"),
+    });
+    setValueIncome(dataTotalIncome);
   };
 
   useEffect(() => {
-    fetchIncome();
-
+    setValueIncome(dataTotalIncome);
     setCategoryExpensesList(categoryExpenses);
-  }, [categoryExpenses]);
+  }, [dataTotalIncome, categoryExpenses]);
+
+  useEffect(() => {
+    if (!drawerManageIncome.isOpen) refetchTotalIncome();
+  }, [drawerManageIncome.isOpen]);
 
   const handleSubmit = async (formData: IFormDataManageCategory) => {
     try {
@@ -129,21 +124,6 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
       toast.error(`Cannot ${selectedCategory ? "Update" : "Create"} Category | ${error}`);
     } finally {
       modalManageCategory.close();
-    }
-  };
-
-  const handleSubmitEditIncome = async (formData: any) => {
-    try {
-      await updateIncome(formData.income);
-
-      drawerEditIncome.close();
-      fetchIncome();
-      toast.success(`Data Updated!`, {
-        description: `Income updated to ${formatRupiah(formData.income)}`,
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error(`Cannot update income ${error}`);
     }
   };
 
@@ -198,7 +178,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
               variant="outline"
               onClick={() => {
                 setSelectedCategory(null);
-                drawerEditIncome.open();
+                drawerManageIncome.open();
               }}
             >
               <Edit2Icon className="w-4" size="icon" />
@@ -213,15 +193,21 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
           <CardHeader>
             <CardTitle> Overview </CardTitle>
           </CardHeader>
-          <CardContent className="pl-2 h-[400px]">
+          <CardContent className="pl-2 h-full lg:h-[400px]">
             <PieChartSpent data={dataPieChart} />
+            <Box className="text-center my-4">
+              Your Available budget is
+              <b> {availableBudgetPercentage}% </b>
+              {" or "}
+              <b> {availableBudgetRupiah} </b>{" "}
+            </Box>
           </CardContent>
         </Card>
         <Card className="w-full lg:w-1/2">
           <Flex className="p-4" justify="between">
             <h2 className="my-auto text-xl font-bold tracking-tight">Categories</h2>
             <Button
-              size={isSmallViewport ? "sm" : "default"}
+              size={isTablet ? "sm" : "default"}
               onClick={handleOpenCreateCategory}
               className="flex gap-2"
             >
@@ -230,79 +216,6 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
             </Button>
           </Flex>
           <Flex className="flex-col flex-wrap sm:flex-row my-6 mx-8" gap="4">
-            {/* <Table>
-              <TableCaption>A list of your recent budgetings.</TableCaption>
-              <TableCaption>
-                {" "}
-                Your Available budget is
-                <b> {availableBudgetPercentage}% </b>
-                {" or "}
-                <b> {availableBudgetRupiah} </b>{" "}
-              </TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead> Category Name </TableHead>
-                  <TableHead> Budget (%) </TableHead>
-                  <TableHead> Budget (Rp) </TableHead>
-                  <TableHead> Description </TableHead>
-                  <TableHead className="text-center"> Action </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categoryExpensesList.map(item => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">
-                      <Badge className="p-1 rounded-lg my-auto" color={item.colorBadge}>
-                        {item.icon} {item.category_title}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{item.budgetPercentage}%</TableCell>
-                    <TableCell>
-                      {item.budgetPercentage
-                        ? formatRupiah((item.budgetPercentage / 100) * valueIncome)
-                        : 0}
-                    </TableCell>
-                    <TableCell>{item.desc || "-"}</TableCell>
-                    <TableCell className="flex justify-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <div className="my-auto cursor-pointer">
-                            <EllipsisIcon size={24} />
-                          </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="flex justify-between cursor-pointer"
-                            onClick={() => handleOpenEditCategory(item)}
-                          >
-                            Edit
-                            <Edit2Icon className="w-4" size="icon" />
-                          </DropdownMenuItem>
-
-                          <DropdownMenuItem
-                            className="flex justify-between cursor-pointer"
-                            onClick={() => {
-                              setSelectedCategory(item);
-                              modalDeleteCategory.open();
-                            }}
-                          >
-                            Delete
-                            <TrashIcon className="w-4" size="icon" />
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>{" "}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={1}> Total </TableCell>
-                  <TableCell> {totalPercentage}% </TableCell>
-                  <TableCell colSpan={3}> </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table> */}
             <TableCategoriesView
               dataCategoryList={categoryExpensesList}
               handleOpenModalEdit={handleOpenEditCategory}
@@ -312,10 +225,10 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
         </Card>
       </Flex>
 
-      <DrawerEditIncome handleSubmit={handleSubmitEditIncome} disclosure={drawerEditIncome} />
+      <SheetManageIncome disclosure={drawerManageIncome} />
 
       {modalManageCategory.isOpen && (
-        <ModalManageCategory
+        <ResponsiveManageCategory
           role={selectedCategory ? "edit" : "create"}
           selectedCategory={selectedCategory}
           disclosure={modalManageCategory}
@@ -324,7 +237,7 @@ function BudgetingView({ categoryExpenses, dataTotalPercentage }: IBudgetingView
       )}
 
       {modalDeleteCategory.isOpen && (
-        <ModalManageCategory
+        <ResponsiveManageCategory
           role={"delete"}
           selectedCategory={selectedCategory}
           disclosure={modalDeleteCategory}

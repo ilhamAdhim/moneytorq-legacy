@@ -15,7 +15,6 @@ import { MONTHS } from "@/constants";
 import { isAfter } from "date-fns";
 import TableTransactionView from "./TableTransaction";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import useScreenWidth from "@/hooks/useScreenWidth";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import ModalManageTransaction, {
@@ -38,6 +37,7 @@ import ModalManageCategory, {
 import { createCategory, getCategories } from "@/actions/categories";
 import { COLORS } from "@/types/common";
 import { ICategory, ICategoryResponse } from "@/types/category";
+import ResponsiveManageTransaction from "@/components/composites/ResponsiveView/ResponsiveManageTransaction";
 
 const availableYearsHistory = [2024, 2023, 2022];
 
@@ -292,7 +292,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
       {/* Modals */}
 
       {modalManageTransaction.isOpen && (
-        <ModalManageTransaction
+        <ResponsiveManageTransaction
           role={selectedTransaction ? "edit" : "create"}
           categoryList={categoryList}
           selectedTransaction={selectedTransaction}
@@ -302,7 +302,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
       )}
 
       {modalDeleteTransaction.isOpen && (
-        <ModalManageTransaction
+        <ResponsiveManageTransaction
           role={"delete"}
           selectedTransaction={selectedTransaction}
           disclosure={modalDeleteTransaction}

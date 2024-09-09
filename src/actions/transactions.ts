@@ -2,6 +2,7 @@
 
 import { IFormDataManageTransaction } from "@/components/composites/Modals/ModalManageTransaction";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { format } from "date-fns";
 
 const getCurrentUser = async () => {
   const supabase = createSupabaseServer();
@@ -21,6 +22,7 @@ interface IGetTransactions {
   type?: "income" | "expenses";
   orderBy?: "date" | "amount";
   orderDir?: "asc" | "desc";
+  withTotalIncome?: boolean;
 }
 
 const getTransactions = async ({
@@ -48,9 +50,12 @@ const getTransactions = async ({
 
   if (month || year) {
     query = query
-      .gte("created_at", `${year || currentYear}-${month || currentMonth}-01`)
-      .lt("created_at", `${year || currentYear}-${month || currentMonth}-01`);
+      .gte("date", `${year || currentYear}-${month || currentMonth}-01`)
+      .lte("date", `${year || currentYear}-${month || currentMonth}-01`);
   }
+
+  if (startDate) query.gte("date", format(startDate, "yyyy-MM-dd"));
+  if (endDate) query.lte("date", format(endDate, "yyyy-MM-dd"));
 
   if (page) {
     let offset = (page - 1) * (limit ?? 10);
@@ -58,6 +63,19 @@ const getTransactions = async ({
   }
 
   const data = await query;
+  return data;
+};
+
+const getTotalIncomeLast30Days = async ({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}) => {
+  const supabase = createSupabaseServer();
+
+  const data = await supabase.rpc("total_income", { start_date: startDate, end_date: endDate });
   return data;
 };
 
@@ -115,4 +133,5 @@ export {
   createTransaction,
   updateTransaction,
   deleteTransaction,
+  getTotalIncomeLast30Days,
 };

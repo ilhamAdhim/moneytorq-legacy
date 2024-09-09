@@ -1,19 +1,25 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import useMediaQuery from "./useMediaQuery";
 
-function useViewports() {
-  // ? isSmallViewport = Tablet & Phone view
-  const isSmallScreen = useMediaQuery("(max-width: 768px)");
+export const useScreenDetector = () => {
+  const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 0);
 
-  const [isSmallViewport, setIsSmallViewport] = useState(false);
+  const handleWindowSizeChange = () => {
+    setWidth(typeof window !== "undefined" ? window.innerWidth : 0);
+  };
 
   useEffect(() => {
-    setIsSmallViewport(isSmallScreen);
-  }, [isSmallScreen]);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleWindowSizeChange);
 
-  return { isSmallViewport };
-}
+      return () => {
+        window.removeEventListener("resize", handleWindowSizeChange);
+      };
+    }
+  }, []);
 
-export default useViewports;
+  const isMobile = width <= 768;
+  const isTablet = width <= 1024;
+  const isDesktop = width > 1024;
+
+  return { isMobile, isTablet, isDesktop };
+};

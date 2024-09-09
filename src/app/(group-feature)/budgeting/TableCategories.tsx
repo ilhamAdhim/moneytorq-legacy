@@ -26,27 +26,6 @@ import { Badge, Box } from "@radix-ui/themes";
 import { COLORS } from "@/types/common";
 
 export const columns: ColumnDef<ICategoryResponse>[] = [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
-  //       }
-  //       onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={value => row.toggleSelected(!!value)}
-  //       aria-label="Select row"
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
   {
     accessorKey: "transaction_type",
   },
@@ -57,16 +36,30 @@ export const columns: ColumnDef<ICategoryResponse>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2 justify-center">
-          <Badge key={row.id} color={row.original.color_badge as COLORS}>
-            {row.original.category_title}
-          </Badge>
+          {row.original.color_badge ? (
+            <Badge key={row.id} color={row.original.color_badge as COLORS}>
+              {row.original.category_title}
+            </Badge>
+          ) : (
+            `${row.original.category_title}`
+          )}
         </div>
       );
     },
   },
   {
     accessorKey: "percentage_amount",
-    header: () => <div className="text-center">Budget (%)</div>,
+    header: ({ column }) => (
+      <Box className="flex justify-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Budget(%)
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </Box>
+    ),
     cell: ({ row }) => <div className="text-center">{row.getValue("percentage_amount")}%</div>,
   },
   {

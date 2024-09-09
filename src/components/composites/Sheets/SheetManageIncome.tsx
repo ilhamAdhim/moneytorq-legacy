@@ -1,21 +1,13 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { UseDisclosureType } from "@/types/common";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Box } from "@radix-ui/themes";
-import { CheckIcon } from "lucide-react";
-import useViewports from "@/hooks/useScreenWidth";
-import { getCategories } from "@/actions/categories";
+import { useScreenDetector } from "@/hooks/useScreenWidth";
 import {
   createTransaction,
   deleteTransaction,
@@ -28,15 +20,18 @@ import { ICategoryResponse } from "@/types/category";
 import TableTransactionView from "@/app/(group-feature)/transaction/TableTransaction";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { toast } from "sonner";
-import ModalManageTransaction, { IFormDataManageTransaction } from "./ModalManageTransaction";
+import ModalManageTransaction, {
+  IFormDataManageTransaction,
+} from "../Modals/ModalManageTransaction";
+import { format, subDays } from "date-fns";
+import { formatRupiah } from "@/utils/common";
 
-interface IDrawerEditIncome {
+interface ISheetManageIncome {
   disclosure: UseDisclosureType;
-  handleSubmit: (formData: any) => any;
 }
 
-function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
-  const { isSmallViewport } = useViewports();
+function SheetManageIncome({ disclosure }: ISheetManageIncome) {
+  const { isDesktop } = useScreenDetector();
   const [dataIncomeList, setDataIncomeList] = useState<ITransaction[]>([]);
   const [categoryListIncome, setCategoryListIncome] = useState<ICategoryResponse[]>([]);
 
@@ -48,6 +43,7 @@ function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
   const refetchDataTransactionIncome = async () => {
     const { data } = await getTransactions({
       type: "income",
+      startDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
     });
     if (data) setDataIncomeList(data);
   };
@@ -91,7 +87,10 @@ function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
   const fetchIncomes = async () => {
     const { data, error } = await getTransactions({
       type: "income",
+      startDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
     });
+
+    console.log("data", data);
 
     if (!error) setDataIncomeList(data || []);
   };
@@ -99,10 +98,6 @@ function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
   useEffect(() => {
     fetchIncomes();
   }, []);
-
-  useEffect(() => {
-    console.log("dataIncomeList", dataIncomeList);
-  }, [dataIncomeList]);
 
   const handleOpenEditTransaction = (item: ITransaction) => {
     setSelectedTransaction(item);
@@ -117,13 +112,13 @@ function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
   return (
     <Sheet onOpenChange={disclosure.toggle} open={disclosure.isOpen}>
       <SheetContent
-        side={isSmallViewport ? "bottom" : "right"}
-        className="max-w-full lg:max-w-[800px]"
+        side={isDesktop ? "right" : "bottom"}
+        className={isDesktop ? "!max-w-[800px]" : "max-w-full"}
       >
         <SheetHeader>
-          <SheetTitle>Edit Income</SheetTitle>
+          <SheetTitle>Manage Income</SheetTitle>
           <SheetDescription>
-            Roughly estimate your income after tax. Then, we do the budgeting for you
+            Roughly estimate your income after tax. Then, we do the budgeting for you.
           </SheetDescription>
         </SheetHeader>
 
@@ -132,13 +127,15 @@ function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
           dataTransaction={dataIncomeList || []}
           handleOpenModalEdit={handleOpenEditTransaction}
           handleOpenModalDelete={handleOpenDeleteTransaction}
+          tableCaption="Your income last 30 days"
         />
         <SheetFooter className="my-4">
-          <SheetClose asChild>
-            <Button type="submit" variant="outline" className="ml-auto">
-              <CheckIcon className="mr-2 h-4 w-4" /> Submit
-            </Button>
-          </SheetClose>
+          Total Income:{" "}
+          {formatRupiah(
+            dataIncomeList
+              ? dataIncomeList?.map(item => item?.amount)?.reduce((a, b) => a + b, 0)
+              : 0
+          )}
         </SheetFooter>
       </SheetContent>
 
@@ -172,4 +169,4 @@ function DrawerEditIncome({ disclosure }: IDrawerEditIncome) {
   );
 }
 
-export default DrawerEditIncome;
+export default SheetManageIncome;

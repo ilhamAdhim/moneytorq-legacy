@@ -93,7 +93,7 @@ export const columns: ColumnDef<ITransaction>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2 justify-center">
-          <Badge key={row.id} color={row.original.color_badge}>
+          <Badge className="p-1" key={row.id} color={row.original.color_badge}>
             {row.original.category_title}
           </Badge>
         </div>
@@ -143,6 +143,7 @@ interface ITableTransactionView {
   handleOpenModalEdit: (item: ITransaction) => void;
   handleOpenModalDelete: (item: ITransaction) => void;
   withFilters?: boolean;
+  tableCaption?: string;
 }
 
 function TableTransactionView({
@@ -152,6 +153,7 @@ function TableTransactionView({
   handleOpenModalEdit,
   handleOpenModalDelete,
   withFilters = false,
+  tableCaption,
 }: ITableTransactionView) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -222,6 +224,7 @@ function TableTransactionView({
   return (
     <>
       <DataTableDemo
+        tableCaption={tableCaption}
         tableInstance={table}
         headers={
           <div className="flex space-between py-4">
@@ -247,9 +250,12 @@ function TableTransactionView({
                           (table.getColumn("transaction_type")?.getFilterValue() as string) ?? ""
                         }
                         onValueChange={value =>
-                          table.getColumn("transaction_type")?.setFilterValue(value)
+                          value === "all"
+                            ? table.getColumn("transaction_type")?.setFilterValue("")
+                            : table.getColumn("transaction_type")?.setFilterValue(value)
                         }
                       >
+                        <DropdownMenuRadioItem value="all">All Transaction</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="expenses">Expenses</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="income">Income</DropdownMenuRadioItem>
                       </DropdownMenuRadioGroup>

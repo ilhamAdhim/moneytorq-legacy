@@ -1,16 +1,18 @@
-import { DialogFooter } from "@/components/ui/dialog";
-import DialogModal from "../DialogModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { COLORS, UseDisclosureType } from "@/types/common";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Badge, Box } from "@radix-ui/themes";
-import { capitalize } from "@/utils/common";
 import { Controller, useForm } from "react-hook-form";
 import { SearchableSelect } from "../SearchableSelect";
+import { COLORS_OPTION } from "@/constants";
 import { ICategoryResponse } from "@/types/category";
 import { Loader2 } from "lucide-react";
+import { SheetFooter } from "@/components/ui/sheet";
+import { capitalize } from "@/utils/common";
+import DialogSheet from "../DialogSheet";
 
 export interface IFormDataManageCategory {
   percentage_amount: number;
@@ -19,21 +21,21 @@ export interface IFormDataManageCategory {
   description?: string;
 }
 
-interface IModalManageCategory {
+interface ISheetManageCategory {
   disclosure: UseDisclosureType;
   handleSubmit: (formData: any) => void;
   role: "delete" | "edit" | "create";
   selectedCategory?: ICategoryResponse | null;
-  processedColors?: { value: string; label: string }[];
+  processedColors: { value: string; label: string }[];
 }
 
-function ModalManageCategory({
+function SheetManageCategory({
   disclosure,
   handleSubmit,
   role,
   selectedCategory,
   processedColors,
-}: IModalManageCategory) {
+}: ISheetManageCategory) {
   const {
     watch,
     register,
@@ -57,28 +59,30 @@ function ModalManageCategory({
 
   if (role === "delete")
     return (
-      <DialogModal
+      <DialogSheet
+        side="bottom"
         onOpenChange={disclosure.toggle}
         isOpen={disclosure.isOpen}
         title={`Delete Category`}
         desc={`Are you sure want to delete ${selectedCategory?.category_title}?`}
       >
-        <DialogFooter className="mt-8">
-          <Button onClick={disclosure.close} variant="outline" className="ml-auto">
+        <SheetFooter className="flex flex-row gap-4 justify-center mt-4">
+          <Button onClick={disclosure.close} variant="outline">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} variant="outline" className="ml-auto">
+          <Button onClick={handleSubmit} variant="outline">
             <CheckIcon className="mr-2 h-4 w-4" /> Delete
           </Button>
-        </DialogFooter>
-      </DialogModal>
+        </SheetFooter>
+      </DialogSheet>
     );
 
   return (
     <>
-      <DialogModal
-        isOpen={disclosure.isOpen}
+      <DialogSheet
+        side="bottom"
         onOpenChange={disclosure.toggle}
+        isOpen={disclosure.isOpen}
         title={`${capitalize(role)} Category`}
       >
         <form onSubmit={submitForm(handleSubmit)}>
@@ -135,30 +139,8 @@ function ModalManageCategory({
                   name="color_badge"
                   control={control as any}
                   render={({ field }) => (
-                    // <FormItem>
-                    //   <FormLabel>Class</FormLabel>
-                    //   <Select
-                    //     onValueChange={field.onChange}
-                    //     defaultValue={field.value}
-                    //   >
-                    //     <FormControl>
-                    //       <SelectTrigger>
-                    //         <SelectValue />
-                    //       </SelectTrigger>
-                    //     </FormControl>
-                    //     <SelectContent ref={field.ref}>
-                    //       {dnd5eClasses
-                    //         .sort((a, b) => a.label.localeCompare(b.label))
-                    //         .map((option) => (
-                    //           <SelectItem key={option.value} value={option.value}>
-                    //             {option.label}
-                    //           </SelectItem>
-                    //         ))}
-                    //     </SelectContent>
-                    //   </Select>
-                    // </FormItem>
                     <SearchableSelect
-                      data={processedColors || []}
+                      data={processedColors}
                       selectedValue={field.value}
                       entity="Colors"
                       setSelectedValue={field.onChange}
@@ -184,9 +166,9 @@ function ModalManageCategory({
             </div>
           </div>
         </form>
-      </DialogModal>
+      </DialogSheet>
     </>
   );
 }
 
-export default ModalManageCategory;
+export default SheetManageCategory;
