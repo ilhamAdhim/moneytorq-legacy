@@ -51,20 +51,22 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
   );
 
   const dataPieChart = useMemo(() => {
-    const dataCategory = categoryExpensesList.map(item => {
+    const dataCategory = categoryExpensesList.map((item, id) => {
       return {
-        id: item.category_title,
+        id: id + 1,
         label: item.category_title,
         value: item.percentage_amount,
+        fill: `var(--chart-${id + 1})`,
       };
     });
 
     return [
       ...dataCategory,
       {
-        id: "available",
+        id: 0,
         label: "Available",
         value: 100 - totalPercentage,
+        fill: `var(--chart-1)`,
       },
     ];
   }, [categoryExpensesList, totalPercentage]);
@@ -193,7 +195,7 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
           <CardHeader>
             <CardTitle> Overview </CardTitle>
           </CardHeader>
-          <CardContent className="pl-2 h-full lg:h-[400px]">
+          <CardContent className="pl-2 lg:h-[400px]">
             <PieChartSpent data={dataPieChart} />
             <Box className="text-center my-4">
               Your Available budget is

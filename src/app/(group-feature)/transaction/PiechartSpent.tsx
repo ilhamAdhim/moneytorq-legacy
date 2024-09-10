@@ -1,78 +1,73 @@
-import { ResponsivePie } from '@nivo/pie'
-import { useEffect, useState } from 'react'
+"use client";
+
+import * as React from "react";
+import { Label, Pie, PieChart } from "recharts";
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
+export const description = "A donut chart with text";
 
 interface IPieChartSpent {
-    data: any
+  data: {
+    id: number;
+    label: string;
+    value: number;
+    fill: string;
+  }[];
 }
+
+interface MapChartConfig {
+  [key: string]: {
+    label: string;
+  };
+}
+
+const chartConfig = ({ data }: IPieChartSpent) => {
+  return data.reduce((acc, curr) => {
+    acc[curr.label] = { label: curr.label };
+    return acc;
+  }, {} as MapChartConfig) satisfies ChartConfig;
+};
+
 const PieChartSpent = ({ data }: IPieChartSpent) => {
-
-    const [dataPie, setDataPie] = useState([])
-
-    useEffect(() => {
-        let animation = setTimeout(() => setDataPie(data), 1)
-        return () => {
-            clearTimeout(animation);
-        };
-    }, [data]);
-
-    return (
-        <>
-            {dataPie ?
-                <ResponsivePie
-                    data={dataPie}
-                    margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-                    innerRadius={0.7}
-                    padAngle={2}
-                    activeOuterRadiusOffset={8}
-                    colors={{ scheme: 'blue_green' }}
-                    borderWidth={1}
-                    borderColor={{
-                        from: 'color',
-                        modifiers: [
-                            [
-                                'darker',
-                                0.2
-                            ]
-                        ]
-                    }}
-                    arcLinkLabel={d => `${d.id} (${d.formattedValue})`}
-                    arcLinkLabelsThickness={2}
-                    arcLinkLabelsColor={{ from: 'color' }}
-                    arcLabelsTextColor={{ theme: 'background' }}
-                    motionConfig="slow"
-                    transitionMode='startAngle'
-                    legends={[
-                        {
-                            anchor: 'bottom',
-                            direction: 'row',
-                            justify: false,
-                            translateX: 0,
-                            translateY: 56,
-                            itemsSpacing: 0,
-                            itemWidth: 100,
-                            itemHeight: 18,
-                            itemTextColor: '#999',
-                            itemDirection: 'left-to-right',
-                            itemOpacity: 1,
-                            symbolSize: 18,
-                            symbolShape: 'circle',
-                            effects: [
-                                {
-                                    on: 'hover',
-                                    style: {
-                                        itemTextColor: '#000'
-                                    }
-                                }
-                            ]
-                        }
-                    ]}
-                />
-                : "Loading..."}
-        </>
-
-    )
-
-}
-
+  return (
+    <ChartContainer config={chartConfig({ data })} className="mx-auto aspect-square max-h-[400px]">
+      <PieChart>
+        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+        <Pie data={data} dataKey="value" nameKey="label" innerRadius={80} strokeWidth={5}>
+          <Label
+            content={({ viewBox }) => {
+              if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                return (
+                  <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                    <tspan
+                      x={viewBox.cx}
+                      y={viewBox.cy}
+                      className="fill-foreground text-xl font-bold"
+                    >
+                      Budget
+                    </tspan>
+                    <tspan
+                      x={viewBox.cx}
+                      y={(viewBox.cy || 0) + 24}
+                      className="fill-muted-foreground"
+                    >
+                      Allocations
+                    </tspan>
+                  </text>
+                );
+              }
+            }}
+          />
+        </Pie>
+      </PieChart>
+    </ChartContainer>
+  );
+};
 
 export default PieChartSpent;

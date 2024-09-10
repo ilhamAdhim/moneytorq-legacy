@@ -1,3 +1,5 @@
+"use client";
+
 import DialogModal from "../DialogModal";
 import { UseDisclosureType } from "@/types/common";
 import { ITransaction } from "@/types/transaction";
@@ -21,6 +23,7 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { ICategory } from "@/types/category";
 import { DatePicker } from "../DatePicker";
+import { usePathname } from "next/navigation";
 
 export interface IFormDataManageTransaction {
   amount: string;
@@ -47,6 +50,8 @@ function ModalManageTransaction({
   selectedTransaction,
   categoryList,
 }: IModalManageTransaction) {
+  const path = usePathname();
+
   const useFormAttributes = useForm<FieldValues>({
     mode: "all",
     ...(selectedTransaction && {
@@ -148,7 +153,9 @@ function ModalManageTransaction({
                       <SelectGroup>
                         <SelectLabel>Type</SelectLabel>
                         <SelectItem value="income">Income</SelectItem>
-                        <SelectItem value="expenses">Expenses</SelectItem>
+                        {!path.includes("budgeting") && (
+                          <SelectItem value="expenses">Expenses</SelectItem>
+                        )}
                       </SelectGroup>
                     </SelectContent>
                   </Select>

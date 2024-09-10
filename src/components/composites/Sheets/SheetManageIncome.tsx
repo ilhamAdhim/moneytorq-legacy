@@ -25,6 +25,9 @@ import ModalManageTransaction, {
 } from "../Modals/ModalManageTransaction";
 import { format, subDays } from "date-fns";
 import { formatRupiah } from "@/utils/common";
+import { Box, Flex } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
 
 interface ISheetManageIncome {
   disclosure: UseDisclosureType;
@@ -99,6 +102,12 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
     fetchIncomes();
   }, []);
 
+  // Modal Handlers
+  const handleOpenCreateTransaction = () => {
+    setSelectedTransaction(null);
+    modalManageTransaction.open();
+  };
+
   const handleOpenEditTransaction = (item: ITransaction) => {
     setSelectedTransaction(item);
     modalManageTransaction.open();
@@ -115,11 +124,17 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
         side={isDesktop ? "right" : "bottom"}
         className={isDesktop ? "!max-w-[800px]" : "max-w-full"}
       >
-        <SheetHeader>
-          <SheetTitle>Manage Income</SheetTitle>
-          <SheetDescription>
-            Roughly estimate your income after tax. Then, we do the budgeting for you.
-          </SheetDescription>
+        <SheetHeader className="my-4 w-full flex flex-col sm:flex-row space-between">
+          <Box className="flex-1">
+            <SheetTitle>Manage Income</SheetTitle>
+            <SheetDescription>
+              Roughly estimate your income after tax. Then, we do the budgeting for you.
+            </SheetDescription>
+          </Box>
+          <Button onClick={handleOpenCreateTransaction} className="flex gap-2">
+            <PlusIcon color="white" />
+            <div className="my-auto text-white">Add Income</div>
+          </Button>
         </SheetHeader>
 
         <TableTransactionView
