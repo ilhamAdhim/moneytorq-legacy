@@ -36,6 +36,7 @@ export interface IFormDataManageTransaction {
 }
 
 interface IModalManageTransaction {
+  isExpense?: boolean;
   disclosure: UseDisclosureType;
   handleSubmit: (formData: any) => void;
   role: "delete" | "edit" | "create";
@@ -44,6 +45,7 @@ interface IModalManageTransaction {
 }
 
 function ModalManageTransaction({
+  isExpense = true,
   disclosure,
   handleSubmit,
   role,
@@ -60,7 +62,7 @@ function ModalManageTransaction({
         title: selectedTransaction.title,
         date: selectedTransaction.date,
         description: selectedTransaction.description,
-        type: selectedTransaction.transaction_type,
+        type: isExpense ? selectedTransaction.transaction_type : "income",
         category_id: selectedTransaction.category_id,
       },
     }),
@@ -136,33 +138,36 @@ function ModalManageTransaction({
               )}
             </Box>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-left">
-              Type
-            </Label>
-            <div className="col-span-3">
-              <Controller
-                name="type"
-                control={control as any}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Transaction Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Type</SelectLabel>
-                        <SelectItem value="income">Income</SelectItem>
-                        {!path.includes("budgeting") && (
-                          <SelectItem value="expenses">Expenses</SelectItem>
-                        )}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+          {isExpense && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-left">
+                Type
+              </Label>
+              <div className="col-span-3">
+                <Controller
+                  name="type"
+                  control={control as any}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Transaction Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Type</SelectLabel>
+                          <SelectItem value="income">Income</SelectItem>
+                          {!path.includes("budgeting") && (
+                            <SelectItem value="expenses">Expenses</SelectItem>
+                          )}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-left">
               Category

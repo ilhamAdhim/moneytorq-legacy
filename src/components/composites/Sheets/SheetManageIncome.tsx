@@ -1,4 +1,4 @@
-import { UseDisclosureType } from "@/types/common";
+import { COLORS, UseDisclosureType } from "@/types/common";
 import {
   Sheet,
   SheetContent,
@@ -25,9 +25,20 @@ import ModalManageTransaction, {
 } from "../Modals/ModalManageTransaction";
 import { format, subDays } from "date-fns";
 import { formatRupiah } from "@/utils/common";
-import { Box, Flex } from "@radix-ui/themes";
+import { Box } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import {
+  createCategory,
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "@/actions/categories";
+import TableCategoriesView from "@/app/(group-feature)/budgeting/TableCategories";
+import { Separator } from "@/components/ui/separator";
+import ModalManageCategory from "../Modals/ModalManageCategory";
+import { IFormDataManageCategory } from "./SheetManageCategory";
+import { COLORS_OPTION } from "@/constants";
 
 interface ISheetManageIncome {
   disclosure: UseDisclosureType;
@@ -40,27 +51,59 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
 
   const modalManageTransaction = useDisclosure();
   const modalDeleteTransaction = useDisclosure();
+  const modalManageCategory = useDisclosure();
+  const modalDeleteCategory = useDisclosure();
 
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ICategoryResponse | null>(null);
 
-  const refetchDataTransactionIncome = async () => {
-    const { data } = await getTransactions({
+  const [processedColors, setProcessedColors] = useState<{ value: string; label: string }[]>([]);
+  useEffect(() => {
+    setProcessedColors(
+      COLORS_OPTION.map(item => {
+        return {
+          value: item,
+          label: item,
+        };
+      })
+    );
+  }, []);
+
+  const fetchIncomes = async () => {
+    const { data, error } = await getTransactions({
       type: "income",
       startDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
     });
-    if (data) setDataIncomeList(data);
+
+    if (!error) setDataIncomeList(data || []);
   };
+
+  const fetchCategoryIncome = async () => {
+    const {
+      queryCategories: { data, error },
+    } = await getCategories({
+      type: "income",
+    });
+
+    if (!error) setCategoryListIncome(data || []);
+  };
+
+  useEffect(() => {
+    fetchIncomes();
+    fetchCategoryIncome();
+  }, []);
 
   // On Submits
   const handleSubmit = async (formData: IFormDataManageTransaction) => {
     // ? Actually exclude the category_title
     const { category_title, ...restFormData } = formData;
+    const payload: IFormDataManageTransaction = { ...restFormData, type: "income" };
     try {
       let query;
-      if (selectedTransaction)
-        query = await updateTransaction(restFormData, selectedTransaction.id);
-      else query = await createTransaction(restFormData);
-      refetchDataTransactionIncome();
+      if (selectedTransaction) query = await updateTransaction(payload, selectedTransaction.id);
+      else query = await createTransaction(payload);
+      fetchIncomes();
+      fetchCategoryIncome();
       toast.success(`Transaction ${selectedTransaction ? "Updated" : "Created"}!`);
     } catch (error) {
       console.error(error);
@@ -77,7 +120,8 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
         if (error) throw Error(error.message);
 
         modalDeleteTransaction.close();
-        refetchDataTransactionIncome();
+        fetchIncomes();
+        fetchCategoryIncome();
         toast.success(`Transaction ${selectedTransaction.title} deleted!`);
       }
     } catch (error) {
@@ -87,20 +131,40 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
     }
   };
 
-  const fetchIncomes = async () => {
-    const { data, error } = await getTransactions({
-      type: "income",
-      startDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
-    });
+  const handleSubmitCategory = async (formData: IFormDataManageCategory) => {
+    const payload: IFormDataManageCategory = { ...formData, category_type: "income" };
+    try {
+      let query;
+      if (selectedCategory) query = await updateCategory(payload, selectedCategory.category_id);
+      else query = await createCategory(payload);
+      fetchIncomes();
+      toast.success(`Category ${selectedCategory ? "Updated" : "Created"}!`);
 
-    console.log("data", data);
-
-    if (!error) setDataIncomeList(data || []);
+      console.log("query", query);
+    } catch (error) {
+      console.error(error);
+      toast.error(`Cannot ${selectedCategory ? "Update" : "Create"} Category | ${error}`);
+    } finally {
+      modalManageCategory.close();
+    }
   };
 
-  useEffect(() => {
-    fetchIncomes();
-  }, []);
+  const handleRemoveCategory = async () => {
+    try {
+      if (selectedCategory) {
+        const { error } = await deleteCategory(selectedCategory.category_id);
+        if (error) throw Error(error.message);
+
+        modalDeleteCategory.close();
+        fetchIncomes();
+        toast.success(`Category ${selectedCategory.category_title} deleted!`);
+      }
+    } catch (error) {
+      toast.error(`Cannot delete category`, {
+        description: `${error}`,
+      });
+    }
+  };
 
   // Modal Handlers
   const handleOpenCreateTransaction = () => {
@@ -118,52 +182,93 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
     modalDeleteTransaction.open();
   };
 
-  return (
-    <Sheet onOpenChange={disclosure.toggle} open={disclosure.isOpen}>
-      <SheetContent
-        side={isDesktop ? "right" : "bottom"}
-        className={isDesktop ? "!max-w-[800px]" : "max-w-full"}
-      >
-        <SheetHeader className="my-4 w-full flex flex-col sm:flex-row space-between">
-          <Box className="flex-1">
-            <SheetTitle>Manage Income</SheetTitle>
-            <SheetDescription>
-              Roughly estimate your income after tax. Then, we do the budgeting for you.
-            </SheetDescription>
-          </Box>
-          <Button onClick={handleOpenCreateTransaction} className="flex gap-2">
-            <PlusIcon color="white" />
-            <div className="my-auto text-white">Add Income</div>
-          </Button>
-        </SheetHeader>
+  const handleOpenCreateCategory = () => {
+    setSelectedCategory(null);
+    modalManageCategory.open();
+  };
 
-        <TableTransactionView
-          withFilters={false}
-          dataTransaction={dataIncomeList || []}
-          handleOpenModalEdit={handleOpenEditTransaction}
-          handleOpenModalDelete={handleOpenDeleteTransaction}
-          tableCaption="Your income last 30 days"
-        />
-        <SheetFooter className="my-4">
-          Total Income:{" "}
-          {formatRupiah(
-            dataIncomeList
-              ? dataIncomeList?.map(item => item?.amount)?.reduce((a, b) => a + b, 0)
-              : 0
-          )}
-        </SheetFooter>
-      </SheetContent>
+  const handleOpenEditCategory = (item: ICategoryResponse) => {
+    setSelectedCategory(item);
+    modalManageCategory.open();
+  };
+
+  const handleOpenDeleteCategory = (item: ICategoryResponse) => {
+    setSelectedCategory(item);
+    modalDeleteCategory.open();
+  };
+
+  return (
+    <>
+      <Sheet onOpenChange={disclosure.toggle} open={disclosure.isOpen}>
+        <SheetContent
+          side={isDesktop ? "right" : "bottom"}
+          className={`${isDesktop ? "!max-w-[800px]" : "max-w-full"} overflow-auto max-h-full`}
+        >
+          <div className="">
+            <SheetHeader className="my-4 w-full flex flex-col sm:flex-row space-between">
+              <Box className="flex-1">
+                <SheetTitle>Income Stream</SheetTitle>
+                <SheetDescription>
+                  Here are your income stream. Try expand it more later!
+                </SheetDescription>
+              </Box>
+              <Button onClick={handleOpenCreateCategory} className="flex gap-2">
+                <PlusIcon color="white" />
+                <div className="my-auto text-white">Add Stream Income</div>
+              </Button>
+            </SheetHeader>
+
+            <TableCategoriesView
+              dataCategoryList={categoryListIncome}
+              handleOpenModalDelete={handleOpenDeleteCategory}
+              handleOpenModalEdit={handleOpenEditCategory}
+            />
+
+            <Separator className="my-4" />
+
+            <Box className="my-4 w-full flex flex-col gap-4 sm:flex-row space-between">
+              <Box className="flex-1">
+                <Box className="font-semibold text-lg">Manage Income</Box>
+                <div className="text-sm text-muted-foreground">
+                  Roughly estimate your income after tax. Then, we do the budgeting for you.
+                </div>
+              </Box>
+              <Button onClick={handleOpenCreateTransaction} className="flex gap-2">
+                <PlusIcon color="white" />
+                <div className="my-auto text-white">Add Income</div>
+              </Button>
+            </Box>
+
+            <TableTransactionView
+              withFilters={false}
+              dataTransaction={dataIncomeList || []}
+              handleOpenModalEdit={handleOpenEditTransaction}
+              handleOpenModalDelete={handleOpenDeleteTransaction}
+              tableCaption="Your income last 30 days"
+            />
+            <SheetFooter className="my-4">
+              Total Income:{" "}
+              {formatRupiah(
+                dataIncomeList
+                  ? dataIncomeList?.map(item => item?.amount)?.reduce((a, b) => a + b, 0)
+                  : 0
+              )}
+            </SheetFooter>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Modals */}
-
       {modalManageTransaction.isOpen && (
         <ModalManageTransaction
+          isExpense={false}
           role={selectedTransaction ? "edit" : "create"}
-          categoryList={dataIncomeList.map(item => {
+          categoryList={categoryListIncome.map(item => {
+            const { category_title, color_badge, category_id } = item;
             return {
-              id: item.category_id,
-              category_title: item.category_title,
-              colorBadge: item.color_badge,
+              category_title,
+              id: category_id,
+              colorBadge: color_badge as COLORS,
             };
           })}
           selectedTransaction={selectedTransaction}
@@ -174,13 +279,34 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
 
       {modalDeleteTransaction.isOpen && (
         <ModalManageTransaction
+          isExpense={false}
           role={"delete"}
           selectedTransaction={selectedTransaction}
           disclosure={modalDeleteTransaction}
           handleSubmit={handleRemoveTransaction}
         />
       )}
-    </Sheet>
+
+      {modalManageCategory.isOpen && (
+        <ModalManageCategory
+          isForExpense={false}
+          role={selectedCategory ? "edit" : "create"}
+          selectedCategory={selectedCategory}
+          disclosure={modalManageCategory}
+          handleSubmit={handleSubmitCategory}
+          processedColors={processedColors}
+        />
+      )}
+
+      {modalDeleteCategory.isOpen && (
+        <ModalManageCategory
+          role={"delete"}
+          selectedCategory={selectedCategory}
+          disclosure={modalDeleteCategory}
+          handleSubmit={handleRemoveCategory}
+        />
+      )}
+    </>
   );
 }
 

@@ -20,6 +20,7 @@ export interface IFormDataManageCategory {
 }
 
 interface IModalManageCategory {
+  isForExpense?: boolean;
   disclosure: UseDisclosureType;
   handleSubmit: (formData: any) => void;
   role: "delete" | "edit" | "create";
@@ -28,6 +29,7 @@ interface IModalManageCategory {
 }
 
 function ModalManageCategory({
+  isForExpense = true,
   disclosure,
   handleSubmit,
   role,
@@ -47,7 +49,7 @@ function ModalManageCategory({
         category_title: selectedCategory.category_title,
         color_badge: selectedCategory.color_badge as COLORS,
         description: selectedCategory.description,
-        percentage_amount: selectedCategory.percentage_amount,
+        percentage_amount: isForExpense ? selectedCategory.percentage_amount : 0,
       },
     }),
   });
@@ -102,30 +104,33 @@ function ModalManageCategory({
                 )}
               </Box>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="percentage" className="text-left">
-                Percentage Amount
-              </Label>
-              <Box className="col-span-3 space-y-1">
-                <Input
-                  type="number"
-                  id="percentage"
-                  {...register("percentage_amount", {
-                    required: { value: true, message: "Required" },
-                    min: { value: 1, message: "Please enter a positive number" },
-                    max: {
-                      value: 70,
-                      message: "It's better to have reasonable allocation for various budgets :)",
-                    },
-                  })}
-                />
-                {errors.percentage_amount && (
-                  <div className="text-red-500 text-sm">
-                    {errors?.percentage_amount?.message as any}
-                  </div>
-                )}
-              </Box>
-            </div>
+            {isForExpense && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="percentage" className="text-left">
+                  Percentage Amount
+                </Label>
+                <Box className="col-span-3 space-y-1">
+                  <Input
+                    type="number"
+                    id="percentage"
+                    {...register("percentage_amount", {
+                      required: { value: true, message: "Required" },
+                      min: { value: 1, message: "Please enter a positive number" },
+                      max: {
+                        value: 70,
+                        message: "It's better to have reasonable allocation for various budgets :)",
+                      },
+                    })}
+                  />
+                  {errors.percentage_amount && (
+                    <div className="text-red-500 text-sm">
+                      {errors?.percentage_amount?.message as any}
+                    </div>
+                  )}
+                </Box>
+              </div>
+            )}
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-left">
                 Choose Color

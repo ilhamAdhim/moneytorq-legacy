@@ -29,7 +29,6 @@ export const columns: ColumnDef<ICategoryResponse>[] = [
   {
     accessorKey: "transaction_type",
   },
-
   {
     accessorKey: "category_title",
     header: () => <div className="text-center"> Category Name </div>,
@@ -47,6 +46,15 @@ export const columns: ColumnDef<ICategoryResponse>[] = [
       );
     },
   },
+  {
+    accessorKey: "description",
+    header: () => <div className="text-center">Description</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("description") || "-"}</div>,
+  },
+];
+
+export const columnsExpenses: ColumnDef<ICategoryResponse>[] = [
+  ...columns,
   {
     accessorKey: "percentage_amount",
     header: ({ column }) => (
@@ -86,20 +94,17 @@ export const columns: ColumnDef<ICategoryResponse>[] = [
       return <div className={`text-center font-medium`}>{formatted}</div>;
     },
   },
-  {
-    accessorKey: "description",
-    header: () => <div className="text-center">Description</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("description") || "-"}</div>,
-  },
 ];
 
 interface ITableCategoriesView {
+  isExpense?: boolean;
   dataCategoryList: ICategoryResponse[];
   handleOpenModalEdit: (item: ICategoryResponse) => void;
   handleOpenModalDelete: (item: ICategoryResponse) => void;
 }
 
 function TableCategoriesView({
+  isExpense = true,
   dataCategoryList,
   handleOpenModalEdit,
   handleOpenModalDelete,
@@ -109,11 +114,12 @@ function TableCategoriesView({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const [rowSelection, setRowSelection] = useState({});
+  const columnToUse = isExpense ? columns : columnsExpenses;
 
   const table = useReactTable({
     data: dataCategoryList,
     columns: [
-      ...columns,
+      ...columnToUse,
       {
         id: "actions",
         enableHiding: false,
@@ -132,13 +138,13 @@ function TableCategoriesView({
                   className="hover:cursor-pointer"
                   onClick={() => handleOpenModalEdit(row.original)}
                 >
-                  Edit Transaction
+                  Edit Category
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="hover:cursor-pointer"
                   onClick={() => handleOpenModalDelete(row.original)}
                 >
-                  Delete Transaction
+                  Delete Category
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

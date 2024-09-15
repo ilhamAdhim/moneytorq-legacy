@@ -19,6 +19,7 @@ export interface IFormDataManageCategory {
   category_title?: string;
   color_badge?: COLORS;
   description?: string;
+  category_type?: "expenses" | "income";
 }
 
 interface ISheetManageCategory {

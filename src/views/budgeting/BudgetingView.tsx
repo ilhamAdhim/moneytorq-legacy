@@ -219,6 +219,7 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
           </Flex>
           <Flex className="flex-col flex-wrap sm:flex-row my-6 mx-8" gap="4">
             <TableCategoriesView
+              isExpense={false}
               dataCategoryList={categoryExpensesList}
               handleOpenModalEdit={handleOpenEditCategory}
               handleOpenModalDelete={handleOpenDeleteCategory}
