@@ -4,6 +4,14 @@ import { CalendarDateRangePicker } from "@/components/composites/DateRangePicker
 import OverviewScreen from "@/views/dashboard/OverviewScreen";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getTransactions } from "@/actions/transactions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "MoneytorQ | Dashboard",
+  icons: {
+    icon: "/moneytorq.png",
+  },
+};
 
 export default async function DashboardPage() {
   const supabase = createSupabaseServer();

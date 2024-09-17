@@ -1,7 +1,15 @@
 import { getCategories } from "@/actions/categories";
-import { getTotalIncomeLast30Days, getTransactions } from "@/actions/transactions";
+import { getTotalIncomeLast30Days } from "@/actions/transactions";
 import BudgetingView from "@/views/budgeting/BudgetingView";
 import { format, subDays } from "date-fns";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "MoneytorQ | Budgeting",
+  icons: {
+    icon: "/moneytorq.png",
+  },
+};
 
 async function BudgetingPage() {
   const {
