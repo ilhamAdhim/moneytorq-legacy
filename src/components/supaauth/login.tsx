@@ -20,7 +20,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import SocialAuth from "./SocialAuth";
 import { toast } from "sonner";
-import LoaderCustom from "../composites/Modals/Loaders";
+import { Spinner } from "@radix-ui/themes";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Invalid Email Address" }),
@@ -130,7 +130,7 @@ export function SignInForm({ redirectTo, isLoading, setIsLoading }: ISignIn) {
           type="submit"
           className="w-full h-8 bg-green-600 hover:bg-green-700 transition-all text-white flex items-center gap-2"
         >
-          {isLoading ? <LoaderCustom /> : "Continue"}
+          {isLoading ? <Spinner /> : "Continue"}
         </Button>
       </form>
       <div className="text-center text-sm">

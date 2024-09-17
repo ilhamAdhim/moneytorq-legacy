@@ -17,8 +17,6 @@ interface IGetTransactions {
   keyword?: string;
   startDate?: string;
   endDate?: string;
-  month?: number;
-  year?: number;
   type?: "income" | "expenses";
   orderBy?: "date" | "amount";
   orderDir?: "asc" | "desc";
@@ -29,17 +27,15 @@ const getTransactions = async ({
   limit,
   page,
   keyword,
-  month,
-  year,
   startDate,
   endDate,
   type,
   orderBy = "date",
   orderDir = "desc",
 }: IGetTransactions) => {
+  console.log("startDate", startDate);
+  console.log("endDate", endDate);
   const supabase = createSupabaseServer();
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
 
   let query = supabase.from("v_transactions").select();
 
@@ -47,12 +43,6 @@ const getTransactions = async ({
   if (keyword) query = query.ilike("title", keyword);
   if (type) query.eq("transaction_type", type);
   if (orderBy) query.order(orderBy, { ascending: orderDir === "asc" ? true : false });
-
-  if (month || year) {
-    query = query
-      .gte("date", `${year || currentYear}-${month || currentMonth}-01`)
-      .lte("date", `${year || currentYear}-${month || currentMonth}-01`);
-  }
 
   if (startDate) query.gte("date", format(startDate, "yyyy-MM-dd"));
   if (endDate) query.lte("date", format(endDate, "yyyy-MM-dd"));

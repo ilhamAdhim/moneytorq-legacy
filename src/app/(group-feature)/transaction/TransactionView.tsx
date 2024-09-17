@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
 import { MONTHS } from "@/constants";
-import { isAfter } from "date-fns";
+import { format, isAfter, lastDayOfMonth } from "date-fns";
 import TableTransactionView from "./TableTransaction";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import {
   getTransactions,
   updateTransaction,
 } from "@/actions/transactions";
-import { Flex } from "@radix-ui/themes";
+import { Box, Flex, Spinner } from "@radix-ui/themes";
 import ModalManageCategory, {
   IFormDataManageCategory,
 } from "@/components/composites/Modals/ModalManageCategory";
@@ -38,6 +38,7 @@ import { createCategory, getCategories } from "@/actions/categories";
 import { COLORS } from "@/types/common";
 import { ICategory, ICategoryResponse } from "@/types/category";
 import ResponsiveManageTransaction from "@/components/composites/ResponsiveView/ResponsiveManageTransaction";
+import LoaderCustom from "@/components/composites/Modals/Loaders";
 
 const availableYearsHistory = [2024, 2023, 2022];
 
@@ -47,6 +48,7 @@ interface ITransactionView {
 
 function TransactionView({ dataTransaction }: ITransactionView) {
   const [transactionList, setTransactionList] = useState<ITransaction[]>([]);
+  const [isLoadingTransaction, setIsLoadingTransaction] = useState(false);
 
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getMonth()]);
@@ -70,10 +72,32 @@ function TransactionView({ dataTransaction }: ITransactionView) {
     console.log(processMonths, selectedYear);
   }, [processMonths, selectedYear]);
 
-  const refetchDataTransaction = async () => {
-    const { data } = await getTransactions({});
-    if (data) setTransactionList(data);
+  const refetchDataTransaction = async (params?: { startDate: string; endDate: string }) => {
+    setIsLoadingTransaction(true);
+    const { data } = await getTransactions({
+      ...(params?.startDate && { startDate: params?.startDate }),
+      ...(params?.endDate && { endDate: params?.endDate }),
+    });
+    if (data) {
+      setIsLoadingTransaction(false);
+      setTransactionList(data);
+    }
   };
+
+  useEffect(() => {
+    const convertToMonthNumber = MONTHS.findIndex(item => item === selectedMonth) + 1;
+    const month =
+      convertToMonthNumber >= 10 ? `${convertToMonthNumber}` : `0${convertToMonthNumber}`;
+    const startDate = format(
+      new Date(`${selectedYear || new Date().getUTCFullYear()}-${month}-01`),
+      "yyyy-MM-dd"
+    );
+    const endDate = format(lastDayOfMonth(startDate), "yyyy-MM-dd");
+    console.log("endDate", endDate);
+    console.log("startDate", startDate);
+
+    refetchDataTransaction({ endDate, startDate });
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     if (dataTransaction) setTransactionList(dataTransaction);
@@ -277,14 +301,20 @@ function TransactionView({ dataTransaction }: ITransactionView) {
             <CardTitle>Transaction Records</CardTitle>
           </CardHeader>
           <CardContent className="px-8">
-            <TableTransactionView
-              withFilters
-              dataTransaction={transactionList || []}
-              categoryList={categoryList}
-              modalManageCategory={modalManageCategory}
-              handleOpenModalEdit={handleOpenEditTransaction}
-              handleOpenModalDelete={handleOpenDeleteTransaction}
-            />
+            {isLoadingTransaction ? (
+              <Box className="h-[300px]">
+                <LoaderCustom />
+              </Box>
+            ) : (
+              <TableTransactionView
+                withFilters
+                dataTransaction={transactionList || []}
+                categoryList={categoryList}
+                modalManageCategory={modalManageCategory}
+                handleOpenModalEdit={handleOpenEditTransaction}
+                handleOpenModalDelete={handleOpenDeleteTransaction}
+              />
+            )}
           </CardContent>
         </Card>
       </div>
