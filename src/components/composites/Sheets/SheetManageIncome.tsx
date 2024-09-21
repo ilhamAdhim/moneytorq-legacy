@@ -138,9 +138,8 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
       if (selectedCategory) query = await updateCategory(payload, selectedCategory.category_id);
       else query = await createCategory(payload);
       fetchIncomes();
+      fetchCategoryIncome();
       toast.success(`Category ${selectedCategory ? "Updated" : "Created"}!`);
-
-      console.log("query", query);
     } catch (error) {
       console.error(error);
       toast.error(`Cannot ${selectedCategory ? "Update" : "Create"} Category | ${error}`);
@@ -157,6 +156,7 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
 
         modalDeleteCategory.close();
         fetchIncomes();
+        fetchCategoryIncome();
         toast.success(`Category ${selectedCategory.category_title} deleted!`);
       }
     } catch (error) {

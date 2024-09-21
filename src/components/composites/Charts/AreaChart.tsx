@@ -51,18 +51,18 @@ export function AreaChartCustom({ data }: IOverview) {
           <Area
             dataKey="income"
             type="natural"
-            fill="var(--color-income)"
+            fill="var(--color-budget)"
             fillOpacity={0.4}
-            stroke="var(--color-income)"
+            stroke="var(--color-budget)"
             stackId="a"
           />
           <Area
             dataKey="spent"
             type="natural"
-            fill="var(--color-spent)"
+            fill="var(--color-expense)"
             fillOpacity={0.4}
-            stroke="var(--color-spent)"
-            stackId="a"
+            stroke="var(--color-expense)"
+            stackId="b"
           />
           <ChartLegend content={<ChartLegendContent />} />
         </AreaChart>

@@ -16,16 +16,16 @@ const chartData = [
   { category: "Business", budget: 237, real: 120 },
   { category: "Personal", budget: 73, real: 190 },
   { category: "Entertainment", budget: 209, real: 130 },
-  { category: "June", budget: 214, real: 140 },
+  { category: "June", budget: 314, real: 440 },
 ];
 const chartConfig = {
   budget: {
     label: "Budget",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1))",
   },
   real: {
     label: "Real",
-    color: "hsl(var(--chart-2))",
+    color: "var(--chart-10))",
   },
 } satisfies ChartConfig;
 
@@ -49,10 +49,10 @@ export function RadarChartCustom({
           }}
         >
           <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
-          <PolarAngleAxis dataKey="category" />
+          <PolarAngleAxis dataKey="category" tickCount={chartData.length} />
           <PolarGrid gridType="circle" />
           <Radar dataKey="budget" fill="var(--color-budget)" fillOpacity={0.6} />
-          <Radar dataKey="real" fill="var(--color-real)" />
+          <Radar dataKey="real" fill="var(--color-expense)" />
           <ChartLegend className="mt-8" content={<ChartLegendContent />} />
         </RadarChart>
       </ChartContainer>

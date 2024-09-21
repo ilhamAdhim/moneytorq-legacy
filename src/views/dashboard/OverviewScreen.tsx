@@ -9,40 +9,7 @@ import { TypographyH3 } from "@/components/ui/Typography/Heading3";
 import { ITransaction } from "@/types/transaction";
 import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
-
-// Data mock
-const data = [
-  {
-    month: "January",
-    income: Math.floor(Math.random() * 10000000) + 1000,
-    spent: Math.floor(Math.random() * 10000000) + 1000,
-  },
-  {
-    month: "February",
-    income: Math.floor(Math.random() * 10000000) + 1000,
-    spent: Math.floor(Math.random() * 10000000) + 1000,
-  },
-  {
-    month: "March",
-    income: Math.floor(Math.random() * 10000000) + 1000,
-    spent: Math.floor(Math.random() * 10000000) + 1000,
-  },
-  {
-    month: "April",
-    income: Math.floor(Math.random() * 10000000) + 1000,
-    spent: Math.floor(Math.random() * 10000000) + 1000,
-  },
-  {
-    month: "May",
-    income: Math.floor(Math.random() * 10000000) + 1000,
-    spent: Math.floor(Math.random() * 10000000) + 1000,
-  },
-  {
-    month: "June",
-    income: Math.floor(Math.random() * 10000000) + 1000,
-    spent: Math.floor(Math.random() * 10000000) + 1000,
-  },
-];
+import { useMemo } from "react";
 
 const dataStats = [
   {
@@ -73,9 +40,26 @@ const dataStats = [
 
 interface IOverviewScreen {
   dataTransaction: ITransaction[];
+  dataSummary?: {
+    user_id: string;
+    total_income: number;
+    total_expenses: number;
+    month_name: string;
+  }[];
 }
 
-function OverviewScreen({ dataTransaction }: IOverviewScreen) {
+function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
+  const dataAreaChart = useMemo(() => {
+    return dataSummary?.map(item => {
+      const { month_name, total_income, total_expenses } = item;
+      return {
+        month: month_name,
+        income: total_income,
+        spent: total_expenses,
+      };
+    });
+  }, [dataSummary]);
+
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -99,7 +83,7 @@ function OverviewScreen({ dataTransaction }: IOverviewScreen) {
             <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2 p-8 md:min-h-[400px] min-h-auto">
-            <AreaChartCustom data={data} />
+            <AreaChartCustom data={dataAreaChart} />
           </CardContent>
         </Card>
         <Card className="md:w-2/5 w-full">

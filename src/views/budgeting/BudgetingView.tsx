@@ -53,10 +53,10 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
   const dataPieChart = useMemo(() => {
     const dataCategory = categoryExpensesList.map((item, id) => {
       return {
-        id: id + 1,
+        id: id + 2,
         label: item.category_title,
         value: item.percentage_amount,
-        fill: `var(--chart-${id + 1})`,
+        fill: `var(--chart-${id + 2})`,
       };
     });
 
@@ -172,7 +172,7 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
           <Flex gap="4">
             <div className="my-auto">
               <Badge className="p-1 rounded-lg" color="green">
-                {formatRupiah(valueIncome)}
+                {formatRupiah(valueIncome || 0)}
               </Badge>
             </div>
             <Button

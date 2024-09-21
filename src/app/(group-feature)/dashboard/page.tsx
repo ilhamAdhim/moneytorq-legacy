@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDateRangePicker } from "@/components/composites/DateRangePicker";
 import OverviewScreen from "@/views/dashboard/OverviewScreen";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { getTransactions } from "@/actions/transactions";
+import { getFinanceSummary, getTransactions } from "@/actions/transactions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -34,6 +34,7 @@ export default async function DashboardPage() {
     type: "income",
   });
 
+  const { data: dataSummary } = await getFinanceSummary();
   return (
     <>
       <div className="flex flex-col sm:flex-row items-center justify-between space-y-2">
@@ -44,26 +45,11 @@ export default async function DashboardPage() {
           <CalendarDateRangePicker />
         </div>
       </div>
-      {/* <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="md:inline flex md:justify-start justify-center">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="reports" disabled>
-            Reports
-          </TabsTrigger>
-          <TabsTrigger value="notifications" disabled>
-            Notifications
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-        </TabsContent>
-        <TabsContent value="analytics" className="space-y-4">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Provident corrupti quia,
-          perferendis omnis quas, vel asperiores fuga incidunt animi rem culpa architecto quae
-          aspernatur dolores esse neque sint obcaecati! Hic?
-        </TabsContent>
-      </Tabs> */}
-      <OverviewScreen dataTransaction={[...(dataExpenses || []), ...(dataIncome || [])]} />
+
+      <OverviewScreen
+        dataSummary={dataSummary || []}
+        dataTransaction={[...(dataExpenses || []), ...(dataIncome || [])]}
+      />
     </>
   );
 }

@@ -67,6 +67,13 @@ const getTotalIncomeLast30Days = async ({
   return data;
 };
 
+const getFinanceSummary = async () => {
+  const supabase = createSupabaseServer();
+
+  const data = await supabase.from("v_finance_summary").select();
+  return data;
+};
+
 const getTransactionByID = async (id: number) => {
   const supabase = createSupabaseServer();
   const query = supabase.from("v_transactions").select().eq("id", id).single();
@@ -122,4 +129,5 @@ export {
   updateTransaction,
   deleteTransaction,
   getTotalIncomeLast30Days,
+  getFinanceSummary,
 };

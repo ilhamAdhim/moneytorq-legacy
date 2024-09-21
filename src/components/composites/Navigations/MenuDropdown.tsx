@@ -15,11 +15,7 @@ import React from "react";
 import { FaUser } from "react-icons/fa6";
 
 function MenuDropdown({ navList }: INavList) {
-  const handleLogout = async () => {
-    console.log("logging out");
-    const res = await signOut();
-    console.log("res", res);
-  };
+  const handleLogout = async () => await signOut();
 
   return (
     <DropdownMenu>

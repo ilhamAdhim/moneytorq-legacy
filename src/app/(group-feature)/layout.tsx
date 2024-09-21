@@ -49,7 +49,6 @@ async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
-  console.log("user", user);
   return (
     <>
       <div className="flex-col md:flex">

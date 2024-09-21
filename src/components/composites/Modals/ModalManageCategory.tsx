@@ -138,6 +138,12 @@ function ModalManageCategory({
               <div className="col-span-3">
                 <Controller
                   name="color_badge"
+                  rules={{
+                    required: {
+                      message: "Please choose color badge",
+                      value: true,
+                    },
+                  }}
                   control={control as any}
                   render={({ field }) => (
                     // <FormItem>
@@ -164,7 +170,7 @@ function ModalManageCategory({
                     // </FormItem>
                     <SearchableSelect
                       data={processedColors || []}
-                      selectedValue={field.value}
+                      selectedValue={field.value ?? ""}
                       entity="Colors"
                       setSelectedValue={field.onChange}
                     />

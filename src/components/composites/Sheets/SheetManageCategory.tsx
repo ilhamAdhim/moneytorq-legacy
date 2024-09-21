@@ -138,6 +138,12 @@ function SheetManageCategory({
               <div className="col-span-3">
                 <Controller
                   name="color_badge"
+                  rules={{
+                    required: {
+                      message: "Please choose color badge",
+                      value: true,
+                    },
+                  }}
                   control={control as any}
                   render={({ field }) => (
                     <SearchableSelect
