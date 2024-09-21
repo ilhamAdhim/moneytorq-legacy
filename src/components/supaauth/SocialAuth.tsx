@@ -19,7 +19,7 @@ export default function Social({ redirectTo, isLoading, setIsLoading }: ISocial)
     setIsLoading(true);
     const supabase = createSupabaseBrowser();
     try {
-      await supabase.auth.signInWithOAuth({
+      const res = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: window.location.origin + `/auth/callback?next=` + redirectTo,

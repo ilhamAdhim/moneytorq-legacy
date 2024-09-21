@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,6 +36,10 @@ interface ISignIn {
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    console.log("isLoading", isLoading);
+  }, [isLoading]);
+
   return (
     <div className="w-full sm:w-[26rem] shadow sm:p-5 border dark:border-zinc-800 rounded-md">
       <div className="p-5 space-y-5">
@@ -50,12 +54,12 @@ export default function SignIn() {
           <p className="text-sm font-bold">Welcome back! Please sign in to continue</p>
         </div>
         <SocialAuth redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
-        <div className="flex items-center gap-5">
+        {/* <div className="flex items-center gap-5">
           <div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
           <div className="text-sm">or</div>
           <div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
         </div>
-        <SignInForm redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
+        <SignInForm redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} /> */}
       </div>
     </div>
   );

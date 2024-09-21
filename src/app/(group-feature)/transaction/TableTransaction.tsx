@@ -267,7 +267,7 @@ function TableTransactionView({
                         <TagsIcon className="h-4 w-4 mr-2" /> Categories
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className="max-h-[250px] overflow-auto">
                       {categoryList?.map(item => (
                         <DropdownMenuItem key={item.id}>
                           <Badge className="p-1 rounded-lg" color={item.colorBadge as any}>

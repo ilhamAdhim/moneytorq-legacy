@@ -42,10 +42,9 @@ export default async function DashboardPage() {
         </h2>
         <div className="flex items-center space-x-2">
           <CalendarDateRangePicker />
-          <Button>Download</Button>
         </div>
       </div>
-      <Tabs defaultValue="overview" className="space-y-4">
+      {/* <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="md:inline flex md:justify-start justify-center">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -57,14 +56,14 @@ export default async function DashboardPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
-          <OverviewScreen dataTransaction={[...(dataExpenses || []), ...(dataIncome || [])]} />
         </TabsContent>
         <TabsContent value="analytics" className="space-y-4">
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Provident corrupti quia,
           perferendis omnis quas, vel asperiores fuga incidunt animi rem culpa architecto quae
           aspernatur dolores esse neque sint obcaecati! Hic?
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
+      <OverviewScreen dataTransaction={[...(dataExpenses || []), ...(dataIncome || [])]} />
     </>
   );
 }

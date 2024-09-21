@@ -1,4 +1,5 @@
 import { MainNav } from "@/components/composites/MainNav";
+import MenuDropdown from "@/components/composites/Navigations/MenuDropdown";
 import ThemeSwitcher from "@/components/composites/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,38 +41,6 @@ const navList = [
   // },
 ];
 
-function MenuDropdown({ navList }: INavList) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-          <FaUser />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-
-        {navList?.map((item, idx) => (
-          <DropdownMenuItem key={idx} asChild>
-            <Link
-              key={idx}
-              href={item.href}
-              className={`text-sm transition-colors hover:text-primary`}
-            >
-              {item.label}
-            </Link>
-          </DropdownMenuItem>
-        ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">Logout</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
   // All protected routes
   const supabase = createSupabaseServer();
@@ -80,7 +49,7 @@ async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
-
+  console.log("user", user);
   return (
     <>
       <div className="flex-col md:flex">

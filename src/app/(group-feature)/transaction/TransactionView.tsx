@@ -93,8 +93,6 @@ function TransactionView({ dataTransaction }: ITransactionView) {
       "yyyy-MM-dd"
     );
     const endDate = format(lastDayOfMonth(startDate), "yyyy-MM-dd");
-    console.log("endDate", endDate);
-    console.log("startDate", startDate);
 
     refetchDataTransaction({ endDate, startDate });
   }, [selectedMonth, selectedYear]);
@@ -166,7 +164,9 @@ function TransactionView({ dataTransaction }: ITransactionView) {
       const {
         queryCategories: { data: dataCategory },
         queryTotalPercentage: { data: dataTotalPercent },
-      } = await getCategories({});
+      } = await getCategories({
+        type: "expenses",
+      });
       if (dataCategory)
         setCategoryList(
           dataCategory?.map((item: ICategoryResponse) => {

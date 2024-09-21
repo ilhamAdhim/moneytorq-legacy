@@ -33,8 +33,6 @@ const getTransactions = async ({
   orderBy = "date",
   orderDir = "desc",
 }: IGetTransactions) => {
-  console.log("startDate", startDate);
-  console.log("endDate", endDate);
   const supabase = createSupabaseServer();
 
   let query = supabase.from("v_transactions").select();

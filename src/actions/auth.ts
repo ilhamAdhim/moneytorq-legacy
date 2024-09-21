@@ -12,3 +12,10 @@ export const verifyOtp = async (data: { email: string; otp: string; type: string
   });
   return JSON.stringify(res);
 };
+
+export const signOut = async () => {
+  const supabase = createSupabaseServer();
+
+  const res = await supabase.auth.signOut();
+  return JSON.stringify(res);
+};
