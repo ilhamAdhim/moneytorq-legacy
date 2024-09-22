@@ -74,6 +74,24 @@ const getFinanceSummary = async () => {
   return data;
 };
 
+const getRadarChartExpenses = async ({
+  startDate,
+  endDate,
+}: {
+  startDate?: string;
+  endDate?: string;
+}) => {
+  const supabase = createSupabaseServer();
+
+  let query = supabase.from("v_ranked_expenses_summary").select();
+  if (startDate) query.gte("expense_month", format(startDate, "yyyy-MM-dd"));
+  if (endDate) query.lte("expense_month", format(endDate, "yyyy-MM-dd"));
+
+  const data = await query;
+
+  return data;
+};
+
 const getTransactionByID = async (id: number) => {
   const supabase = createSupabaseServer();
   const query = supabase.from("v_transactions").select().eq("id", id).single();
@@ -130,4 +148,5 @@ export {
   deleteTransaction,
   getTotalIncomeLast30Days,
   getFinanceSummary,
+  getRadarChartExpenses,
 };

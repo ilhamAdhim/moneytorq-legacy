@@ -9,8 +9,8 @@ import { Badge } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { COLORS } from "@/types/common";
-import { useAtom } from "jotai/react";
-import { categories } from "@/store";
+import { useAtom, useAtomValue } from "jotai/react";
+import { categories, PROCESSED_COLORS_ATOM } from "@/store";
 
 interface IModalNewCategories {
   isModalOpenNewCategories: boolean;
@@ -21,6 +21,8 @@ function ModalNewCategory({
   isModalOpenNewCategories,
   setIsModalOpenNewCategories,
 }: IModalNewCategories) {
+  const COLORS = useAtomValue(PROCESSED_COLORS_ATOM);
+
   const { register, handleSubmit, watch } = useForm();
   const watchCategoryName = watch("category_title");
 
@@ -28,17 +30,6 @@ function ModalNewCategory({
   const [categoryList, setCategories] = useAtom(categories);
 
   const [selectedValue, setSelectedValue] = useState<COLORS>("gray");
-  const [processedColors, setProcessedColors] = useState<{ value: string; label: string }[]>([]);
-  useEffect(() => {
-    setProcessedColors(
-      COLORS_OPTION.map(item => {
-        return {
-          value: item,
-          label: item,
-        };
-      })
-    );
-  }, []);
 
   const onSubmit = (formData: any) => {
     setIsSubmitting(true);
@@ -86,7 +77,7 @@ function ModalNewCategory({
             </Label>
             <div className="col-span-3">
               <SearchableSelect
-                data={processedColors}
+                data={COLORS}
                 selectedValue={selectedValue}
                 entity="Colors"
                 setSelectedValue={setSelectedValue}

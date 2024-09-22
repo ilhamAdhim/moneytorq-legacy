@@ -9,7 +9,7 @@ import { useDisclosure } from "@/hooks/useDisclosure";
 import { ICategoryResponse } from "@/types/category";
 import { formatRupiah } from "@/utils/common";
 import { Box, Flex } from "@radix-ui/themes";
-import { Edit2Icon, PlusIcon } from "lucide-react";
+import { Edit2Icon, PlusIcon, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import PieChartSpent from "@/app/(group-feature)/transaction/PiechartSpent";
@@ -164,10 +164,10 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Budgeting</h2>
+        <h2 className="text-xl lg:text-3xl font-bold tracking-tight">Budgeting</h2>
         <Flex gap="4" className="justify-between md:justify-start">
           <Box className="my-auto">
-            <TypographyH4> Fixed Income </TypographyH4>
+            <TypographyH4> Your Income </TypographyH4>
           </Box>
           <Flex gap="4">
             <div className="my-auto">
@@ -193,7 +193,10 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
       <Flex className="flex-col lg:flex-row" gap="6">
         <Card className="w-full lg:w-1/2">
           <CardHeader>
-            <CardTitle> Overview </CardTitle>
+            <CardTitle className="flex gap-4">
+              <Search />
+              Overview{" "}
+            </CardTitle>
           </CardHeader>
           <CardContent className="pl-2 lg:h-[400px]">
             <PieChartSpent data={dataPieChart} />

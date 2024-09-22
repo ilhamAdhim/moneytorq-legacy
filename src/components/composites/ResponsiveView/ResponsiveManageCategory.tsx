@@ -5,6 +5,8 @@ import SheetManageCategory from "../Sheets/SheetManageCategory";
 import ModalManageCategory from "../Modals/ModalManageCategory";
 import { COLORS_OPTION } from "@/constants";
 import { useState, useEffect } from "react";
+import { PROCESSED_COLORS_ATOM } from "@/store";
+import { useAtomValue } from "jotai/react";
 
 interface IResponsiveManageCategory {
   disclosure: UseDisclosureType;
@@ -19,19 +21,8 @@ function ResponsiveManageCategory({
   role,
   selectedCategory,
 }: IResponsiveManageCategory) {
+  const COLORS = useAtomValue(PROCESSED_COLORS_ATOM);
   const { isDesktop } = useScreenDetector();
-
-  const [processedColors, setProcessedColors] = useState<{ value: string; label: string }[]>([]);
-  useEffect(() => {
-    setProcessedColors(
-      COLORS_OPTION.map(item => {
-        return {
-          value: item,
-          label: item,
-        };
-      })
-    );
-  }, []);
 
   if (!isDesktop)
     return (
@@ -40,7 +31,7 @@ function ResponsiveManageCategory({
         selectedCategory={selectedCategory}
         disclosure={disclosure}
         handleSubmit={handleSubmit}
-        processedColors={processedColors}
+        processedColors={COLORS}
       />
     );
 
@@ -50,7 +41,7 @@ function ResponsiveManageCategory({
       selectedCategory={selectedCategory}
       disclosure={disclosure}
       handleSubmit={handleSubmit}
-      processedColors={processedColors}
+      processedColors={COLORS}
     />
   );
 }

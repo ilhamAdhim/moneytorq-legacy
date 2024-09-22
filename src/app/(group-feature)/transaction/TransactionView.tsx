@@ -12,14 +12,12 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
 import { MONTHS } from "@/constants";
-import { format, isAfter, lastDayOfMonth } from "date-fns";
+import { format, formatDate, isAfter, lastDayOfMonth } from "date-fns";
 import TableTransactionView from "./TableTransaction";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
-import ModalManageTransaction, {
-  IFormDataManageTransaction,
-} from "@/components/composites/Modals/ModalManageTransaction";
+import { Banknote, Calculator, PlusIcon, WalletCards } from "lucide-react";
+import { IFormDataManageTransaction } from "@/components/composites/Modals/ModalManageTransaction";
 import { RadarChartCustom } from "@/components/composites/Charts/RadarChart";
 import { ITransaction } from "@/types/transaction";
 import { useDisclosure } from "@/hooks/useDisclosure";
@@ -27,6 +25,7 @@ import { toast } from "sonner";
 import {
   createTransaction,
   deleteTransaction,
+  getRadarChartExpenses,
   getTransactions,
   updateTransaction,
 } from "@/actions/transactions";
@@ -39,15 +38,28 @@ import { COLORS } from "@/types/common";
 import { ICategory, ICategoryResponse } from "@/types/category";
 import ResponsiveManageTransaction from "@/components/composites/ResponsiveView/ResponsiveManageTransaction";
 import LoaderCustom from "@/components/composites/Modals/Loaders";
+import { PROCESSED_COLORS_ATOM } from "@/store";
+import { useAtomValue } from "jotai/react";
 
 const availableYearsHistory = [2024, 2023, 2022];
 
+interface IExpenseVSBudget {
+  user_id: string;
+  month_name: string;
+  category_title: string;
+  total_expenses: number;
+  budgeted_amount: number;
+}
 interface ITransactionView {
   dataTransaction: ITransaction[];
+  dataRadarChart: IExpenseVSBudget[];
 }
 
-function TransactionView({ dataTransaction }: ITransactionView) {
+function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) {
+  const COLORS = useAtomValue(PROCESSED_COLORS_ATOM);
+
   const [transactionList, setTransactionList] = useState<ITransaction[]>([]);
+  const [expenseVSBudget, setExpenseVSBudget] = useState<IExpenseVSBudget[]>([]);
   const [isLoadingTransaction, setIsLoadingTransaction] = useState(false);
 
   const [selectedYear, setSelectedYear] = useState("2024");
@@ -68,9 +80,15 @@ function TransactionView({ dataTransaction }: ITransactionView) {
     });
   }, [selectedYear]);
 
-  useEffect(() => {
-    console.log(processMonths, selectedYear);
-  }, [processMonths, selectedYear]);
+  const processedDataChart = useMemo(() => {
+    return (expenseVSBudget || dataRadarChart).map(item => {
+      return {
+        category: item.category_title,
+        budget: item.budgeted_amount,
+        expenses: item.total_expenses,
+      };
+    });
+  }, [dataRadarChart, expenseVSBudget]);
 
   const refetchDataTransaction = async (params?: { startDate: string; endDate: string }) => {
     setIsLoadingTransaction(true);
@@ -81,6 +99,18 @@ function TransactionView({ dataTransaction }: ITransactionView) {
     if (data) {
       setIsLoadingTransaction(false);
       setTransactionList(data);
+    }
+  };
+
+  const refetchRadarChart = async (params?: { startDate: string; endDate: string }) => {
+    // setIsLoadingTransaction(true);
+    const { data } = await getRadarChartExpenses({
+      ...(params?.startDate && { startDate: params?.startDate || "" }),
+      ...(params?.endDate && { endDate: params?.endDate || "" }),
+    });
+    if (data) {
+      // setIsLoadingTransaction(false);
+      setExpenseVSBudget(data);
     }
   };
 
@@ -95,6 +125,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
     const endDate = format(lastDayOfMonth(startDate), "yyyy-MM-dd");
 
     refetchDataTransaction({ endDate, startDate });
+    refetchRadarChart({ endDate, startDate });
   }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
@@ -222,7 +253,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
   return (
     <>
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Transaction</h2>
+        <h2 className="text-xl lg:text-3xl font-bold tracking-tight">Transaction</h2>
         <div className="flex items-center space-x-2 gap-4">
           <Button onClick={handleOpenCreateTransaction} className="flex gap-2">
             <PlusIcon color="white" />
@@ -288,17 +319,34 @@ function TransactionView({ dataTransaction }: ITransactionView) {
       <div className={`flex flex-col md:flex-row gap-4`}>
         <Card className="w-full md:w-2/5">
           <CardHeader>
-            <CardTitle>
-              Money Spent at {selectedMonth} {selectedYear}{" "}
+            <CardTitle className="flex gap-4">
+              <Calculator />
+              Money Spent at {selectedMonth} {selectedYear}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pl-2 h-full sm:h-[400px]">
-            <RadarChartCustom />
+          <CardContent className="pl-2 h-full sm:max-h-[400px]">
+            <RadarChartCustom data={processedDataChart} />
+            <Box className="flex flex-col gap-4 my-4 pt-4 text-sm">
+              <div className="flex items-center justify-center gap-2 font-medium leading-none">
+                Your top 6 categories
+                <WalletCards className="h-4 w-4" />
+              </div>
+              <div className="flex items-center justify-center gap-2 leading-none text-muted-foreground">
+                {formatDate(new Date(`01-${selectedMonth}-${selectedYear}`), "dd MMM yyyy")} -{" "}
+                {formatDate(
+                  new Date(`${lastDayOfMonth(selectedMonth)}-${selectedMonth}-${selectedYear}`),
+                  "dd MMM yyyy"
+                )}
+              </div>
+            </Box>
           </CardContent>
         </Card>
         <Card className="w-full md:w-3/5">
           <CardHeader>
-            <CardTitle>Transaction Records</CardTitle>
+            <CardTitle className="flex gap-4">
+              <Banknote />
+              Transaction Records
+            </CardTitle>
           </CardHeader>
           <CardContent className="px-8">
             {isLoadingTransaction ? (
@@ -345,6 +393,7 @@ function TransactionView({ dataTransaction }: ITransactionView) {
           role={"create"}
           disclosure={modalManageCategory}
           handleSubmit={handleSubmitCreateCategory}
+          processedColors={COLORS}
         />
       )}
     </>

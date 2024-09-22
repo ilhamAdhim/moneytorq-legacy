@@ -39,12 +39,16 @@ import { Separator } from "@/components/ui/separator";
 import ModalManageCategory from "../Modals/ModalManageCategory";
 import { IFormDataManageCategory } from "./SheetManageCategory";
 import { COLORS_OPTION } from "@/constants";
+import { useAtomValue } from "jotai/react";
+import { PROCESSED_COLORS_ATOM } from "@/store";
 
 interface ISheetManageIncome {
   disclosure: UseDisclosureType;
 }
 
 function SheetManageIncome({ disclosure }: ISheetManageIncome) {
+  const COLORS = useAtomValue(PROCESSED_COLORS_ATOM);
+
   const { isDesktop } = useScreenDetector();
   const [dataIncomeList, setDataIncomeList] = useState<ITransaction[]>([]);
   const [categoryListIncome, setCategoryListIncome] = useState<ICategoryResponse[]>([]);
@@ -56,18 +60,6 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
 
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<ICategoryResponse | null>(null);
-
-  const [processedColors, setProcessedColors] = useState<{ value: string; label: string }[]>([]);
-  useEffect(() => {
-    setProcessedColors(
-      COLORS_OPTION.map(item => {
-        return {
-          value: item,
-          label: item,
-        };
-      })
-    );
-  }, []);
 
   const fetchIncomes = async () => {
     const { data, error } = await getTransactions({
@@ -294,7 +286,7 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
           selectedCategory={selectedCategory}
           disclosure={modalManageCategory}
           handleSubmit={handleSubmitCategory}
-          processedColors={processedColors}
+          processedColors={COLORS}
         />
       )}
 
