@@ -4,6 +4,7 @@ import { useAtomValue } from "jotai/react";
 import { transactionRecords } from "@/store";
 import { ITransaction } from "@/types/transaction";
 import { formatRupiah } from "@/utils/common";
+import { format } from "date-fns";
 
 interface IRecentTransactionView {
   data: ITransaction[];
@@ -17,7 +18,7 @@ export function RecentTransaction({ data }: IRecentTransactionView) {
           <div key={item.id} className="flex items-center">
             <div className="ml-4 space-y-1">
               <p className="text-sm font-medium leading-none">{item.title}</p>
-              <p className="text-sm text-muted-foreground">{item.date}</p>
+              <p className="text-sm text-muted-foreground">{format(item.date, "dd MMM yyyy")}</p>
             </div>
             <div
               className={`ml-auto font-medium ${

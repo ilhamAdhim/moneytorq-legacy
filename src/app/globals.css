@@ -109,6 +109,7 @@ body {
     --chart-13: hsla(122, 30%, 33%, 1);
     --chart-14: hsla(131, 25%, 31%, 1);
     --chart-15: hsla(148, 19%, 28%, 1);
+    --button-solid: hsla(106, 77%, 43%, 1);
     --color-budget: hsla(110, 52%, 38%, 1);
     --color-expense: rgb(216, 3, 3);
   }
@@ -129,6 +130,7 @@ body {
     --chart-13: hsla(105, 92%, 47%, 1);
     --chart-14: hsla(104, 96%, 49%, 1);
     --chart-15: hsla(104, 100%, 50%, 1);
+    --button-solid: hsla(110, 52%, 38%, 1);
     --color-budget: hsla(106, 77%, 43%, 1);
     --color-expense: rgb(133, 0, 0);
   }

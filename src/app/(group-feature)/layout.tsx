@@ -51,9 +51,9 @@ async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
   if (!user) redirect("/login");
   return (
     <>
-      <div className="flex-col md:flex">
+      <div className="flex-col md:flex top-0 sticky bg-inherit z-10">
         <div className="border-b">
-          <div className="flex justify-between h-16 items-center px-4">
+          <div className="flex justify-between h-16 items-center px-4 ">
             <Image
               src={"/moneytorq.png"}
               alt="supabase logo"

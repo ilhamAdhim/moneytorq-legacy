@@ -204,7 +204,10 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
                   Here are your income stream. Try expand it more later!
                 </SheetDescription>
               </Box>
-              <Button onClick={handleOpenCreateCategory} className="flex gap-2">
+              <Button
+                onClick={handleOpenCreateCategory}
+                className="flex gap-2  bg-[var(--button-solid)]"
+              >
                 <PlusIcon color="white" />
                 <div className="my-auto text-white">Add Stream Income</div>
               </Button>
@@ -225,7 +228,10 @@ function SheetManageIncome({ disclosure }: ISheetManageIncome) {
                   Roughly estimate your income after tax. Then, we do the budgeting for you.
                 </div>
               </Box>
-              <Button onClick={handleOpenCreateTransaction} className="flex gap-2">
+              <Button
+                onClick={handleOpenCreateTransaction}
+                className="flex gap-2 bg-[var(--button-solid)]"
+              >
                 <PlusIcon color="white" />
                 <div className="my-auto text-white">Add Income</div>
               </Button>

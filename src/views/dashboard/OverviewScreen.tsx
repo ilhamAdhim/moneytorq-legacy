@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TypographyH3 } from "@/components/ui/Typography/Heading3";
+import { MONTHS } from "@/constants";
 import { ITransaction } from "@/types/transaction";
 import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
@@ -25,13 +26,13 @@ const dataStats = [
     icon: <UserIcon fontSize={12} color="gray" />,
   },
   {
-    title: "Transaction",
+    title: "Savings to Income Ratio",
     description: "+19% from last month",
     value: "+12,234",
     icon: <CreditCardIcon fontSize={12} color="gray" />,
   },
   {
-    title: "Active Now",
+    title: "Savings to Expense Ratio",
     description: "+201 since last month",
     value: "+573",
     icon: <TrendingDownIcon fontSize={12} color="gray" />,
@@ -50,14 +51,21 @@ interface IOverviewScreen {
 
 function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
   const dataAreaChart = useMemo(() => {
-    return dataSummary?.map(item => {
-      const { month_name, total_income, total_expenses } = item;
-      return {
-        month: month_name,
-        income: total_income,
-        spent: total_expenses,
-      };
-    });
+    return dataSummary
+      ?.sort((a, b) => {
+        return (
+          MONTHS.findIndex(item => item === a.month_name) -
+          MONTHS.findIndex(item => item === b.month_name)
+        );
+      })
+      .map(item => {
+        const { month_name, total_income, total_expenses } = item;
+        return {
+          month: month_name,
+          income: total_income,
+          spent: total_expenses,
+        };
+      });
   }, [dataSummary]);
 
   return (
@@ -77,8 +85,8 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
         ))}
       </div>
 
-      <div className="flex md:flex-row flex-col gap-4">
-        <Card className="md:w-3/5 w-full">
+      <div className="flex lg:flex-row flex-col gap-4">
+        <Card className="lg:w-3/5 w-full">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
           </CardHeader>
@@ -86,14 +94,14 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
             <AreaChartCustom data={dataAreaChart} />
           </CardContent>
         </Card>
-        <Card className="md:w-2/5 w-full">
+        <Card className="lg:w-2/5 w-full">
           <div className="flex space-between">
             <CardHeader className="grow">
               <CardTitle>Recent Expenses</CardTitle>
             </CardHeader>
             <div className="p-4">
               <Link href="/transaction">
-                <Button className="my-auto">Read more</Button>
+                <Button className="my-auto bg-[var(--button-solid)]">See more</Button>
               </Link>
             </div>
           </div>

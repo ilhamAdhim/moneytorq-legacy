@@ -38,7 +38,33 @@ const PieChartSpent = ({ data }: IPieChartSpent) => {
   return (
     <ChartContainer config={chartConfig({ data })} className="mx-auto aspect-square max-h-[400px]">
       <PieChart>
-        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+        <ChartTooltip
+          cursor={false}
+          content={
+            <ChartTooltipContent
+              className="w-[150px]"
+              formatter={(value, name, item) => {
+                return (
+                  <>
+                    <div
+                      className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
+                      style={
+                        {
+                          "--color-bg": item.payload.fill || "",
+                        } as React.CSSProperties
+                      }
+                    />
+                    {name}
+                    <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
+                      {value}
+                      <span className="font-normal text-muted-foreground">%</span>
+                    </div>
+                  </>
+                );
+              }}
+            />
+          }
+        />
         <Pie data={data} dataKey="value" nameKey="label" innerRadius={80} strokeWidth={5}>
           <Label
             content={({ viewBox }) => {

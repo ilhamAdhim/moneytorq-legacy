@@ -214,7 +214,7 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
             <Button
               size={isTablet ? "sm" : "default"}
               onClick={handleOpenCreateCategory}
-              className="flex gap-2"
+              className="flex gap-2 bg-[var(--button-solid)]"
             >
               <PlusIcon color="white" />
               <div className="my-auto text-white">Add Records</div>

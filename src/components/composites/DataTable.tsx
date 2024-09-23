@@ -55,7 +55,7 @@ export function DataTableDemo({ tableInstance, headers, tableCaption }: IDataTab
             ) : (
               <TableRow>
                 <TableCell
-                  // colSpan={columns.length}
+                  colSpan={tableInstance.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   No results.

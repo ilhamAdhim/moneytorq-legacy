@@ -8,7 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { formatRupiah } from "@/utils/common";
+import { capitalize, formatRupiah } from "@/utils/common";
 
 const chartConfig = {
   income: {
@@ -47,7 +47,33 @@ export function AreaChartCustom({ data }: IOverview) {
           />
           <YAxis tickSize={5} tickFormatter={value => `${formatRupiah(value as any)}`} />
 
-          <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+          <ChartTooltip
+            cursor={false}
+            content={
+              <ChartTooltipContent
+                className="w-[100px] md:w-[200px]"
+                indicator="line"
+                formatter={(value, name, item) => {
+                  return (
+                    <>
+                      <div
+                        className="h-3 w-1.5 shrink-0 rounded-[2px] bg-[--color-bg]"
+                        style={
+                          {
+                            "--color-bg": item.stroke || "",
+                          } as React.CSSProperties
+                        }
+                      />
+                      {capitalize(name as string)}
+                      <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
+                        {formatRupiah(value as number)}
+                      </div>
+                    </>
+                  );
+                }}
+              />
+            }
+          />
           <Area
             dataKey="income"
             type="natural"

@@ -88,13 +88,14 @@ export const columns: ColumnDef<ITransaction>[] = [
     cell: ({ row }) => <div className="text-center">{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "category",
+    accessorKey: "category_title",
     header: () => <div className="text-center"> Category </div>,
     cell: ({ row }) => {
       return (
         <div className="flex gap-2 justify-center">
           <Badge className="p-1" key={row.id} color={row.original.color_badge}>
-            {row.original.category_title}
+            {/* {row.original.category_title} */}
+            {row.getValue("category_title")}
           </Badge>
         </div>
       );
@@ -255,7 +256,7 @@ function TableTransactionView({
                             : table.getColumn("transaction_type")?.setFilterValue(value)
                         }
                       >
-                        <DropdownMenuRadioItem value="all">All Transaction</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="all">All Category</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="expenses">Expenses</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="income">Income</DropdownMenuRadioItem>
                       </DropdownMenuRadioGroup>
@@ -268,13 +269,26 @@ function TableTransactionView({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="max-h-[250px] overflow-auto">
-                      {categoryList?.map(item => (
-                        <DropdownMenuItem key={item.id}>
-                          <Badge className="p-1 rounded-lg" color={item.colorBadge as any}>
-                            {item.category_title}
-                          </Badge>
-                        </DropdownMenuItem>
-                      ))}
+                      <DropdownMenuRadioGroup
+                        value={
+                          (table.getColumn("category_title")?.getFilterValue() as string) ?? ""
+                        }
+                        onValueChange={value =>
+                          value === "all"
+                            ? table.getColumn("category_title")?.setFilterValue("")
+                            : table.getColumn("category_title")?.setFilterValue(value)
+                        }
+                      >
+                        <DropdownMenuRadioItem value="all">All Transaction</DropdownMenuRadioItem>
+
+                        {categoryList?.map(item => (
+                          <DropdownMenuRadioItem value={item.category_title} key={item.id}>
+                            <Badge className="w-full p-1 rounded-lg" color={item.colorBadge as any}>
+                              {item.category_title}
+                            </Badge>
+                          </DropdownMenuRadioItem>
+                        ))}
+                      </DropdownMenuRadioGroup>
                       <DropdownMenuSeparator />
                       {modalManageCategory && (
                         <div onClick={modalManageCategory.open}>

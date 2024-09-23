@@ -9,6 +9,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Box, Text } from "@radix-ui/themes";
+import { capitalize, formatRupiah } from "@/utils/common";
+import { LoaderCircle } from "lucide-react";
+import { memo } from "react";
 const chartData = [
   { category: "Transportation", budget: 186, expenses: 80 },
   { category: "Groceries", budget: 305, expenses: 200 },
@@ -29,30 +32,54 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface IRadarChartCustom {
-  title?: string;
-  desc?: string;
   data?: any[];
+  isLoading?: boolean;
 }
 
-export function RadarChartCustom({
-  title = "Radar Chart - Legend",
-  desc = "Showing total visitors for the last 6 months",
-  data,
-}: IRadarChartCustom) {
+function RadarChartCustom({ data, isLoading }: IRadarChartCustom) {
   if (data?.length === 0)
     return (
-      <Box className="flex h-full w-full">
+      <Box className="flex h-[400px] w-full">
         {" "}
-        <Text className="m-auto font-normal text-center">
-          Please input your transactions on 3 different budgets{" "}
-        </Text>{" "}
+        {isLoading ? (
+          <LoaderCircle />
+        ) : (
+          <Text className="m-auto font-normal text-center text-muted-foreground">
+            Please input your transactions on 3 different budgets{" "}
+          </Text>
+        )}
       </Box>
     );
   return (
     <>
-      <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[400px]">
+      <ChartContainer config={chartConfig} className="mx-auto aspect-square md:h-[400px] h-auto">
         <RadarChart data={data}>
-          <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+          <ChartTooltip
+            cursor={false}
+            content={
+              <ChartTooltipContent
+                className="w-[200px]"
+                formatter={(value, name, item) => {
+                  return (
+                    <>
+                      <div
+                        className="h-3 w-1.5 shrink-0 rounded-[2px] bg-[--color-bg]"
+                        style={
+                          {
+                            "--color-bg": item.color || "",
+                          } as React.CSSProperties
+                        }
+                      />
+                      {capitalize(name as string)}
+                      <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
+                        {formatRupiah(value as number)}
+                      </div>
+                    </>
+                  );
+                }}
+              />
+            }
+          />
           <PolarAngleAxis dataKey="category" />
           <PolarGrid gridType="circle" />
           <Radar dataKey="budget" fill="var(--color-budget)" fillOpacity={0.6} />
@@ -63,3 +90,5 @@ export function RadarChartCustom({
     </>
   );
 }
+
+export default memo(RadarChartCustom);

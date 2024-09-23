@@ -2,7 +2,7 @@
 
 import { IFormDataManageTransaction } from "@/components/composites/Modals/ModalManageTransaction";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 
 const getCurrentUser = async () => {
   const supabase = createSupabaseServer();
@@ -88,7 +88,6 @@ const getRadarChartExpenses = async ({
   if (endDate) query.lte("expense_month", format(endDate, "yyyy-MM-dd"));
 
   const data = await query;
-
   return data;
 };
 
@@ -101,7 +100,7 @@ const getTransactionByID = async (id: number) => {
 const createTransaction = async (payload: IFormDataManageTransaction) => {
   const user = await getCurrentUser();
 
-  const { type, amount, ...restPayload } = payload;
+  const { type, amount, date, ...restPayload } = payload;
   const supabase = createSupabaseServer();
 
   const { data, count, error, status, statusText } = await supabase
@@ -111,6 +110,7 @@ const createTransaction = async (payload: IFormDataManageTransaction) => {
         transaction_type: type,
         amount: Number(amount),
         user_id: user,
+        date: addDays(new Date(date), 1),
         ...restPayload,
       },
     ])
@@ -121,12 +121,13 @@ const createTransaction = async (payload: IFormDataManageTransaction) => {
 
 const updateTransaction = async (payload: IFormDataManageTransaction, id: number) => {
   const supabase = createSupabaseServer();
-  const { type, amount, ...restPayload } = payload;
+  const { type, amount, date, ...restPayload } = payload;
   const query = supabase
     .from("tb_transactions")
     .update({
       transaction_type: type,
       amount: Number(amount),
+      date: addDays(new Date(date), 1),
       ...restPayload,
     })
     .eq("id", id)

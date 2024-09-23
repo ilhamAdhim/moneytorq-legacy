@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MONTHS } from "@/constants";
 import { format, formatDate, isAfter, lastDayOfMonth } from "date-fns";
 import TableTransactionView from "./TableTransaction";
@@ -18,7 +18,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Banknote, Calculator, PlusIcon, WalletCards } from "lucide-react";
 import { IFormDataManageTransaction } from "@/components/composites/Modals/ModalManageTransaction";
-import { RadarChartCustom } from "@/components/composites/Charts/RadarChart";
+import RadarChartCustom from "@/components/composites/Charts/RadarChart";
 import { ITransaction } from "@/types/transaction";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { toast } from "sonner";
@@ -64,6 +64,7 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
 
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getMonth()]);
+  const [renderFilterDate, setRenderFilterDate] = useState("");
 
   const modalManageTransaction = useDisclosure();
   const modalDeleteTransaction = useDisclosure();
@@ -81,14 +82,14 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
   }, [selectedYear]);
 
   const processedDataChart = useMemo(() => {
-    return (expenseVSBudget || dataRadarChart).map(item => {
+    return expenseVSBudget.map(item => {
       return {
         category: item.category_title,
         budget: item.budgeted_amount,
         expenses: item.total_expenses,
       };
     });
-  }, [dataRadarChart, expenseVSBudget]);
+  }, [expenseVSBudget]);
 
   const refetchDataTransaction = async (params?: { startDate: string; endDate: string }) => {
     setIsLoadingTransaction(true);
@@ -103,13 +104,13 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
   };
 
   const refetchRadarChart = async (params?: { startDate: string; endDate: string }) => {
-    // setIsLoadingTransaction(true);
+    setIsLoadingTransaction(true);
     const { data } = await getRadarChartExpenses({
       ...(params?.startDate && { startDate: params?.startDate || "" }),
       ...(params?.endDate && { endDate: params?.endDate || "" }),
     });
     if (data) {
-      // setIsLoadingTransaction(false);
+      setIsLoadingTransaction(false);
       setExpenseVSBudget(data);
     }
   };
@@ -124,6 +125,8 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
     );
     const endDate = format(lastDayOfMonth(startDate), "yyyy-MM-dd");
 
+    setRenderFilterDate(`${format(startDate, "dd MMM yyyy")} - ${format(endDate, "dd MMM yyyy")}`);
+
     refetchDataTransaction({ endDate, startDate });
     refetchRadarChart({ endDate, startDate });
   }, [selectedMonth, selectedYear]);
@@ -131,6 +134,18 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
   useEffect(() => {
     if (dataTransaction) setTransactionList(dataTransaction);
   }, [dataTransaction]);
+
+  // ? Every times transactionList is changed (CRUD) => Update Radar chart
+  // useEffect(() => {
+  //   if (renderFilterDate && transactionList.length > 0) {
+  //     const [start, end] = renderFilterDate.split("-");
+
+  //     refetchRadarChart({
+  //       endDate: format(new Date(end), "yyyy-MM-dd"),
+  //       startDate: format(new Date(start), "yyyy-MM-dd"),
+  //     });
+  //   }
+  // }, [transactionList, renderFilterDate]);
 
   // On Submits
   const handleSubmit = async (formData: IFormDataManageTransaction) => {
@@ -190,31 +205,6 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [totalPercentage, setTotalPercentage] = useState(0);
 
-  useEffect(() => {
-    const fetchDataCategory = async () => {
-      const {
-        queryCategories: { data: dataCategory },
-        queryTotalPercentage: { data: dataTotalPercent },
-      } = await getCategories({
-        type: "expenses",
-      });
-      if (dataCategory)
-        setCategoryList(
-          dataCategory?.map((item: ICategoryResponse) => {
-            return {
-              id: item.category_id,
-              budgetPercentage: item.percentage_amount,
-              category_title: item.category_title,
-              colorBadge: item.color_badge as COLORS,
-            };
-          })
-        );
-      if (dataTotalPercent) setTotalPercentage(dataTotalPercent);
-    };
-
-    fetchDataCategory();
-  }, []);
-
   const refetchDataCategories = async () => {
     const {
       queryCategories: { data },
@@ -234,6 +224,10 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
 
     if (dataPercentage) setTotalPercentage(dataPercentage);
   };
+
+  useEffect(() => {
+    refetchDataCategories();
+  }, []);
 
   const handleSubmitCreateCategory = async (formData: IFormDataManageCategory) => {
     try {
@@ -255,7 +249,10 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-xl lg:text-3xl font-bold tracking-tight">Transaction</h2>
         <div className="flex items-center space-x-2 gap-4">
-          <Button onClick={handleOpenCreateTransaction} className="flex gap-2">
+          <Button
+            onClick={handleOpenCreateTransaction}
+            className="flex gap-2 bg-[var(--button-solid)]"
+          >
             <PlusIcon color="white" />
             <div className="my-auto text-white">Add Records</div>
           </Button>
@@ -316,32 +313,26 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
         </Tabs>
       </Flex>
 
-      <div className={`flex flex-col md:flex-row gap-4`}>
-        <Card className="w-full md:w-2/5">
+      <div className={`flex flex-col lg:flex-row gap-4`}>
+        <Card className="w-full lg:w-2/5 flex flex-col justify-between">
           <CardHeader>
-            <CardTitle className="flex gap-4">
+            <CardTitle className=" flex gap-4">
               <Calculator />
               Money Spent at {selectedMonth} {selectedYear}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pl-2 h-full sm:max-h-[400px]">
-            <RadarChartCustom data={processedDataChart} />
-            <Box className="flex flex-col gap-4 my-4 pt-4 text-sm">
-              <div className="flex items-center justify-center gap-2 font-medium leading-none">
-                Your top 6 categories
-                <WalletCards className="h-4 w-4" />
-              </div>
-              <div className="flex items-center justify-center gap-2 leading-none text-muted-foreground">
-                {formatDate(new Date(`01-${selectedMonth}-${selectedYear}`), "dd MMM yyyy")} -{" "}
-                {formatDate(
-                  new Date(`${lastDayOfMonth(selectedMonth)}-${selectedMonth}-${selectedYear}`),
-                  "dd MMM yyyy"
-                )}
-              </div>
-            </Box>
-          </CardContent>
+          <RadarChartCustom isLoading={isLoadingTransaction} data={processedDataChart} />
+          <Box className="flex flex-col gap-4 my-4 pt-4 text-sm">
+            <div className="flex items-center justify-center gap-2 font-medium leading-none">
+              Your top 6 categories
+              <WalletCards className="h-4 w-4" />
+            </div>
+            <div className="flex items-center justify-center gap-2 leading-none text-muted-foreground">
+              {renderFilterDate}
+            </div>
+          </Box>
         </Card>
-        <Card className="w-full md:w-3/5">
+        <Card className="w-full lg:w-3/5">
           <CardHeader>
             <CardTitle className="flex gap-4">
               <Banknote />
