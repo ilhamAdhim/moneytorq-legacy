@@ -59,7 +59,7 @@ In the side AreaChart, you can also see whether your expenses surpass your incom
 
 ### Budgeting View
 
-![Budgeting View](https://github.com/ilhamAdhim/moneytorq/blob/master/public/assets/dashboard-page.png?raw=true)
+![Budgeting View](https://github.com/ilhamAdhim/moneytorq/blob/master/public/assets/category-page.png?raw=true)
 
 In Budgeting view, you can input your budget allocations for expenses. We supports input it by percentage. In further update, you will also be able to input it by the fixed amount.
 
