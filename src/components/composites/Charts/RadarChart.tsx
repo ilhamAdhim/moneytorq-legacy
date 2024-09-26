@@ -12,14 +12,7 @@ import { Box, Text } from "@radix-ui/themes";
 import { capitalize, formatRupiah } from "@/utils/common";
 import { LoaderCircle } from "lucide-react";
 import { memo } from "react";
-const chartData = [
-  { category: "Transportation", budget: 186, expenses: 80 },
-  { category: "Groceries", budget: 305, expenses: 200 },
-  { category: "Business", budget: 237, expenses: 120 },
-  { category: "Personal", budget: 73, expenses: 190 },
-  { category: "Entertainment", budget: 209, expenses: 130 },
-  { category: "June", budget: 314, expenses: 440 },
-];
+
 const chartConfig = {
   budget: {
     label: "Budget",
@@ -52,8 +45,8 @@ function RadarChartCustom({ data, isLoading }: IRadarChartCustom) {
     );
   return (
     <>
-      <ChartContainer config={chartConfig} className="mx-auto aspect-square md:h-[400px] h-auto">
-        <RadarChart data={data}>
+      <ChartContainer config={chartConfig} className="mx-auto aspect-square md:h-[400px] h-[350px]">
+        <RadarChart data={data} margin={{}}>
           <ChartTooltip
             cursor={false}
             content={

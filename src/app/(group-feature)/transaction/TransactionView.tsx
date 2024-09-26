@@ -316,7 +316,7 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
       <div className={`flex flex-col lg:flex-row gap-4`}>
         <Card className="w-full lg:w-2/5 flex flex-col justify-between">
           <CardHeader>
-            <CardTitle className=" flex gap-4">
+            <CardTitle className="flex gap-4">
               <Calculator />
               Money Spent at {selectedMonth} {selectedYear}
             </CardTitle>
