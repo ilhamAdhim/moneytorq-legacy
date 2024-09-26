@@ -47,8 +47,50 @@ MoneytorQ is an open-source personal budgeting finance app with MIT license. Bui
 
 ## Screenshots
 
+### Dashboard View
+
+![Dashboard View](https://github.com/ilhamAdhim/moneytorq/blob/master/public/assets/dashboard-page.png?raw=true)
+
+In Dashboard view, you can see overall finance health. The latest and highest expenses, your recent income, how is your savings to expenses ratio, etc.
+
+In the side AreaChart, you can also see whether your expenses surpass your income or not. And how stagnant your income is. (Let's try to change that by making new stream of income :D).
+
+<br />
+
+### Budgeting View
+
+![Budgeting View](https://github.com/ilhamAdhim/moneytorq/blob/master/public/assets/dashboard-page.png?raw=true)
+
+In Budgeting view, you can input your budget allocations for expenses. We supports input it by percentage. In further update, you will also be able to input it by the fixed amount.
+
+<br />
+
+### Budgeting View - Income Stream
+
+![Budgeting View - Income](https://github.com/ilhamAdhim/moneytorq/blob/master/public/assets/income-category-page.png?raw=true)
+
+In this view, you can create a new stream of income (Basically creating a new category with `income` type).
+
+For Manage Income, it's almost the same as creating a transaction with `income` type. You can also input it in Transaction view (See next screenshot).
+<br />
+
+### Transaction View
+
+![Transaction View](https://github.com/ilhamAdhim/moneytorq/blob/master/public/assets/transaction-page.png?raw=true)
+
+Here lies the details of your transactions from all the way to January - December. Expenses or Incomes, all of it will be shown here. You can filter it by month, year, transaction title, expense type, and categories.
+
+The radar chart in the left will show your top 6 categories sorted by the most expenses amount.
+
+<br />
+
 🚧🚧🚧
 
 ## Contacts
 
 If you have any questions or feedback, feel free to reach out at ilham.adhim@gmail.com :)
+
+### Also Written on
+
+- [Medium](https://medium.com/@ilhamm179/from-curiosity-to-code-building-with-supabase-shadcn-d5b0dc7a5d35)
+- My Personal Website 🚧
