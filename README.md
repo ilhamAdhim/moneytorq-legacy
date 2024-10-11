@@ -84,8 +84,6 @@ The radar chart in the left will show your top 6 categories sorted by the most e
 
 <br />
 
-🚧🚧🚧
-
 ## Contacts
 
 If you have any questions or feedback, feel free to reach out at ilham.adhim@gmail.com :)
@@ -93,4 +91,4 @@ If you have any questions or feedback, feel free to reach out at ilham.adhim@gma
 ### Also Written on
 
 - [Medium](https://medium.com/@ilhamm179/from-curiosity-to-code-building-with-supabase-shadcn-d5b0dc7a5d35)
-- My Personal Website 🚧
+- [My Personal Website](https://ilhamadhim.my.id/blog/learn-supabase-and-shadcn)
