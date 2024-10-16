@@ -38,7 +38,8 @@ function RadarChartCustom({ data, isLoading }: IRadarChartCustom) {
           <LoaderCircle />
         ) : (
           <Text className="m-auto font-normal text-center text-muted-foreground">
-            Please input your transactions on 3 different budgets{" "}
+            Please input your transactions on 3 different budgets and add your income for this month
+            first
           </Text>
         )}
       </Box>

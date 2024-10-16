@@ -11,12 +11,23 @@ import { Controller, useForm } from "react-hook-form";
 import { SearchableSelect } from "../SearchableSelect";
 import { ICategoryResponse } from "@/types/category";
 import { Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import path from "path";
 
 export interface IFormDataManageCategory {
   percentage_amount: number;
   category_title?: string;
   color_badge?: COLORS;
   description?: string;
+  budget_type: "percentage" | "number";
 }
 
 interface IModalManageCategory {
@@ -56,6 +67,7 @@ function ModalManageCategory({
 
   const watchCategoryName = watch("category_title");
   const watchColorBadge = watch("color_badge");
+  const watchBudgetType = watch("budget_type");
 
   if (role === "delete")
     return (
@@ -104,10 +116,36 @@ function ModalManageCategory({
                 )}
               </Box>
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-left">
+                Budget Type
+              </Label>
+              <div className="col-span-3">
+                <Controller
+                  name="budget_type"
+                  control={control as any}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Budget Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Budget Type</SelectLabel>
+                          <SelectItem value="percentage">Percentage</SelectItem>
+                          <SelectItem value="number">Rupiah Amount</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+
             {isForExpense && (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="percentage" className="text-left">
-                  Percentage Amount
+                  {watchBudgetType === "percentage" ? "Percentage" : "Rupiah"} Amount
                 </Label>
                 <Box className="col-span-3 space-y-1">
                   <Input
