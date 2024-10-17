@@ -3,13 +3,6 @@
 import { IFormDataManageCategory } from "@/components/composites/Modals/ModalManageCategory";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
-const getCurrentUser = async () => {
-  const supabase = createSupabaseServer();
-
-  const currentUser = await supabase.auth.getUser();
-  return currentUser?.data?.user?.id || "";
-};
-
 interface IGetCategories {
   limit?: number;
   page?: number;
@@ -20,6 +13,13 @@ interface IGetCategories {
   year?: number;
   type?: "income" | "expenses";
 }
+
+const getCurrentUser = async () => {
+  const supabase = createSupabaseServer();
+
+  const currentUser = await supabase.auth.getUser();
+  return currentUser?.data?.user?.id || "";
+};
 
 const getCategories = async ({ limit, page, keyword, month, year, type }: IGetCategories) => {
   const supabase = createSupabaseServer();
@@ -61,7 +61,9 @@ const createCategory = async (payload: IFormDataManageCategory) => {
   const user = await getCurrentUser();
   const { data, count, error, status, statusText } = await supabase
     .from("tb_category")
-    .insert([{ ...payload, user_id: user }])
+    .insert([
+      { ...payload, user_id: user, is_using_percentage: payload.budget_type === "percentage" },
+    ])
     .select();
 
   return { data, count, error, status, statusText };
@@ -70,7 +72,11 @@ const createCategory = async (payload: IFormDataManageCategory) => {
 const updateCategory = async (payload: IFormDataManageCategory, id: number) => {
   const supabase = createSupabaseServer();
 
-  const query = supabase.from("tb_category").update(payload).eq("category_id", id).single();
+  const query = supabase
+    .from("tb_category")
+    .update({ ...payload, is_using_percentage: payload.budget_type === "percentage" })
+    .eq("category_id", id)
+    .single();
   return query;
 };
 

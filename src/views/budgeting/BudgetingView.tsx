@@ -1,7 +1,5 @@
 "use client";
-import ModalManageCategory, {
-  IFormDataManageCategory,
-} from "@/components/composites/Modals/ModalManageCategory";
+import { IFormDataManageCategory } from "@/components/composites/Modals/ModalManageCategory";
 import { Badge } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/ui/Typography/Heading4";
@@ -25,9 +23,10 @@ import { Separator } from "@/components/ui/separator";
 import TableCategoriesView from "@/app/(group-feature)/budgeting/TableCategories";
 import { getTotalIncomeLast30Days } from "@/actions/transactions";
 import { subDays, format } from "date-fns";
-import SheetManageCategory from "@/components/composites/Sheets/SheetManageCategory";
 import SheetManageIncome from "@/components/composites/Sheets/SheetManageIncome";
 import ResponsiveManageCategory from "@/components/composites/ResponsiveView/ResponsiveManageCategory";
+import { availableBudgetPercentageAtom, availableBudgetRupiahAtom } from "@/store";
+import { useSetAtom } from "jotai/react";
 
 interface IBudgetingView {
   categoryExpenses: ICategoryResponse[];
@@ -43,12 +42,19 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
   const [categoryExpensesList, setCategoryExpensesList] = useState<ICategoryResponse[]>([]);
   const [totalPercentage, setTotalPercentage] = useState(dataTotalPercentage);
   const [selectedCategory, setSelectedCategory] = useState<ICategoryResponse | null>(null);
+  const setAvailableBudgetPercentage = useSetAtom(availableBudgetPercentageAtom);
+  const setAvailableBudgetRupiah = useSetAtom(availableBudgetRupiahAtom);
 
   const availableBudgetPercentage = useMemo(() => 100 - totalPercentage, [totalPercentage]);
   const availableBudgetRupiah = useMemo(
-    () => formatRupiah(((100 - totalPercentage) / 100) * valueIncome),
+    () => ((100 - totalPercentage) / 100) * valueIncome,
     [totalPercentage, valueIncome]
   );
+
+  useEffect(() => {
+    setAvailableBudgetPercentage(availableBudgetPercentage);
+    setAvailableBudgetRupiah(availableBudgetRupiah);
+  }, [availableBudgetPercentage, availableBudgetRupiah]);
 
   const dataPieChart = useMemo(() => {
     const dataCategory = categoryExpensesList.map((item, id) => {
@@ -115,9 +121,24 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
 
       if (percentageBelow100) throw Error("Your budget is more than 100% ?");
 
+      const { budget_type, percentage_amount, rupiah_amount, ...restFormData } = formData;
+      const payload = {
+        ...restFormData,
+        budget_type,
+        // ? Check if budget_type === 'percentage' then use the value from formData. Else manually calculate from available budget
+        percentage_amount:
+          budget_type === "percentage"
+            ? formData.percentage_amount
+            : Math.round((formData?.rupiah_amount ?? 0) / valueIncome),
+        rupiah_amount:
+          budget_type === "rupiah"
+            ? formData.rupiah_amount
+            : Math.round(((formData?.percentage_amount ?? 0) / 100) * valueIncome),
+      };
+
       let query;
-      if (selectedCategory) query = await updateCategory(formData, selectedCategory.category_id);
-      else query = await createCategory(formData);
+      if (selectedCategory) query = await updateCategory(payload, selectedCategory.category_id);
+      else query = await createCategory(payload);
 
       refetchDataCategories();
       toast.success(`Category ${selectedCategory ? "Updated" : "Created"}!`);
@@ -204,7 +225,7 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
               Your Available budget is
               <b> {availableBudgetPercentage}% </b>
               {" or "}
-              <b> {availableBudgetRupiah} </b>{" "}
+              <b> {formatRupiah(availableBudgetRupiah)} </b>{" "}
             </Box>
           </CardContent>
         </Card>

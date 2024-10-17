@@ -26,3 +26,6 @@ export const PROCESSED_COLORS_ATOM = atom(
     };
   })
 );
+
+export const availableBudgetRupiahAtom = atomWithStorage("__available_budget_rupiah", 0);
+export const availableBudgetPercentageAtom = atomWithStorage("__available_budget_percentage", 0);

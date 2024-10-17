@@ -3,8 +3,6 @@ import { ICategoryResponse } from "@/types/category";
 import { UseDisclosureType } from "@/types/common";
 import SheetManageCategory from "../Sheets/SheetManageCategory";
 import ModalManageCategory from "../Modals/ModalManageCategory";
-import { COLORS_OPTION } from "@/constants";
-import { useState, useEffect } from "react";
 import { PROCESSED_COLORS_ATOM } from "@/store";
 import { useAtomValue } from "jotai/react";
 

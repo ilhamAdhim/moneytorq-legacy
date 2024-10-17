@@ -6,7 +6,7 @@ import { COLORS, UseDisclosureType } from "@/types/common";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Badge, Box } from "@radix-ui/themes";
-import { capitalize } from "@/utils/common";
+import { capitalize, formatRupiah } from "@/utils/common";
 import { Controller, useForm } from "react-hook-form";
 import { SearchableSelect } from "../SearchableSelect";
 import { ICategoryResponse } from "@/types/category";
@@ -21,13 +21,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import path from "path";
+import { useEffect, useMemo } from "react";
+import { availableBudgetPercentageAtom, availableBudgetRupiahAtom } from "@/store";
+import { useAtomValue } from "jotai/react";
 
 export interface IFormDataManageCategory {
-  percentage_amount: number;
-  category_title?: string;
+  percentage_amount?: number;
+  rupiah_amount?: number;
+  category_title: string;
   color_badge?: COLORS;
   description?: string;
-  budget_type: "percentage" | "number";
+  budget_type?: "percentage" | "rupiah";
 }
 
 interface IModalManageCategory {
@@ -47,6 +51,9 @@ function ModalManageCategory({
   selectedCategory,
   processedColors,
 }: IModalManageCategory) {
+  const availableBudgetPercentage = useAtomValue(availableBudgetPercentageAtom);
+  const availableBudgetRupiah = useAtomValue(availableBudgetRupiahAtom);
+
   const {
     watch,
     register,
@@ -55,19 +62,36 @@ function ModalManageCategory({
     formState: { isValid, errors, isSubmitting },
   } = useForm<IFormDataManageCategory>({
     mode: "all",
-    ...(selectedCategory && {
-      defaultValues: {
-        category_title: selectedCategory.category_title,
-        color_badge: selectedCategory.color_badge as COLORS,
-        description: selectedCategory.description,
-        percentage_amount: isForExpense ? selectedCategory.percentage_amount : 0,
-      },
-    }),
+    ...(selectedCategory
+      ? {
+          defaultValues: {
+            category_title: selectedCategory.category_title,
+            color_badge: selectedCategory.color_badge as COLORS,
+            description: selectedCategory.description,
+            percentage_amount: isForExpense ? selectedCategory.percentage_amount : 0,
+            budget_type: selectedCategory.is_using_percentage ? "percentage" : "rupiah",
+          },
+        }
+      : {
+          defaultValues: {
+            budget_type: "percentage",
+          },
+        }),
   });
 
   const watchCategoryName = watch("category_title");
   const watchColorBadge = watch("color_badge");
   const watchBudgetType = watch("budget_type");
+
+  const AVAILABLE_AMOUNT = useMemo(() => {
+    return watchBudgetType === "percentage"
+      ? availableBudgetPercentage || 70
+      : availableBudgetRupiah || 1000000;
+  }, [watchBudgetType]);
+
+  useEffect(() => {
+    console.log("watchBudgetType", watchBudgetType);
+  }, [watchBudgetType]);
 
   if (role === "delete")
     return (
@@ -123,6 +147,7 @@ function ModalManageCategory({
               <div className="col-span-3">
                 <Controller
                   name="budget_type"
+                  defaultValue={watchBudgetType}
                   control={control as any}
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
@@ -133,7 +158,7 @@ function ModalManageCategory({
                         <SelectGroup>
                           <SelectLabel>Budget Type</SelectLabel>
                           <SelectItem value="percentage">Percentage</SelectItem>
-                          <SelectItem value="number">Rupiah Amount</SelectItem>
+                          <SelectItem value="rupiah">Rupiah Amount</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -145,24 +170,31 @@ function ModalManageCategory({
             {isForExpense && (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="percentage" className="text-left">
-                  {watchBudgetType === "percentage" ? "Percentage" : "Rupiah"} Amount
+                  {capitalize(watchBudgetType || "")} Amount
                 </Label>
                 <Box className="col-span-3 space-y-1">
                   <Input
                     type="number"
                     id="percentage"
-                    {...register("percentage_amount", {
-                      required: { value: true, message: "Required" },
-                      min: { value: 1, message: "Please enter a positive number" },
-                      max: {
-                        value: 70,
-                        message: "It's better to have reasonable allocation for various budgets :)",
-                      },
-                    })}
+                    {...register(
+                      watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount",
+                      {
+                        required: { value: true, message: "Required" },
+                        min: { value: 1, message: "Please enter a positive number" },
+                        max: {
+                          value: AVAILABLE_AMOUNT,
+                          message: `It's better to have reasonable allocation for various budgets :) [Remaining value ${
+                            watchBudgetType === "percentage"
+                              ? `${AVAILABLE_AMOUNT}%`
+                              : formatRupiah(AVAILABLE_AMOUNT)
+                          }]`,
+                        },
+                      }
+                    )}
                   />
-                  {errors.percentage_amount && (
+                  {(errors.percentage_amount || errors.rupiah_amount) && (
                     <div className="text-red-500 text-sm">
-                      {errors?.percentage_amount?.message as any}
+                      {errors?.percentage_amount?.message || errors?.rupiah_amount?.message}
                     </div>
                   )}
                 </Box>
