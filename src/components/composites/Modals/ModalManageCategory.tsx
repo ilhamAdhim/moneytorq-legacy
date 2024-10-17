@@ -70,6 +70,7 @@ function ModalManageCategory({
             description: selectedCategory.description,
             percentage_amount: isForExpense ? selectedCategory.percentage_amount : 0,
             budget_type: selectedCategory.is_using_percentage ? "percentage" : "rupiah",
+            rupiah_amount: selectedCategory.rupiah_amount,
           },
         }
       : {
@@ -84,14 +85,15 @@ function ModalManageCategory({
   const watchBudgetType = watch("budget_type");
 
   const AVAILABLE_AMOUNT = useMemo(() => {
+    if (selectedCategory && role === "edit") {
+      return watchBudgetType === "percentage"
+        ? availableBudgetPercentage + selectedCategory.percentage_amount || 70
+        : availableBudgetRupiah + selectedCategory.rupiah_amount || 1000000;
+    }
     return watchBudgetType === "percentage"
       ? availableBudgetPercentage || 70
       : availableBudgetRupiah || 1000000;
-  }, [watchBudgetType]);
-
-  useEffect(() => {
-    console.log("watchBudgetType", watchBudgetType);
-  }, [watchBudgetType]);
+  }, [watchBudgetType, selectedCategory]);
 
   if (role === "delete")
     return (

@@ -67,6 +67,7 @@ function SheetManageCategory({
             color_badge: selectedCategory.color_badge as COLORS,
             description: selectedCategory.description,
             percentage_amount: selectedCategory.percentage_amount,
+            rupiah_amount: selectedCategory.rupiah_amount,
             budget_type: selectedCategory.is_using_percentage ? "percentage" : "rupiah",
           },
         }
@@ -82,10 +83,15 @@ function SheetManageCategory({
   const watchColorBadge = watch("color_badge");
 
   const AVAILABLE_AMOUNT = useMemo(() => {
+    if (selectedCategory && role === "edit") {
+      return watchBudgetType === "percentage"
+        ? availableBudgetPercentage + selectedCategory.percentage_amount || 70
+        : availableBudgetRupiah + selectedCategory.rupiah_amount || 1000000;
+    }
     return watchBudgetType === "percentage"
       ? availableBudgetPercentage || 70
       : availableBudgetRupiah || 1000000;
-  }, [watchBudgetType]);
+  }, [watchBudgetType, selectedCategory]);
 
   if (role === "delete")
     return (
@@ -186,9 +192,9 @@ function SheetManageCategory({
                     }
                   )}
                 />
-                {errors.percentage_amount && (
+                {(errors.percentage_amount || errors.rupiah_amount) && (
                   <div className="text-red-500 text-sm">
-                    {errors?.percentage_amount?.message as any}
+                    {errors?.percentage_amount?.message || errors?.rupiah_amount?.message}
                   </div>
                 )}
               </Box>

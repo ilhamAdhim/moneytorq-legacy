@@ -59,11 +59,11 @@ const createCategory = async (payload: IFormDataManageCategory) => {
   const supabase = createSupabaseServer();
 
   const user = await getCurrentUser();
+  const { budget_type, ...restPayload } = payload;
+
   const { data, count, error, status, statusText } = await supabase
     .from("tb_category")
-    .insert([
-      { ...payload, user_id: user, is_using_percentage: payload.budget_type === "percentage" },
-    ])
+    .insert([{ ...restPayload, user_id: user, is_using_percentage: budget_type === "percentage" }])
     .select();
 
   return { data, count, error, status, statusText };
@@ -71,10 +71,10 @@ const createCategory = async (payload: IFormDataManageCategory) => {
 
 const updateCategory = async (payload: IFormDataManageCategory, id: number) => {
   const supabase = createSupabaseServer();
-
+  const { budget_type, ...restPayload } = payload;
   const query = supabase
     .from("tb_category")
-    .update({ ...payload, is_using_percentage: payload.budget_type === "percentage" })
+    .update({ ...restPayload, is_using_percentage: budget_type === "percentage" })
     .eq("category_id", id)
     .single();
   return query;

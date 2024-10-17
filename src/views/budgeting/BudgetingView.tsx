@@ -129,16 +129,18 @@ function BudgetingView({ categoryExpenses, dataTotalIncome, dataTotalPercentage 
         percentage_amount:
           budget_type === "percentage"
             ? formData.percentage_amount
-            : Math.round((formData?.rupiah_amount ?? 0) / valueIncome),
+            : Math.round(((Number(formData?.rupiah_amount) || 0) / valueIncome) * 100),
         rupiah_amount:
           budget_type === "rupiah"
             ? formData.rupiah_amount
-            : Math.round(((formData?.percentage_amount ?? 0) / 100) * valueIncome),
+            : Math.round(((Number(formData?.percentage_amount) || 0) / 100) * valueIncome),
       };
 
       let query;
       if (selectedCategory) query = await updateCategory(payload, selectedCategory.category_id);
       else query = await createCategory(payload);
+
+      if (query.status >= 400) throw new Error(query.error?.message);
 
       refetchDataCategories();
       toast.success(`Category ${selectedCategory ? "Updated" : "Created"}!`);

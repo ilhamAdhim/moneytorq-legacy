@@ -234,6 +234,8 @@ function TransactionView({ dataTransaction, dataRadarChart }: ITransactionView) 
       if (Number(totalPercentage) + Number(formData.percentage_amount) > 100)
         throw Error("Your budget is more than 100% ?");
       const query = await createCategory(formData);
+      if (query.status >= 400) throw new Error(query.error?.message);
+
       refetchDataCategories();
       toast.success(`Category Created!`);
     } catch (error) {

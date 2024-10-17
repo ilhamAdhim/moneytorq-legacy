@@ -15,7 +15,7 @@ export interface ICategoryResponse {
   created_at: string;
   category_title: string;
   percentage_amount: number;
-  nominal_amount?: number;
+  rupiah_amount: number;
   color_badge: string;
   user_id: string;
   description: any;
