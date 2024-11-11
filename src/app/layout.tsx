@@ -9,6 +9,7 @@ import { useAtomValue } from "jotai/react";
 import { colorMode } from "@/store";
 import { Theme } from "@radix-ui/themes";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
   const initialColorMode = useAtomValue(colorMode);
   return (
     <html lang="en">
+      <Analytics />
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         {/* For Radix UI */}
         <Theme>
