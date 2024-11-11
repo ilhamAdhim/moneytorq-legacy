@@ -4,6 +4,16 @@ import { RisksSection } from "@/components/composites/LandingPage/risks-section"
 import { BenefitsSection } from "@/components/composites/LandingPage/benefits-section";
 import { DonationForm } from "@/components/composites/LandingPage/donation-form";
 import { CTASection } from "@/components/composites/LandingPage/cta-section";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "MoneytorQ | Expense Tracker & Financial Goals",
+  description:
+    "MoneytorQ: Your all-in-one money management app. Track spending, create budgets, and reach your financial goals with ease.",
+  icons: {
+    icon: "/moneytorq.png",
+  },
+};
 
 function App() {
   return (

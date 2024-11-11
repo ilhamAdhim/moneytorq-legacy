@@ -70,7 +70,7 @@ const getTotalIncomeLast30Days = async ({
 const getFinanceSummary = async () => {
   const supabase = createSupabaseServer();
 
-  const data = await supabase.from("v_finance_summary").select();
+  const data = await supabase.from("v_remaining_balances").select();
   return data;
 };
 

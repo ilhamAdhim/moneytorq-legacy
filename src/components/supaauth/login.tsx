@@ -1,6 +1,5 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Image from "next/image";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -41,16 +40,16 @@ export default function SignIn() {
   }, [isLoading]);
 
   return (
-    <div className="w-full sm:w-[26rem] shadow sm:p-5 border dark:border-zinc-800 rounded-md">
+    <div className="w-full sm:w-[26rem] shadow sm:p-5 rounded-md">
       <div className="p-5 space-y-5">
         <div className="text-center">
-          <Image
+          {/* <Image
             src={"/moneytorq.png"}
             alt="supabase logo"
             width={100}
             height={100}
             className="rounded-full mx-auto"
-          />
+          /> */}
           <p className="text-sm font-bold">Welcome back! Please sign in to continue</p>
         </div>
         <SocialAuth redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />

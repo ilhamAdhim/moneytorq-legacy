@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDateRangePicker } from "@/components/composites/DateRangePicker";
 import OverviewScreen from "@/views/dashboard/OverviewScreen";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getFinanceSummary, getTransactions } from "@/actions/transactions";

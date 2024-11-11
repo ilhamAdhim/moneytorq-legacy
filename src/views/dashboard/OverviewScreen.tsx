@@ -8,48 +8,100 @@ import { Separator } from "@/components/ui/separator";
 import { TypographyH3 } from "@/components/ui/Typography/Heading3";
 import { MONTHS } from "@/constants";
 import { ITransaction } from "@/types/transaction";
-import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon } from "lucide-react";
+import { formatRupiah } from "@/utils/common";
+import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon, Wallet } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
-
-const dataStats = [
-  {
-    title: "Total Revenue",
-    description: "+20.1% from last month",
-    value: "$45,231.89",
-    icon: <DollarSignIcon fontSize={12} color="gray" />,
-  },
-  {
-    title: "Subscriptions",
-    description: "+180.1% from last month",
-    value: "+2350",
-    icon: <UserIcon fontSize={12} color="gray" />,
-  },
-  {
-    title: "Savings to Income Ratio",
-    description: "+19% from last month",
-    value: "+12,234",
-    icon: <CreditCardIcon fontSize={12} color="gray" />,
-  },
-  {
-    title: "Savings to Expense Ratio",
-    description: "+201 since last month",
-    value: "+573",
-    icon: <TrendingDownIcon fontSize={12} color="gray" />,
-  },
-];
-
+import { ReactElement, useEffect, useMemo, useState } from "react";
 interface IOverviewScreen {
   dataTransaction: ITransaction[];
   dataSummary?: {
     user_id: string;
     total_income: number;
     total_expenses: number;
+    remaining_amount: number;
     month_name: string;
   }[];
 }
 
+interface IMappedDataStats {
+  title: string;
+  description: string;
+  value: string;
+  icon: ReactElement;
+}
+
 function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
+  console.log("dataSummary", dataSummary);
+  const [mappedDataStats, setMappedDataStats] = useState<IMappedDataStats[]>([]);
+  const [isLoadingDataStats, setIsLoadingDataStats] = useState(true);
+
+  useEffect(() => {
+    setIsLoadingDataStats(true);
+    if (dataSummary) {
+      const lastSavingsToIncomeRatio = Math.round(
+        (dataSummary[dataSummary.length - 1].remaining_amount /
+          dataSummary[dataSummary.length - 1].total_income) *
+          100
+      );
+      const prevSavingsToIncomeRatio = Math.round(
+        (dataSummary[dataSummary.length - 2].remaining_amount /
+          dataSummary[dataSummary.length - 2].total_income) *
+          100
+      );
+
+      const lastSavingsToExpenseRatio = Math.round(
+        (dataSummary[dataSummary.length - 1].remaining_amount /
+          dataSummary[dataSummary.length - 1].total_expenses) *
+          100
+      );
+
+      const prevSavingsToExpenseRatio = Math.round(
+        (dataSummary[dataSummary.length - 2].remaining_amount /
+          dataSummary[dataSummary.length - 2].total_expenses) *
+          100
+      );
+      setMappedDataStats([
+        {
+          title: "Total Revenue",
+          description: `${
+            dataSummary[dataSummary.length - 1].remaining_amount >= 0 ? "+" : "-"
+          }${formatRupiah(dataSummary[dataSummary.length - 1].remaining_amount)} from last month`,
+          value: `${formatRupiah(
+            dataSummary?.map(item => item.total_income).reduce((a, b) => a + b, 0)
+          )}`,
+          icon: <DollarSignIcon fontSize={12} color="gray" />,
+        },
+        {
+          title: "Total Expense",
+          description: `${
+            dataSummary[dataSummary.length - 1].remaining_amount >= 0 ? "+" : "-"
+          }${formatRupiah(dataSummary[dataSummary.length - 1].total_expenses)} from last month`,
+          value: `${formatRupiah(
+            dataSummary?.map(item => item.total_expenses).reduce((a, b) => a + b, 0)
+          )}`,
+          icon: <UserIcon fontSize={12} color="gray" />,
+        },
+        {
+          title: "Savings to Income Ratio",
+          description: `${Math.round(
+            (lastSavingsToIncomeRatio / prevSavingsToIncomeRatio) * 100
+          )}% from last month`,
+          value: `${lastSavingsToIncomeRatio}%`,
+          icon: <CreditCardIcon fontSize={12} color="gray" />,
+        },
+        {
+          title: "Savings to Expense Ratio",
+          description: `${Math.round(
+            (lastSavingsToExpenseRatio / prevSavingsToExpenseRatio) * 100
+          )}% from last month`,
+          value: `${lastSavingsToExpenseRatio}%`,
+          icon: <Wallet fontSize={12} color="gray" />,
+        },
+      ]);
+      setIsLoadingDataStats(false);
+    }
+  }, [dataSummary]);
+
   const dataAreaChart = useMemo(() => {
     return dataSummary
       ?.sort((a, b) => {
@@ -71,18 +123,19 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {dataStats.map((item, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
-              {item.icon}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{item.value}</div>
-              <p className="text-xs text-muted-foreground">{item.description}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {!isLoadingDataStats &&
+          mappedDataStats.map((item, index) => (
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
+                {item.icon}
+              </CardHeader>
+              <CardContent>
+                <div className={`text-2xl font-bold`}>{item.value}</div>
+                <p className="text-xs text-muted-foreground">{item.description}</p>
+              </CardContent>
+            </Card>
+          ))}
       </div>
 
       <div className="flex lg:flex-row flex-col gap-4">
