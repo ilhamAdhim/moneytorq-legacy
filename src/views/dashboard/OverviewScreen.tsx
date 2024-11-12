@@ -12,6 +12,7 @@ import { formatRupiah } from "@/utils/common";
 import { CreditCardIcon, DollarSignIcon, TrendingDownIcon, UserIcon, Wallet } from "lucide-react";
 import Link from "next/link";
 import { ReactElement, useEffect, useMemo, useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 interface IOverviewScreen {
   dataTransaction: ITransaction[];
   dataSummary?: {
@@ -24,14 +25,22 @@ interface IOverviewScreen {
 }
 
 interface IMappedDataStats {
+  id: string;
   title: string;
   description: string;
-  value: string;
+  value: number;
+  formattedValue: string;
   icon: ReactElement;
 }
 
 function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
-  console.log("dataSummary", dataSummary);
+  const [hideNumbers, setHideNumbers] = useState<{ [key: string]: boolean }>({
+    totalRevenue: true,
+    totalExpense: true,
+    savingsToRatio: false,
+    savingsToExpense: false,
+  });
+
   const [mappedDataStats, setMappedDataStats] = useState<IMappedDataStats[]>([]);
   const [isLoadingDataStats, setIsLoadingDataStats] = useState(true);
 
@@ -60,41 +69,49 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
           dataSummary[dataSummary.length - 2].total_expenses) *
           100
       );
+
+      const totalRevenue = dataSummary?.map(item => item.total_income).reduce((a, b) => a + b, 0);
+      const totalExpense = dataSummary?.map(item => item.total_expenses).reduce((a, b) => a + b, 0);
+
       setMappedDataStats([
         {
+          id: "totalRevenue",
           title: "Total Revenue",
           description: `${
             dataSummary[dataSummary.length - 1].remaining_amount >= 0 ? "+" : "-"
           }${formatRupiah(dataSummary[dataSummary.length - 1].remaining_amount)} from last month`,
-          value: `${formatRupiah(
-            dataSummary?.map(item => item.total_income).reduce((a, b) => a + b, 0)
-          )}`,
+          value: totalRevenue,
+          formattedValue: `${formatRupiah(totalRevenue)}`,
           icon: <DollarSignIcon fontSize={12} color="gray" />,
         },
         {
+          id: "totalExpense",
           title: "Total Expense",
           description: `${
             dataSummary[dataSummary.length - 1].remaining_amount >= 0 ? "+" : "-"
           }${formatRupiah(dataSummary[dataSummary.length - 1].total_expenses)} from last month`,
-          value: `${formatRupiah(
-            dataSummary?.map(item => item.total_expenses).reduce((a, b) => a + b, 0)
-          )}`,
+          value: totalExpense,
+          formattedValue: `${formatRupiah(totalExpense)}`,
           icon: <UserIcon fontSize={12} color="gray" />,
         },
         {
+          id: "savingsToRatio",
           title: "Savings to Income Ratio",
           description: `${Math.round(
             (lastSavingsToIncomeRatio / prevSavingsToIncomeRatio) * 100
           )}% from last month`,
-          value: `${lastSavingsToIncomeRatio}%`,
+          value: lastSavingsToIncomeRatio,
+          formattedValue: `${lastSavingsToIncomeRatio}%`,
           icon: <CreditCardIcon fontSize={12} color="gray" />,
         },
         {
+          id: "savingsToExpense",
           title: "Savings to Expense Ratio",
           description: `${Math.round(
             (lastSavingsToExpenseRatio / prevSavingsToExpenseRatio) * 100
           )}% from last month`,
-          value: `${lastSavingsToExpenseRatio}%`,
+          value: lastSavingsToExpenseRatio,
+          formattedValue: `${lastSavingsToExpenseRatio}%`,
           icon: <Wallet fontSize={12} color="gray" />,
         },
       ]);
@@ -130,9 +147,40 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
                 <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
                 {item.icon}
               </CardHeader>
-              <CardContent>
-                <div className={`text-2xl font-bold`}>{item.value}</div>
-                <p className="text-xs text-muted-foreground">{item.description}</p>
+              <CardContent className="flex w-full justify-betwween">
+                <div className="w-full">
+                  <span
+                    className={`text-2xl font-bold ${
+                      hideNumbers[item.id] ? "blur bg-white/30" : ""
+                    } ${item.value >= 0 ? "text-green-700" : "text-red-700"}`}
+                  >
+                    {item.formattedValue}
+                  </span>
+                  <p
+                    className={`text-xs text-muted-foreground ${
+                      hideNumbers[item.id] ? "blur bg-white/30" : ""
+                    }`}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() =>
+                    setHideNumbers(prev => {
+                      return {
+                        ...prev,
+                        [item.id]: !prev[item.id],
+                      };
+                    })
+                  }
+                >
+                  {hideNumbers[item.id] ? (
+                    <FaRegEye fontSize={12} className="group-hover:scale-105 transition-all" />
+                  ) : (
+                    <FaRegEyeSlash fontSize={12} className="group-hover:scale-105 transition-all" />
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}

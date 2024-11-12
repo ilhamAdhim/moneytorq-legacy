@@ -10,8 +10,8 @@ export function CTASection() {
         <div className="max-w-2xl">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Financial Life?</h2>
           <p className="text-lg text-muted-foreground">
-            Join thousands of users who are already mastering their finances with MoneytorQ. Start
-            your journey to financial freedom today.
+            Join users who are already mastering their finances with MoneytorQ. Start your journey
+            to financial freedom today.
           </p>
         </div>
         <Link href="/login">
