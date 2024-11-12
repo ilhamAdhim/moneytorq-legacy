@@ -10,6 +10,7 @@ import { colorMode } from "@/store";
 import { Theme } from "@radix-ui/themes";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -29,6 +30,24 @@ export default function RootLayout({
   const initialColorMode = useAtomValue(colorMode);
   return (
     <html lang="en">
+      <Script
+        defer
+        data-name="BMC-Widget"
+        data-cfasync="false"
+        src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+        data-id="ilhamadhim"
+        data-description="Support me on Buy me a coffee!"
+        data-message="Support MoneytorQ by buying me a coffee :D"
+        data-color="#40DCA5"
+        data-position="Right"
+        data-x_margin="18"
+        data-y_margin="18"
+        onLoad={() => {
+          const evt = document.createEvent("Event");
+          evt.initEvent("DOMContentLoaded", false, false);
+          window.dispatchEvent(evt);
+        }}
+      />
       <Analytics />
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         {/* For Radix UI */}

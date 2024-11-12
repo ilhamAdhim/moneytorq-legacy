@@ -24,7 +24,7 @@ function App() {
         <RisksSection />
         <BenefitsSection />
         <CTASection />
-        <DonationForm />
+        {/* <DonationForm /> */}
       </main>
     </div>
   );

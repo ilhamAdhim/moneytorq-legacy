@@ -151,10 +151,10 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
                 <div className="w-full">
                   <span
                     className={`text-2xl font-bold ${
-                      hideNumbers[item.id] ? "blur bg-white/30" : ""
-                    } ${item.value >= 0 ? "text-green-700" : "text-red-700"}`}
+                      item.value >= 0 ? "text-green-700" : "text-red-700"
+                    }`}
                   >
-                    {item.formattedValue}
+                    {hideNumbers[item.id] ? "Rp. *******" : item.formattedValue}
                   </span>
                   <p
                     className={`text-xs text-muted-foreground ${
