@@ -156,12 +156,8 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
                   >
                     {hideNumbers[item.id] ? "Rp. *******" : item.formattedValue}
                   </span>
-                  <p
-                    className={`text-xs text-muted-foreground ${
-                      hideNumbers[item.id] ? "blur bg-white/30" : ""
-                    }`}
-                  >
-                    {item.description}
+                  <p className="text-xs text-muted-foreground">
+                    {hideNumbers[item.id] ? "Rp. *******" : item.description}
                   </p>
                 </div>
                 <div
