@@ -56,13 +56,13 @@ async function LayoutGroupFeature({ children }: ILayoutGroupFeature) {
             </div>
             <MainNav navList={navList} className="hidden md:block mx-6" />
             <div className="hidden ml-auto md:flex items-center space-x-4">
-              <MenuDropdown />
               <ThemeSwitcher />
+              <MenuDropdown />
             </div>
 
             <div className="md:hidden flex gap-4">
-              <MenuDropdown navList={navList} />
               <ThemeSwitcher />
+              <MenuDropdown navList={navList} />
             </div>
           </div>
         </div>

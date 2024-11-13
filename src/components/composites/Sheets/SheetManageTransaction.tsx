@@ -21,6 +21,8 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { ICategory } from "@/types/category";
 import { DatePicker } from "../DatePicker";
 import { SheetFooter } from "@/components/ui/sheet";
+import { NumericFormat } from "react-number-format";
+import { parseRupiah } from "@/utils/common";
 
 export interface IFormDataManageTransaction {
   amount: string;
@@ -64,6 +66,8 @@ function SheetManageTransaction({
   const {
     register,
     control,
+    getValues,
+    setValue,
     handleSubmit: submitForm,
     formState: { isValid, errors, isSubmitting },
   } = useFormAttributes;
@@ -119,14 +123,28 @@ function SheetManageTransaction({
               IDR Amount
             </Label>
             <Box className="col-span-3 space-y-1">
-              <Input
-                type="number"
-                id="percentage"
-                {...register("amount", {
-                  required: { value: true, message: "Required" },
+              <Controller
+                name="amount"
+                control={control}
+                rules={{
+                  required: true,
                   min: { value: 1, message: "Please enter a positive number" },
-                })}
+                }}
+                render={({ field }) => (
+                  <NumericFormat
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    prefix="Rp "
+                    customInput={Input}
+                    {...field} // Spread the field props from Controller
+                    value={getValues("amount") || ""}
+                    onChange={event => {
+                      setValue("amount", parseRupiah(event.target.value));
+                    }}
+                  />
+                )}
               />
+
               {errors.amount && (
                 <div className="text-red-500 text-sm">{errors?.amount?.message as any}</div>
               )}

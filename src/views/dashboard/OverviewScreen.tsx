@@ -50,24 +50,24 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
       const lastSavingsToIncomeRatio = Math.round(
         (dataSummary[dataSummary.length - 1]?.remaining_amount /
           dataSummary[dataSummary.length - 1]?.total_income) *
-          100
+          100 || 0
       );
       const prevSavingsToIncomeRatio = Math.round(
         (dataSummary[dataSummary.length - 2]?.remaining_amount /
           dataSummary[dataSummary.length - 2]?.total_income) *
-          100
+          100 || 0
       );
 
       const lastSavingsToExpenseRatio = Math.round(
         (dataSummary[dataSummary.length - 1]?.remaining_amount /
           dataSummary[dataSummary.length - 1]?.total_expenses) *
-          100
+          100 || 0
       );
 
       const prevSavingsToExpenseRatio = Math.round(
         (dataSummary[dataSummary.length - 2]?.remaining_amount /
           dataSummary[dataSummary.length - 2]?.total_expenses) *
-          100
+          100 || 0
       );
 
       const totalRevenue = dataSummary?.map(item => item.total_income)?.reduce((a, b) => a + b, 0);
@@ -174,9 +174,9 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
                   }
                 >
                   {hideNumbers[item.id] ? (
-                    <FaRegEye fontSize={12} className="group-hover:scale-105 transition-all" />
+                    <FaRegEye fontSize={20} className="group-hover:scale-105 transition-all" />
                   ) : (
-                    <FaRegEyeSlash fontSize={12} className="group-hover:scale-105 transition-all" />
+                    <FaRegEyeSlash fontSize={20} className="group-hover:scale-105 transition-all" />
                   )}
                 </div>
               </CardContent>

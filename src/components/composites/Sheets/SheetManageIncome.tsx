@@ -38,7 +38,6 @@ import TableCategoriesView from "@/app/(group-feature)/budgeting/TableCategories
 import { Separator } from "@/components/ui/separator";
 import ModalManageCategory from "../Modals/ModalManageCategory";
 import { IFormDataManageCategory } from "./SheetManageCategory";
-import { COLORS_OPTION } from "@/constants";
 import { useAtomValue } from "jotai/react";
 import { PROCESSED_COLORS_ATOM } from "@/store";
 

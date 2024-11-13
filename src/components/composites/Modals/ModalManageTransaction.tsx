@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import { NumericFormat } from "react-number-format";
 import { Box } from "@radix-ui/themes";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
@@ -24,6 +25,7 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { ICategory } from "@/types/category";
 import { DatePicker } from "../DatePicker";
 import { usePathname } from "next/navigation";
+import { formatRupiah, parseRupiah } from "@/utils/common";
 
 export interface IFormDataManageTransaction {
   amount: string;
@@ -72,6 +74,8 @@ function ModalManageTransaction({
     watch,
     register,
     control,
+    setValue,
+    getValues,
     handleSubmit: submitForm,
     formState: { isValid, errors, isSubmitting },
   } = useFormAttributes;
@@ -125,13 +129,37 @@ function ModalManageTransaction({
               IDR Amount
             </Label>
             <Box className="col-span-3 space-y-1">
-              <Input
-                type="number"
-                id="percentage"
+              {/* <NumericFormat
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="Rp "
                 {...register("amount", {
                   required: { value: true, message: "Required" },
                   min: { value: 1, message: "Please enter a positive number" },
                 })}
+                customInput={Input}
+              /> */}
+
+              <Controller
+                name="amount"
+                control={control}
+                rules={{
+                  required: true,
+                  min: { value: 1, message: "Please enter a positive number" },
+                }}
+                render={({ field }) => (
+                  <NumericFormat
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    prefix="Rp "
+                    customInput={Input}
+                    {...field} // Spread the field props from Controller
+                    value={getValues("amount") || ""}
+                    onChange={event => {
+                      setValue("amount", parseRupiah(event.target.value));
+                    }}
+                  />
+                )}
               />
               {errors.amount && (
                 <div className="text-red-500 text-sm">{errors?.amount?.message as any}</div>

@@ -12,7 +12,7 @@ import {
 import { INavList } from "@/types/common";
 import Link from "next/link";
 import React from "react";
-import { FaUser } from "react-icons/fa6";
+import { FaBars } from "react-icons/fa6";
 
 function MenuDropdown({ navList }: INavList) {
   const handleLogout = async () => await signOut();
@@ -21,7 +21,7 @@ function MenuDropdown({ navList }: INavList) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-          <FaUser />
+          <FaBars />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
