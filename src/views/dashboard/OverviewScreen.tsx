@@ -48,38 +48,40 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
     setIsLoadingDataStats(true);
     if (dataSummary) {
       const lastSavingsToIncomeRatio = Math.round(
-        (dataSummary[dataSummary.length - 1].remaining_amount /
-          dataSummary[dataSummary.length - 1].total_income) *
+        (dataSummary[dataSummary.length - 1]?.remaining_amount /
+          dataSummary[dataSummary.length - 1]?.total_income) *
           100
       );
       const prevSavingsToIncomeRatio = Math.round(
-        (dataSummary[dataSummary.length - 2].remaining_amount /
-          dataSummary[dataSummary.length - 2].total_income) *
+        (dataSummary[dataSummary.length - 2]?.remaining_amount /
+          dataSummary[dataSummary.length - 2]?.total_income) *
           100
       );
 
       const lastSavingsToExpenseRatio = Math.round(
-        (dataSummary[dataSummary.length - 1].remaining_amount /
-          dataSummary[dataSummary.length - 1].total_expenses) *
+        (dataSummary[dataSummary.length - 1]?.remaining_amount /
+          dataSummary[dataSummary.length - 1]?.total_expenses) *
           100
       );
 
       const prevSavingsToExpenseRatio = Math.round(
-        (dataSummary[dataSummary.length - 2].remaining_amount /
-          dataSummary[dataSummary.length - 2].total_expenses) *
+        (dataSummary[dataSummary.length - 2]?.remaining_amount /
+          dataSummary[dataSummary.length - 2]?.total_expenses) *
           100
       );
 
-      const totalRevenue = dataSummary?.map(item => item.total_income).reduce((a, b) => a + b, 0);
-      const totalExpense = dataSummary?.map(item => item.total_expenses).reduce((a, b) => a + b, 0);
+      const totalRevenue = dataSummary?.map(item => item.total_income)?.reduce((a, b) => a + b, 0);
+      const totalExpense = dataSummary
+        ?.map(item => item.total_expenses)
+        ?.reduce((a, b) => a + b, 0);
 
       setMappedDataStats([
         {
           id: "totalRevenue",
           title: "Total Revenue",
           description: `${
-            dataSummary[dataSummary.length - 1].remaining_amount >= 0 ? "+" : "-"
-          }${formatRupiah(dataSummary[dataSummary.length - 1].remaining_amount)} from last month`,
+            dataSummary[dataSummary.length - 1]?.remaining_amount >= 0 ? "+" : "-"
+          }${formatRupiah(dataSummary[dataSummary.length - 1]?.remaining_amount)} from last month`,
           value: totalRevenue,
           formattedValue: `${formatRupiah(totalRevenue)}`,
           icon: <DollarSignIcon fontSize={12} color="gray" />,
@@ -88,8 +90,8 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
           id: "totalExpense",
           title: "Total Expense",
           description: `${
-            dataSummary[dataSummary.length - 1].remaining_amount >= 0 ? "+" : "-"
-          }${formatRupiah(dataSummary[dataSummary.length - 1].total_expenses)} from last month`,
+            dataSummary[dataSummary.length - 1]?.remaining_amount >= 0 ? "+" : "-"
+          }${formatRupiah(dataSummary[dataSummary.length - 1]?.total_expenses)} from last month`,
           value: totalExpense,
           formattedValue: `${formatRupiah(totalExpense)}`,
           icon: <UserIcon fontSize={12} color="gray" />,
@@ -98,7 +100,7 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
           id: "savingsToRatio",
           title: "Savings to Income Ratio",
           description: `${Math.round(
-            (lastSavingsToIncomeRatio / prevSavingsToIncomeRatio) * 100
+            (lastSavingsToIncomeRatio / prevSavingsToIncomeRatio) * 100 || 0
           )}% from last month`,
           value: lastSavingsToIncomeRatio,
           formattedValue: `${lastSavingsToIncomeRatio}%`,
@@ -108,7 +110,7 @@ function OverviewScreen({ dataSummary, dataTransaction }: IOverviewScreen) {
           id: "savingsToExpense",
           title: "Savings to Expense Ratio",
           description: `${Math.round(
-            (lastSavingsToExpenseRatio / prevSavingsToExpenseRatio) * 100
+            (lastSavingsToExpenseRatio / prevSavingsToExpenseRatio) * 100 || 0
           )}% from last month`,
           value: lastSavingsToExpenseRatio,
           formattedValue: `${lastSavingsToExpenseRatio}%`,
