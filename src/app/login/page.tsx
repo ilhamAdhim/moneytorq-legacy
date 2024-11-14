@@ -6,6 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Wallet } from "lucide-react";
 import { Box } from "@radix-ui/themes";
+import AuthIllustration from "@/components/supaauth/AuthIllustration";
 
 export const metadata: Metadata = {
   title: "MoneytorQ | Login",
@@ -35,14 +36,12 @@ export default function AuthenticationPage() {
           <Link href="/register" className={cn("absolute right-4 top-4 md:right-8 md:top-8")}>
             Register
           </Link>
-          <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-            <div className="absolute inset-0 bg-zinc-900" />
-            <div className="sticky top-4 z-20 flex items-center text-lg font-medium">
-              <div className="py-4 flex justify-center space-x-2">
-                <Wallet className="h-6 w-6 text-emerald-600" />
-                <span className="text-xl font-bold">MoneytorQ</span>
-              </div>
+          <div className="relative hidden h-full flex-col bg-muted text-white dark:border-r lg:flex">
+            <div className="sticky top-4 z-20 flex items-center px-10 text-lg font-medium py-4 space-x-2">
+              <Wallet className="h-6 w-6 text-emerald-600" />
+              <span className="text-xl font-bold">MoneytorQ</span>
             </div>
+            <AuthIllustration />
           </div>
           <div className="lg:p-8">
             <div className="mx-auto flex w-full flex-col justify-center space-y-2 sm:w-[350px]">

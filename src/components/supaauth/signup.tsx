@@ -126,7 +126,7 @@ export default function SignUp({ redirectTo, isLoading, setIsLoading }: IRegiste
 
   return (
     <div
-      className={`whitespace-nowrap p-5 overflow-hidden items-center align-top ${
+      className={`whitespace-nowrap px-5 overflow-hidden items-center align-top ${
         isPending ? "animate-pulse" : ""
       }`}
     >

@@ -41,7 +41,7 @@ export default function SignIn() {
 
   return (
     <div className="w-full sm:w-[26rem] shadow sm:p-5 rounded-md">
-      <div className="p-5 space-y-5">
+      <div className="py-5 space-y-5">
         <div className="text-center space-y-3">
           {/* <Image
             src={"/moneytorq.png"}
@@ -51,15 +51,17 @@ export default function SignIn() {
             className="rounded-full mx-auto"
           /> */}
           <h1 className="font-bold">Login to your Account</h1>
-          <p className="text-sm font-bold">Welcome back! Please sign in to continue</p>
+          <p className="text-sm">Welcome back! Please sign in to continue</p>
         </div>
-        <SocialAuth redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
+
+        <SignInForm redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
+
         <div className="flex items-center gap-5">
           <div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
           <div className="text-sm">or</div>
           <div className="flex-1 h-[0.5px] w-full bg-zinc-400 dark:bg-zinc-800"></div>
         </div>
-        <SignInForm redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
+        <SocialAuth redirectTo={"/dashboard"} isLoading={isLoading} setIsLoading={setIsLoading} />
       </div>
     </div>
   );
