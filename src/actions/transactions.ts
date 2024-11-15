@@ -100,7 +100,7 @@ const getTransactionByID = async (id: number) => {
 const createTransaction = async (payload: IFormDataManageTransaction) => {
   const user = await getCurrentUser();
 
-  const { type, amount, date, ...restPayload } = payload;
+  const { type, amount, date, isChangeDate, ...restPayload } = payload;
   const supabase = createSupabaseServer();
 
   const { data, count, error, status, statusText } = await supabase
@@ -121,13 +121,15 @@ const createTransaction = async (payload: IFormDataManageTransaction) => {
 
 const updateTransaction = async (payload: IFormDataManageTransaction, id: number) => {
   const supabase = createSupabaseServer();
-  const { type, amount, date, ...restPayload } = payload;
+  const { type, amount, date, isChangeDate, ...restPayload } = payload;
+  console.log("date", date);
   const query = supabase
     .from("tb_transactions")
     .update({
       transaction_type: type,
       amount: Number(amount),
-      date: addDays(new Date(date), 1),
+      // date: isChangeDate ? addDays(new Date(date), 1) : new Date(date),
+      date: new Date(date),
       ...restPayload,
     })
     .eq("id", id)

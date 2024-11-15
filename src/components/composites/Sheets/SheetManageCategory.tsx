@@ -9,7 +9,7 @@ import { SearchableSelect } from "../SearchableSelect";
 import { ICategoryResponse } from "@/types/category";
 import { Loader2 } from "lucide-react";
 import { SheetFooter } from "@/components/ui/sheet";
-import { capitalize, formatRupiah } from "@/utils/common";
+import { capitalize, formatRupiah, parseRupiah } from "@/utils/common";
 import DialogSheet from "../DialogSheet";
 import {
   Select,
@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/select";
 import { useAtomValue } from "jotai/react";
 import { availableBudgetPercentageAtom, availableBudgetRupiahAtom } from "@/store";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { NumericFormat } from "react-number-format";
 
 export interface IFormDataManageCategory {
   percentage_amount?: number;
@@ -57,7 +58,10 @@ function SheetManageCategory({
     register,
     control,
     handleSubmit: submitForm,
+    getValues,
+    setValue,
     formState: { isValid, errors, isSubmitting },
+    resetField,
   } = useForm<IFormDataManageCategory>({
     mode: "all",
     ...(selectedCategory
@@ -92,6 +96,11 @@ function SheetManageCategory({
       ? availableBudgetPercentage || 70
       : availableBudgetRupiah || 1000000;
   }, [watchBudgetType, selectedCategory]);
+
+  useEffect(() => {
+    resetField("percentage_amount");
+    resetField("rupiah_amount");
+  }, [watchBudgetType]);
 
   if (role === "delete")
     return (
@@ -173,23 +182,41 @@ function SheetManageCategory({
                 {capitalize(watchBudgetType || "")} Amount
               </Label>
               <Box className="col-span-3 space-y-1">
-                <Input
-                  type="number"
-                  id="percentage"
-                  {...register(
-                    watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount",
-                    {
-                      required: { value: true, message: "Required" },
-                      min: { value: 1, message: "Please enter a positive number" },
-                      max: {
-                        value: AVAILABLE_AMOUNT,
-                        message: `It's better to have reasonable allocation for various budgets :) [Remaining value ${
-                          watchBudgetType === "percentage"
-                            ? `${AVAILABLE_AMOUNT}%`
-                            : formatRupiah(AVAILABLE_AMOUNT)
-                        }]`,
-                      },
-                    }
+                <Controller
+                  name={watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount"}
+                  control={control}
+                  rules={{
+                    required: { value: true, message: "Required" },
+                    min: { value: 1, message: "Please enter a positive number" },
+                    max: {
+                      value: AVAILABLE_AMOUNT,
+                      message: `It's better to have reasonable allocation for various budgets :) [Remaining value ${
+                        watchBudgetType === "percentage"
+                          ? `${AVAILABLE_AMOUNT}%`
+                          : formatRupiah(AVAILABLE_AMOUNT)
+                      }]`,
+                    },
+                  }}
+                  render={({ field }) => (
+                    <NumericFormat
+                      {...field} // Spread the field props from Controller
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      prefix={watchBudgetType === "rupiah" ? "Rp " : ""}
+                      suffix={watchBudgetType === "percentage" ? "%" : ""}
+                      customInput={Input}
+                      value={
+                        getValues(
+                          watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount"
+                        ) || ""
+                      }
+                      onChange={event => {
+                        setValue(
+                          watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount",
+                          parseRupiah(event.target.value)
+                        );
+                      }}
+                    />
                   )}
                 />
                 {(errors.percentage_amount || errors.rupiah_amount) && (

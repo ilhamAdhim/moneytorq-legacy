@@ -39,7 +39,7 @@ export default function RootLayout({
         data-description="Support me on Buy me a coffee!"
         data-message="Support MoneytorQ by buying me a coffee :D"
         data-color="#40DCA5"
-        data-position="Right"
+        data-position="left"
         data-x_margin="18"
         data-y_margin="18"
         onLoad={() => {

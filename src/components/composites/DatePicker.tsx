@@ -25,30 +25,33 @@ export function DatePicker({ useFormAttributes }: IDatePicker) {
         },
       }}
       control={useFormAttributes.control as any}
-      render={({ field }) => (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !field.value && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={field.value}
-              onSelect={field.onChange}
-              disabled={date => date > new Date() || date < new Date("1900-01-01")}
-            />
-          </PopoverContent>
-        </Popover>
-      )}
+      render={({ field }) => {
+        console.log("field", field.value);
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !field.value && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={field.value}
+                onSelect={field.onChange}
+                disabled={date => date > new Date() || date < new Date("1900-01-01")}
+              />
+            </PopoverContent>
+          </Popover>
+        );
+      }}
     />
   );
 }

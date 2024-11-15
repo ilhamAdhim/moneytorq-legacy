@@ -40,7 +40,7 @@ export default function SignIn() {
   }, [isLoading]);
 
   return (
-    <div className="w-full sm:w-[26rem] shadow sm:p-5 rounded-md">
+    <div className="w-full sm:w-[26rem] shadow p-4 dark:border-zinc-800 rounded-md">
       <div className="py-5 space-y-5">
         <div className="text-center space-y-3">
           {/* <Image

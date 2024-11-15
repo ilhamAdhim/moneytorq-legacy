@@ -35,6 +35,7 @@ export interface IFormDataManageTransaction {
   category_id: number;
   category_title?: string;
   type: "income" | "expenses";
+  isChangeDate: boolean;
 }
 
 interface IModalManageTransaction {
@@ -55,7 +56,6 @@ function ModalManageTransaction({
   categoryList,
 }: IModalManageTransaction) {
   const path = usePathname();
-
   const useFormAttributes = useForm<FieldValues>({
     mode: "all",
     ...(selectedTransaction && {
@@ -65,13 +65,12 @@ function ModalManageTransaction({
         date: selectedTransaction.date,
         description: selectedTransaction.description,
         type: isExpense ? selectedTransaction.transaction_type : "income",
-        category_id: selectedTransaction.category_id,
+        category_id: `${selectedTransaction.category_id}`,
       },
     }),
   });
 
   const {
-    watch,
     register,
     control,
     setValue,
@@ -129,17 +128,6 @@ function ModalManageTransaction({
               IDR Amount
             </Label>
             <Box className="col-span-3 space-y-1">
-              {/* <NumericFormat
-                thousandSeparator="."
-                decimalSeparator=","
-                prefix="Rp "
-                {...register("amount", {
-                  required: { value: true, message: "Required" },
-                  min: { value: 1, message: "Please enter a positive number" },
-                })}
-                customInput={Input}
-              /> */}
-
               <Controller
                 name="amount"
                 control={control}

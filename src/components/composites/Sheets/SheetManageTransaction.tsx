@@ -58,7 +58,7 @@ function SheetManageTransaction({
         date: selectedTransaction.date,
         description: selectedTransaction.description,
         type: selectedTransaction.transaction_type,
-        category_id: selectedTransaction.category_id,
+        category_id: `${selectedTransaction.category_id}`,
       },
     }),
   });

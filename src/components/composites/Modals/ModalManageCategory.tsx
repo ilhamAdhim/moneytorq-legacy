@@ -6,7 +6,7 @@ import { COLORS, UseDisclosureType } from "@/types/common";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Badge, Box } from "@radix-ui/themes";
-import { capitalize, formatRupiah } from "@/utils/common";
+import { capitalize, formatRupiah, parseRupiah } from "@/utils/common";
 import { Controller, useForm } from "react-hook-form";
 import { SearchableSelect } from "../SearchableSelect";
 import { ICategoryResponse } from "@/types/category";
@@ -20,10 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import path from "path";
 import { useEffect, useMemo } from "react";
 import { availableBudgetPercentageAtom, availableBudgetRupiahAtom } from "@/store";
 import { useAtomValue } from "jotai/react";
+import { NumericFormat } from "react-number-format";
 
 export interface IFormDataManageCategory {
   percentage_amount?: number;
@@ -59,7 +59,10 @@ function ModalManageCategory({
     register,
     control,
     handleSubmit: submitForm,
+    getValues,
+    setValue,
     formState: { isValid, errors, isSubmitting },
+    resetField,
   } = useForm<IFormDataManageCategory>({
     mode: "all",
     ...(selectedCategory
@@ -83,6 +86,11 @@ function ModalManageCategory({
   const watchCategoryName = watch("category_title");
   const watchColorBadge = watch("color_badge");
   const watchBudgetType = watch("budget_type");
+
+  useEffect(() => {
+    resetField("percentage_amount");
+    resetField("rupiah_amount");
+  }, [watchBudgetType]);
 
   const AVAILABLE_AMOUNT = useMemo(() => {
     if (selectedCategory && role === "edit") {
@@ -172,27 +180,49 @@ function ModalManageCategory({
                   </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="percentage" className="text-left">
-                    {capitalize(watchBudgetType || "")} Amount
-                  </Label>
+                  <Label className="text-left">{capitalize(watchBudgetType || "")} Amount</Label>
                   <Box className="col-span-3 space-y-1">
-                    <Input
-                      type="number"
-                      id="percentage"
-                      {...register(
-                        watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount",
-                        {
-                          required: { value: true, message: "Required" },
-                          min: { value: 1, message: "Please enter a positive number" },
-                          max: {
-                            value: AVAILABLE_AMOUNT,
-                            message: `It's better to have reasonable allocation for various budgets :) [Remaining value ${
+                    <Controller
+                      name={
+                        watchBudgetType === "percentage" ? "percentage_amount" : "rupiah_amount"
+                      }
+                      control={control}
+                      rules={{
+                        required: { value: true, message: "Required" },
+                        min: { value: 1, message: "Please enter a positive number" },
+                        max: {
+                          value: AVAILABLE_AMOUNT,
+                          message: `It's better to have reasonable allocation for various budgets :) [Remaining value ${
+                            watchBudgetType === "percentage"
+                              ? `${AVAILABLE_AMOUNT}%`
+                              : formatRupiah(AVAILABLE_AMOUNT)
+                          }]`,
+                        },
+                      }}
+                      render={({ field }) => (
+                        <NumericFormat
+                          {...field} // Spread the field props from Controller
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          prefix={watchBudgetType === "rupiah" ? "Rp " : ""}
+                          suffix={watchBudgetType === "percentage" ? "%" : ""}
+                          customInput={Input}
+                          value={
+                            getValues(
                               watchBudgetType === "percentage"
-                                ? `${AVAILABLE_AMOUNT}%`
-                                : formatRupiah(AVAILABLE_AMOUNT)
-                            }]`,
-                          },
-                        }
+                                ? "percentage_amount"
+                                : "rupiah_amount"
+                            ) || ""
+                          }
+                          onChange={event => {
+                            setValue(
+                              watchBudgetType === "percentage"
+                                ? "percentage_amount"
+                                : "rupiah_amount",
+                              parseRupiah(event.target.value)
+                            );
+                          }}
+                        />
                       )}
                     />
                     {(errors.percentage_amount || errors.rupiah_amount) && (
