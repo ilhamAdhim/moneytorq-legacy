@@ -37,10 +37,12 @@ export default function AuthenticationPage() {
             Register
           </Link>
           <div className="relative hidden h-full flex-col bg-muted dark:border-r lg:flex">
-            <div className="sticky top-4 z-20 flex items-center px-10 text-lg font-medium py-4 space-x-2">
-              <Wallet className="h-6 w-6 text-emerald-600" />
-              <span className="text-xl font-bold">MoneytorQ</span>
-            </div>
+            <Link href="/">
+              <div className="sticky top-4 z-20 flex items-center px-10 text-lg font-medium py-4 space-x-2">
+                <Wallet className="h-6 w-6 text-emerald-600" />
+                <span className="text-xl font-bold">MoneytorQ</span>
+              </div>
+            </Link>
             <AuthIllustration />
           </div>
           <div className="lg:p-8">

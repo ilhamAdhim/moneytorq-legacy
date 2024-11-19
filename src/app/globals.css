@@ -98,3 +98,21 @@ body {
   @apply transition-colors duration-500;
   background-color: var(--parent-background-color);
 }
+
+html {
+  overflow-x: hidden;
+}
+
+.jiggle {
+  @apply animate-jiggle;
+}
+
+@keyframes jiggle {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}

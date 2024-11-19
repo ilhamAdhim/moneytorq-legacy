@@ -35,10 +35,6 @@ interface ISignIn {
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    console.log("isLoading", isLoading);
-  }, [isLoading]);
-
   return (
     <div className="w-full sm:w-[26rem] shadow p-4 dark:border-zinc-800 rounded-md">
       <div className="py-5 space-y-5">

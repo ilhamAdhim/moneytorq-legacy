@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from "react";
 
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
@@ -9,10 +9,10 @@ function useMediaQuery(query: string) {
     const handleChange = () => setMatches(match.matches);
 
     // Add event listener on component mount
-    match.addEventListener('change', handleChange);
+    match.addEventListener("change", handleChange);
 
     // Cleanup function to remove event listener on component unmount
-    return () => match.removeEventListener('change', handleChange);
+    return () => match.removeEventListener("change", handleChange);
   }, [query]); // Dependency array includes the query
 
   return matches;

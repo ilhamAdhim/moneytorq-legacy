@@ -2,6 +2,7 @@
 // import type { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
+import "aos/dist/aos.css"; // You can also use <link> for styles
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
@@ -11,6 +12,8 @@ import { Theme } from "@radix-ui/themes";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
+import { useEffect } from "react";
+import AOS from "aos";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -27,6 +30,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    AOS.init();
+  }, []);
+
   const initialColorMode = useAtomValue(colorMode);
   return (
     <html lang="en">
