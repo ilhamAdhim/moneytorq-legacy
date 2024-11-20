@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 
 function App() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main>
+      <main className="overflow-x-hidden">
         <HeroSection />
         <RisksSection />
         <BenefitsSection />

@@ -22,7 +22,7 @@ export default function AuthenticationPage() {
       {/* Mobile + Tablet View */}
       <div className="flex align-center justify-center min-h-[100vh] block lg:hidden">
         <Box className="m-auto p-4">
-          <div className="py-4 flex justify-center space-x-2">
+          <div className="flex justify-center space-x-2">
             <Wallet className="h-6 w-6 text-emerald-600" />
             <span className="text-xl font-bold">MoneytorQ</span>
           </div>
