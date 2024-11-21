@@ -39,9 +39,6 @@
     --chart-13: hsla(122, 30%, 33%, 1);
     --chart-14: hsla(131, 25%, 31%, 1);
     --chart-15: hsla(148, 19%, 28%, 1);
-    --button-solid: hsla(106, 77%, 43%, 1);
-    --color-budget: hsla(110, 52%, 38%, 1);
-    --color-expense: rgb(216, 3, 3);
   }
 
   .dark {
@@ -79,9 +76,6 @@
     --chart-13: hsla(105, 92%, 47%, 1);
     --chart-14: hsla(104, 96%, 49%, 1);
     --chart-15: hsla(104, 100%, 50%, 1);
-    --button-solid: hsla(110, 52%, 38%, 1);
-    --color-budget: hsla(106, 77%, 43%, 1);
-    --color-expense: rgb(133, 0, 0);
   }
 }
 
@@ -96,7 +90,50 @@
 
 body {
   @apply transition-colors duration-500;
-  background-color: var(--parent-background-color);
+}
+
+@layer base {
+  :root {
+    --chart-1: hsla(104, 100%, 50%, 1);
+    --chart-2: hsla(104, 96%, 49%, 1);
+    --chart-3: hsla(105, 92%, 47%, 1);
+    --chart-4: hsla(105, 87%, 46%, 1);
+    --chart-5: hsla(106, 82%, 45%, 1);
+    --chart-6: hsla(106, 77%, 43%, 1);
+    --chart-7: hsla(107, 72%, 42%, 1);
+    --chart-8: hsla(108, 65%, 41%, 1);
+    --chart-9: hsla(109, 59%, 39%, 1);
+    --chart-10: hsla(110, 52%, 38%, 1);
+    --chart-11: hsla(113, 45%, 36%, 1);
+    --chart-12: hsla(116, 37%, 35%, 1);
+    --chart-13: hsla(122, 30%, 33%, 1);
+    --chart-14: hsla(131, 25%, 31%, 1);
+    --chart-15: hsla(148, 19%, 28%, 1);
+    --button-solid: hsla(106, 77%, 43%, 1);
+    --color-budget: hsla(110, 52%, 38%, 1);
+    --color-expense: rgb(216, 3, 3);
+  }
+
+  .dark {
+    --chart-1: hsla(148, 19%, 28%, 1);
+    --chart-2: hsla(131, 25%, 31%, 1);
+    --chart-3: hsla(122, 30%, 33%, 1);
+    --chart-4: hsla(116, 37%, 35%, 1);
+    --chart-5: hsla(113, 45%, 36%, 1);
+    --chart-6: hsla(110, 52%, 38%, 1);
+    --chart-7: hsla(109, 59%, 39%, 1);
+    --chart-8: hsla(108, 65%, 41%, 1);
+    --chart-9: hsla(107, 72%, 42%, 1);
+    --chart-10: hsla(106, 77%, 43%, 1);
+    --chart-11: hsla(106, 82%, 45%, 1);
+    --chart-12: hsla(105, 87%, 46%, 1);
+    --chart-13: hsla(105, 92%, 47%, 1);
+    --chart-14: hsla(104, 96%, 49%, 1);
+    --chart-15: hsla(104, 100%, 50%, 1);
+    --button-solid: hsla(110, 52%, 38%, 1);
+    --color-budget: hsla(106, 77%, 43%, 1);
+    --color-expense: rgb(133, 0, 0);
+  }
 }
 
 html {
