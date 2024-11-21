@@ -1,6 +1,7 @@
 # MoneytorQ
 
-MoneytorQ is an open-source personal budgeting finance app with MIT license. Built with Next JS + Shadcn UI + Supabase. Currently, MoneytorQ only supports IDR (Indonesian Rupiahs) for the currency.
+MoneytorQ is an open-source personal budgeting finance app with MIT license. Built with Next JS + Shadcn UI + Supabase. Currently, MoneytorQ only supports IDR (Indonesian Rupiahs) for the currency. 
+Note: This repository is just a glimpse of how I technically make this product. It won't be updated as I have the main codebase on my private repo. Cheers =)
 
 ## Table of Contents
 
