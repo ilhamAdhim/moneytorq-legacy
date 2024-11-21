@@ -2,6 +2,8 @@
 
 import { IFormDataManageCategory } from "@/components/composites/Modals/ModalManageCategory";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getCurrentUser } from "./auth";
+import { freeTrialError } from "@/utils/common";
 
 interface IGetCategories {
   limit?: number;
@@ -13,13 +15,6 @@ interface IGetCategories {
   year?: number;
   type?: "income" | "expenses";
 }
-
-const getCurrentUser = async () => {
-  const supabase = createSupabaseServer();
-
-  const currentUser = await supabase.auth.getUser();
-  return currentUser?.data?.user?.id || "";
-};
 
 const getCategories = async ({ limit, page, keyword, month, year, type }: IGetCategories) => {
   const supabase = createSupabaseServer();
@@ -55,29 +50,44 @@ const getCategoryByID = async (id: number) => {
   return query;
 };
 
+// ? If user.is_premium_user || user.is_using_free_trial, then just proceed CRUD
+// ? If free trial has ended and user is not premium yet, then returns error msg
+// ? Free trial automatically ends when an account is one month from its registration date
+
 const createCategory = async (payload: IFormDataManageCategory) => {
   const supabase = createSupabaseServer();
 
   const user = await getCurrentUser();
-  const { budget_type, ...restPayload } = payload;
+  if (user.is_premium_user || user.is_using_free_trial) {
+    const { budget_type, ...restPayload } = payload;
 
-  const { data, count, error, status, statusText } = await supabase
-    .from("tb_category")
-    .insert([{ ...restPayload, user_id: user, is_using_percentage: budget_type === "percentage" }])
-    .select();
+    const { data, count, error, status, statusText } = await supabase
+      .from("tb_category")
+      .insert([
+        { ...restPayload, user_id: user.id, is_using_percentage: budget_type === "percentage" },
+      ])
+      .select();
 
-  return { data, count, error, status, statusText };
+    return { data, count, error, status, statusText };
+  }
+
+  return freeTrialError;
 };
 
 const updateCategory = async (payload: IFormDataManageCategory, id: number) => {
-  const supabase = createSupabaseServer();
-  const { budget_type, ...restPayload } = payload;
-  const query = supabase
-    .from("tb_category")
-    .update({ ...restPayload, is_using_percentage: budget_type === "percentage" })
-    .eq("category_id", id)
-    .single();
-  return query;
+  const user = await getCurrentUser();
+
+  if (user.is_premium_user || user.is_using_free_trial) {
+    const supabase = createSupabaseServer();
+    const { budget_type, ...restPayload } = payload;
+    const query = supabase
+      .from("tb_category")
+      .update({ ...restPayload, is_using_percentage: budget_type === "percentage" })
+      .eq("category_id", id)
+      .single();
+    return query;
+  }
+  return freeTrialError;
 };
 
 const deleteCategory = async (id: number) => {

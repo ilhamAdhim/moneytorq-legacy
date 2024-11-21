@@ -27,3 +27,15 @@ export const parseRupiah = (formattedValue?: string) => {
 
   return isNaN(parsedValue) ? undefined : parsedValue;
 };
+
+export const freeTrialError = {
+  data: {
+    status: 400,
+  },
+  count: 0,
+  error: {
+    message: "Your free trial has ended!",
+    code: 400,
+  },
+  status: 400,
+};

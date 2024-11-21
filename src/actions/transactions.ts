@@ -3,13 +3,8 @@
 import { IFormDataManageTransaction } from "@/components/composites/Modals/ModalManageTransaction";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { addDays, format } from "date-fns";
-
-const getCurrentUser = async () => {
-  const supabase = createSupabaseServer();
-
-  const currentUser = await supabase.auth.getUser();
-  return currentUser?.data?.user?.id || "";
-};
+import { getCurrentUser } from "./auth";
+import { freeTrialError } from "@/utils/common";
 
 interface IGetTransactions {
   limit?: number;
@@ -97,44 +92,56 @@ const getTransactionByID = async (id: number) => {
   return query;
 };
 
+// ? If user.is_premium_user || user.is_using_free_trial, then just proceed CRUD
+// ? If free trial has ended and user is not premium yet, then returns error msg
+// ? Free trial automatically ends when an account is one month from its registration date
+
 const createTransaction = async (payload: IFormDataManageTransaction) => {
   const user = await getCurrentUser();
 
-  const { type, amount, date, isChangeDate, ...restPayload } = payload;
-  const supabase = createSupabaseServer();
+  if (user.is_premium_user || user.is_using_free_trial) {
+    const { type, amount, date, isChangeDate, ...restPayload } = payload;
+    const supabase = createSupabaseServer();
 
-  const { data, count, error, status, statusText } = await supabase
-    .from("tb_transactions")
-    .insert([
-      {
-        transaction_type: type,
-        amount: Number(amount),
-        user_id: user,
-        date: addDays(new Date(date), 1),
-        ...restPayload,
-      },
-    ])
-    .select();
+    const { data, count, error, status, statusText } = await supabase
+      .from("tb_transactions")
+      .insert([
+        {
+          transaction_type: type,
+          amount: Number(amount),
+          user_id: user.id,
+          date: addDays(new Date(date), 1),
+          ...restPayload,
+        },
+      ])
+      .select();
+    return { data, count, error, status, statusText };
+  }
 
-  return { data, count, error, status, statusText };
+  return freeTrialError;
 };
 
 const updateTransaction = async (payload: IFormDataManageTransaction, id: number) => {
-  const supabase = createSupabaseServer();
-  const { type, amount, date, isChangeDate, ...restPayload } = payload;
-  console.log("date", date);
-  const query = supabase
-    .from("tb_transactions")
-    .update({
-      transaction_type: type,
-      amount: Number(amount),
-      // date: isChangeDate ? addDays(new Date(date), 1) : new Date(date),
-      date: new Date(date),
-      ...restPayload,
-    })
-    .eq("id", id)
-    .single();
-  return query;
+  const user = await getCurrentUser();
+
+  if (user.is_premium_user || user.is_using_free_trial) {
+    const supabase = createSupabaseServer();
+    const { type, amount, date, isChangeDate, ...restPayload } = payload;
+    console.log("date", date);
+    const query = supabase
+      .from("tb_transactions")
+      .update({
+        transaction_type: type,
+        amount: Number(amount),
+        // date: isChangeDate ? addDays(new Date(date), 1) : new Date(date),
+        date: new Date(date),
+        ...restPayload,
+      })
+      .eq("id", id)
+      .single();
+    return query;
+  }
+  return freeTrialError;
 };
 
 const deleteTransaction = async (id: number) => {
